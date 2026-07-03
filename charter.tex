@@ -1,37 +1,35 @@
 \documentclass[
-11pt, % The default document font size, options: 10pt, 11pt, 12pt
-%codirector, % Uncomment to add a codirector to the title page
-]{charter} 
-
+  11pt, % The default document font size, options: 10pt, 11pt, 12pt
+  %codirector, % Uncomment to add a codirector to the title page
+]{charter}
 
 % El títulos de la memoria, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \ttitle
-\titulo{Título del proyecto} 
+\titulo{Verificación Biométrica de Identidad para Plataformas de Gestión de Personal Tercerizado}
 
 % Nombre del posgrado, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \degreename
-%\posgrado{Carrera de Especialización en Sistemas Embebidos} 
-%\posgrado{Carrera de Especialización en Internet de las Cosas} 
+%\posgrado{Carrera de Especialización en Sistemas Embebidos}
+%\posgrado{Carrera de Especialización en Internet de las Cosas}
 \posgrado{Carrera de Especialización en Inteligencia Artificial}
-%\posgrado{Maestría en Sistemas Embebidos} 
+%\posgrado{Maestría en Sistemas Embebidos}
 %\posgrado{Maestría en Internet de las cosas}
 
 % Tu nombre, se puede usar el cualquier lugar del documento con el comando \authorname
 % IMPORTANTE: no omitir titulaciones ni tildación en los nombres, también se recomienda escribir los nombres completos (tal cual los tienen en su documento)
-\autor{Título y Nombre del autor}
+\autor{Denis Zhbankov}
 
 % El nombre del director y co-director, se puede usar el cualquier lugar del documento con el comando \supname y \cosupname y \pertesupname y \pertecosupname
-\director{Título y Nombre del director}
-\pertenenciaDirector{pertenencia} 
+\director{Ksenija Blažević}
+\pertenenciaDirector{Head of Machine Learning \& AI}
 \codirector{} % para que aparezca en la portada se debe descomentar la opción codirector en los parámetros de documentclass
 \pertenenciaCoDirector{FIUBA}
 
 % Nombre del cliente, quien va a aprobar los resultados del proyecto, se puede usar con el comando \clientename y \empclientename
-\cliente{Nombre del cliente}
-\empresaCliente{Empresa del cliente}
- 
-\fechaINICIO{30 de abril de 2023}		%Fecha de inicio de la cursada de GdP \fechaInicioName
-\fechaFINALPlan{18 de junio de 2023} 	%Fecha de final de cursada de GdP
-\fechaFINALTrabajo{15 de mayo de 2024}	%Fecha de defensa pública del trabajo final
+\cliente{Recursos Humanos}
+\empresaCliente{Leroy Merlin}
 
+\fechaINICIO{23 de junio de 2026}    %Fecha de inicio de la cursada de GdP \fechaInicioName
+\fechaFINALPlan{18 de agosto de 2026}   %Fecha de final de cursada de GdP
+\fechaFINALTrabajo{1 de enero de 2027}  %Fecha de defensa pública del trabajo final
 
 \begin{document}
 
@@ -39,53 +37,48 @@
 \thispagestyle{empty}
 \pagebreak
 
-
 \thispagestyle{empty}
 {\setlength{\parskip}{0pt}
-\tableofcontents{}
+  \tableofcontents{}
 }
 \pagebreak
-
 
 \section*{Registros de cambios}
 \label{sec:registro}
 
-
 \begin{table}[ht]
-\label{tab:registro}
-\centering
-\begin{tabularx}{\linewidth}{@{}|c|X|c|@{}}
-\hline
-\rowcolor[HTML]{C0C0C0} 
-Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios realizados} & Fecha      \\ \hline
-0      & Creación del documento                                 &\fechaInicioName \\ \hline
-%1      & Se completa hasta el punto 5 inclusive                & {día} de {mes} de 202X \\ \hline
-%2      & Se completa hasta el punto 9 inclusive
-%		  Se puede agregar algo más \newline
-%		  En distintas líneas \newline
-%		  Así                                                    & {día} de {mes} de 202X \\ \hline
-%3      & Se completa hasta el punto 12 inclusive                & {día} de {mes} de 202X \\ \hline
-%4      & Se completa el plan	                                 & {día} de {mes} de 202X \\ \hline
+  \label{tab:registro}
+  \centering
+  \begin{tabularx}{\linewidth}{@{}|c|X|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios realizados} & Fecha              \\ \hline
+    0        & Creación del documento                                                          & \fechaInicioName   \\ \hline
+    1        & Se completa hasta el punto 5 inclusive                                          & 3 de julio de 2026 \\ \hline
+    %2      & Se completa hasta el punto 9 inclusive
+    %      Se puede agregar algo más \newline
+    %      En distintas líneas \newline
+    %      Así                                                    & {día} de {mes} de 202X \\ \hline
+    %3      & Se completa hasta el punto 12 inclusive                & {día} de {mes} de 202X \\ \hline
+    %4      & Se completa el plan                                   & {día} de {mes} de 202X \\ \hline
 
-% Si hay más correcciones pasada la versión 4 también se deben especificar acá
+    % Si hay más correcciones pasada la versión 4 también se deben especificar acá
 
-\end{tabularx}
+  \end{tabularx}
 \end{table}
 
 \pagebreak
-
-
 
 \section*{Acta de constitución del proyecto}
 \label{sec:acta}
 
 \begin{flushright}
-Buenos Aires, \fechaInicioName
+  Buenos Aires, \fechaInicioName
 \end{flushright}
 
 \vspace{2cm}
 
-Por medio de la presente se acuerda con el \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en \textcolor{red}{la implementación de un prototipo de un sistema de control de temperatura de una caldera industrial}. El trabajo tendrá un presupuesto preliminar estimado de \textcolor{red}{600} horas y un costo estimado de \textcolor{red}{\$ XXX}, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
+Por medio de la presente se acuerda con \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en el desarrollo de un módulo de verificación biométrica de identidad basado en reconocimiento facial para plataformas de gestión de personal tercerizado. El trabajo tendrá un presupuesto preliminar estimado de 600 horas y un costo estimado de USD 36000, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
 
 Se adjunta a esta acta la planificación inicial.
 
@@ -93,157 +86,114 @@ Se adjunta a esta acta la planificación inicial.
 
 % Esta parte se construye sola con la información que hayan cargado en el preámbulo del documento y no debe modificarla
 \begin{table}[ht]
-\centering
-\begin{tabular}{ccc}
-\begin{tabular}[c]{@{}c@{}}Dr. Ing. Ariel Lutenberg \\ Director posgrado FIUBA\end{tabular} & \hspace{2cm} & \begin{tabular}[c]{@{}c@{}}\clientename \\ \empclientename \end{tabular} \vspace{2.5cm} \\ 
-\multicolumn{3}{c}{\begin{tabular}[c]{@{}c@{}} \supname \\ Director del Trabajo Final\end{tabular}} \vspace{2.5cm} \\
-\end{tabular}
+  \centering
+  \begin{tabular}{ccc}
+    \begin{tabular}[c]{@{}c@{}}Dr. Ing. Ariel Lutenberg \\ Director posgrado FIUBA
+    \end{tabular} & \hspace{2cm} &
+    \begin{tabular}[c]{@{}c@{}}\clientename \\ \empclientename
+    \end{tabular} \vspace{2.5cm} \\
+    \multicolumn{3}{c}{
+      \begin{tabular}[c]{@{}c@{}} \supname \\ Director del Trabajo Final
+    \end{tabular}} \vspace{2.5cm} \\
+  \end{tabular}
 \end{table}
-
-
-
 
 \section{1. Descripción técnica-conceptual del proyecto a realizar}
 \label{sec:descripcion}
 
-\begin{consigna}{red} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-El objetivo es que el lector, en una o dos páginas, exponga de qué se trata el proyecto y cuáles son sus desafíos, cuál es la motivación para realizarlo y su importancia.
+El presente trabajo se desarrolla en el marco de \empclientename, empresa francesa líder en mejoramiento del hogar y bricolaje, que enfrenta una problemática recurrente en la gestión de personal tercerizado de baja calificación (mozos de depósito, personal de limpieza, mecánicos, peones): el fraude de identidad. Este fenómeno se manifiesta de dos formas principales: la presentación de documentos falsificados durante la selección y la suplantación de identidad, donde la persona que aprueba el proceso de ingreso no es la misma que se presenta a trabajar cada turno. Esta problemática representa un riesgo operativo, de seguridad y de cumplimiento normativo para la organización.
 
-Se debe introducir el contexto del proyecto, el estado del arte en la temática, describir la propuesta de valor, cuál es el problema que atiende y cuál es la solución que se propone. Se debe dar una descripción funcional de la solución que incluya un diagrama en bloques.
+En cuanto al estado del arte, el reconocimiento facial es un campo maduro con modelos consolidados como FaceNet y ArcFace para la generación de embeddings faciales, y arquitecturas de detección como MTCNN y RetinaFace. El paradigma de \textit{face verification} permite operar sin necesidad de reentrenamiento ante nuevos usuarios, ya que no requiere clasificación de identidades sino comparación de similitud entre representaciones vectoriales. Sin embargo, las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral de baja calificación: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
 
-Puede ser útil incluir en esta sección la respuesta a alguna de estas preguntas:
+La solución propuesta consiste en un módulo de verificación biométrica que se integra a la plataforma de gestión de personal existente y opera en dos instancias críticas:
 
 \begin{itemize}
-	\item ¿Cuál es el contexto del proyecto, es un emprendimiento personal, un proyecto para una empresa, es parte del programa de vinculación con empresas del posgrado?
-	\item ¿Existen o aplican condiciones especiales al proyecto, financiamiento de algún programa público o privado, acuerdos de confidencialidad, acuerdos sobre la propiedad intelectual de los entregables u otros?
-	\item ¿Cómo se compara la solución propuesta con el estado del arte en el campo de aplicación? ¿En qué aspectos destaca?
-	\item ¿Ayuda a la explicación si se incluye un lienzo Canvas del Modelo de Negocio?
-	\item ¿En qué estado del ciclo de vida está la solución que se propone?
-	\item ¿Cuáles son las características del cliente (el adoptante de los entregables del proyecto) qué valora, qué necesita?
-	\item ¿Por dónde pasa la innovación?
+  \item Durante la selección: al momento de incorporar un candidato al sistema, se captura su rostro (mediante cámara del dispositivo) y se verifica su correspondencia con la fotografía del documento de identidad presentado (DNI, licencia de conducir, carné de residencia, etc.).
+  \item Al inicio de cada turno laboral: se realiza un escaneo facial en tiempo real (de manera similar a los sistemas de autenticación biométrica utilizados en aplicaciones bancarias móviles) y se compara con la representación almacenada del trabajador registrado.
 \end{itemize}
 
-La descripción técnica-conceptual \textbf{debe incluir al menos un diagrama en bloques del sistema} y descripción funcional de la solución propuesta.
+El pipeline técnico central consiste en: (1) detección facial mediante modelos como MTCNN o RetinaFace, (2) generación de embeddings faciales (representaciones vectoriales compactas del rostro) mediante redes neuronales preentrenadas como FaceNet o ArcFace, (3) cálculo de similitud por distancia coseno entre el embedding del sujeto presente y el almacenado en la base de datos, y (4) decisión umbralizada que equilibre la tasa de falsos positivos y falsos negativos según los requerimientos de seguridad de la aplicación.
 
-Las figuras se deben mencionar en el texto ANTES de que aparezcan con una frase como la siguiente: ``En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistema. Se observa que...''.  La regla es que las figuras nunca pueden ir antes de ser mencionadas en el texto, porque sino el lector no entiende por qué de pronto aparece una figura.
+En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistema. El pipeline consta de seis etapas secuenciales: primero, la captura de imagen (mediante cámara del dispositivo o digitalización de un documento); luego, la detección facial, realizada con modelos como MTCNN o RetinaFace; a continuación, la generación del embedding facial mediante redes como FaceNet o ArcFace; ese embedding se almacena en la base de datos; posteriormente se realiza la comparación por distancia coseno entre el embedding generado y el almacenado; y finalmente se produce la decisión del sistema, que determina si la identidad queda verificada o rechazada. Este mismo pipeline se aplica tanto al registro inicial del candidato como a la verificación diaria al inicio de cada turno, variando únicamente el origen de la imagen capturada (documento de identidad en el primer caso, escaneo en vivo en el segundo) y si el embedding resultante se almacena como referencia o se compara contra uno ya existente.
 
 \begin{figure}[htpb]
-\centering 
-\includegraphics[width=.65\textwidth]{./Figuras/diagBloques.png}
-\caption{Diagrama en bloques del sistema.}
-\label{fig:diagBloques}
+  \centering
+  \includegraphics[width=.85\textwidth]{./Figuras/diagBloques.png}
+  \caption{Diagrama en bloques del sistema.}
+  \label{fig:diagBloques}
 \end{figure}
 
-\vspace{25px}
+Por tratarse de un proyecto de vinculación con una empresa, no contempla financiamiento de programas públicos o privados adicionales. No existen acuerdos de confidencialidad ni de propiedad intelectual que restrinjan la difusión de los resultados.
 
-El tamaño del texto en TODAS las figuras debe ser adecuado \textbf{para que NO pase lo que ocurre en la figura \ref{fig:diagBloques}}, donde el lector debe esforzarse para poder leer el texto. 
-
-Los colores usados en el diagrama deben ser adecuados, tal que ayuden a comprender mejor el diagrama. Se recomienda evitar colores primarios (como rojo, verde o cyan) y usar la gama de colores pastel.
-
-\end{consigna} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
+El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en outsourcing de baja calificación) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis comparativo sistemático de arquitecturas y funciones de pérdida métricas evaluando no solo precisión sino también costo computacional, un factor crítico para el despliegue en entornos con recursos limitados. Tercero, establece un marco de ajuste de umbral de decisión que permite balancear explícitamente seguridad y usabilidad según los requerimientos específicos de cada organización, utilizando exclusivamente datasets públicos y éticamente obtenidos para garantizar el cumplimiento de la normativa de protección de datos personales.
 
 \section{2. Identificación y análisis de los interesados}
 \label{sec:interesados}
 
-\begin{consigna}{red} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-\textbf{Nota importante:} borrar esto y todas las consignas en color rojo antes de entregar este documento). Esto se hace eliminando el par de comandos que forman el bloque consigna, \verb!\begin{consigna}{red}! y \verb!\end{consigna}{red}! del código. 
- 
-Es inusual que una misma persona esté en más de un rol, incluso en proyectos chicos. Si se considera que una persona cumple dos o más roles, entonces \textbf{solo dejarla en el rol más importante}. 
-
-Por ejemplo, si una persona es Cliente pero también colabora u orienta, dejarla solo como Cliente. Si una persona es el Responsable, \textbf{no debe ser colocado también como miembro del equipo}.
-
+En un proyecto es prioritario conocer y gestionar a los interesados, sus expectativas y sus influencias. Esta sección se enfoca en detallar claramente qué roles debe cumplir cada persona involucrada a lo largo de todo el proceso.
 
 \begin{table}[ht]
-%\caption{Identificación de los interesados}
-%\label{tab:interesados}
-\begin{tabularx}{\linewidth}{@{}|l|X|X|l|@{}}
-\hline
-\rowcolor[HTML]{C0C0C0} 
-Rol           & Nombre y Apellido & Organización 	& Puesto 	\\ \hline
-Auspiciante   &                   &              	&        	\\ \hline
-Cliente       & \clientename      &\empclientename	&        	\\ \hline
-Impulsor      &                   &              	&        	\\ \hline
-Responsable   & \authorname       & FIUBA        	& Alumno 	\\ \hline
-Colaboradores &                   &              	&        	\\ \hline
-Orientador    & \supname	      & \pertesupname 	& Director del Trabajo Final \\ \hline
-Equipo        & miembro1 \newline 
-				miembro2          &              	&        	\\ \hline
-Opositores    &                   &              	&        	\\ \hline
-Usuario final &                   &              	&        	\\ \hline
-\end{tabularx}
+  \begin{tabularx}{\linewidth}{@{}|l|X|X|l|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Rol           & Nombre y Apellido & Organización    & Puesto        \\ \hline
+    Cliente       & -                 & \empclientename & \clientename  \\ \hline
+    Orientador    & \supname          & \empclientename & \pertesupname \\ \hline
+    Responsable   & \authorname       & FIUBA           & Alumno        \\ \hline
+  \end{tabularx}
 \end{table}
 
-El Director suele ser uno de los orientadores.
+Principales características de los interesados:
 
-No dejar celdas vacías; si no hay nada que poner en una celda colocar un signo ``-''.
-
-No dejar filas vacías; si no hay nada que poner en una fila entonces eliminarla.
-
-Es deseable listar a continuación las principales características de cada interesado.
- 
-Por ejemplo:
 \begin{itemize}
-	\item Orientador: la Dra. Ing. María Gómez es experta en la temática y va a ayudar con la definición de los requerimientos y el desarrollo del firmware del embebido.
-	\item Auspiciante: es riguroso y exigente con la rendición de gastos. Tener mucho cuidado con esto.
-	\item Equipo: Juan Perez, suele pedir licencia porque tiene un familiar con una enfermedad. Planificar considerando esto.
+  \item Cliente: \empclientename\hspace{1px} es la empresa adoptante del módulo. Valora la reducción del fraude laboral, el cumplimiento normativo y la seguridad operativa en la gestión de personal tercerizado. El personal de RRHH y los supervisores de turno que utilizarán el sistema a diario para verificar la identidad de los trabajadores al inicio de cada jornada laboral.
+  \item Orientador: \supname\hspace{1px} es experta en Machine Learning y supervisará la definición de requerimientos, la selección de arquitecturas y el desarrollo del pipeline biométrico.
 \end{itemize}
-
-\end{consigna} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-
 
 \section{3. Propósito del proyecto}
 \label{sec:proposito}
 
-\begin{consigna}{red} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-
-¿Por qué se hace el proyecto? ¿Qué se quiere lograr? 
-
-Se recomienda que sea solo un párrafo que continúe con la idea de la frase ``el propósito de este proyecto es...'' (omitir la frase, ya que está en el título de la sección).
-\end{consigna}
+Desarrollar un módulo de verificación biométrica de identidad basado en reconocimiento facial que permita a \empclientename\hspace{1px} detectar y prevenir el fraude de identidad en la contratación y gestión de personal tercerizado, mejorando la seguridad operativa, el cumplimiento normativo y la trazabilidad de los procesos de admisión y control de acceso laboral.
 
 \section{4. Alcance del proyecto}
 \label{sec:alcance}
 
-\begin{consigna}{red}
-¿Qué se incluye y que no se incluye en este proyecto?
-
-Se refiere al trabajo que se va a hacer para entregar el producto o resultado especificado. 
-
-Explicitar todo lo quede comprendido dentro del alcance del proyecto. Por ejemplo:
-
 El proyecto incluye:
+
 \begin{itemize}
-	\item Ítem 1.
-	\item Ítem 2.
-		\begin{itemize}
-		\item Subítem 1.
-		\item Subítem 2.
-		\item ...
-		\end{itemize}
-	\item ...
-	
+  \item Implementación de un pipeline completo de detección facial y generación de embeddings.
+  \item Desarrollo de un módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad.
+  \item Integración del módulo con la plataforma de gestión de personal existente mediante una interfaz API.
+  \item Evaluación del sistema utilizando datasets públicos (LFW, VGGFace2, CASIA-WebFace) y métricas estándar (EER, FAR, FRR, ROC).
+  \item Análisis comparativo de al menos dos arquitecturas de generación de embeddings (FaceNet, ArcFace).
+  \item Documentación técnica completa del desarrollo, resultados y manual de uso.
 \end{itemize}
 
-Explicitar además todo lo que no quede incluido (``El presente proyecto no incluye...'')
+El presente proyecto no incluye:
 
-\end{consigna} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-
+\begin{itemize}
+  \item Recolección ni procesamiento de datos biométricos de personas reales fuera de datasets públicos.
+  \item Desarrollo de la plataforma de gestión de personal ni de sus funcionalidades existentes.
+  \item Despliegue en producción ni mantenimiento post-entrega.
+  \item Desarrollo de hardware de captura o adquisición de cámaras.
+  \item Capacitación del personal de la empresa en el uso del sistema.
+  \item Cumplimiento de certificaciones formales de seguridad o normativas específicas.
+\end{itemize}
 
 \section{5. Supuestos del proyecto}
 \label{sec:supuestos}
 
-\begin{consigna}{red} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
-``Para el desarrollo del presente proyecto se supone que: ...''
+Para el desarrollo del presente proyecto se supone que:
 
 \begin{itemize}
-	\item Supuesto 1.
-	\item Supuesto 2.
-	\item ...
+  \item Los datasets públicos seleccionados (LFW, VGGFace2, CASIA-WebFace) están disponibles y son suficientes para entrenar y evaluar los modelos propuestos.
+  \item Se cuenta con los recursos computacionales necesarios (GPU) para el entrenamiento de los modelos de deep learning.
+  \item Se dispone del tiempo necesario para completar las 600 horas estimadas del proyecto dentro del plazo establecido.
+  \item Las condiciones macroeconómicas y reglamentarias no sufrirán cambios significativos que afecten la ejecución o el presupuesto del proyecto.
+  \item Se cuenta con las habilidades técnicas necesarias en Python, PyTorch/TensorFlow y visión por computadora para implementar la solución.
+  \item La plataforma de gestión de personal existente expone una API que permite la integración del módulo biométrico.
+  \item No habrá cambios significativos en los requisitos del proyecto durante su ejecución.
 \end{itemize}
-
-Por ejemplo, se podrían incluir supuestos respecto a disponibilidad de tiempo y recursos humanos y materiales, sobre la factibilidad técnica de distintos aspectos del proyecto, sobre otras cuestiones que sean necesarias para el éxito del proyecto como condiciones macroeconómicas o reglamentarias.
-
-\end{consigna} % ELIMINAR \begin{consigna}{red} y \end{consigna}{red} en las secciones que vayan completando para cada entrega parcial.
 
 \section{6. Product Backlog}
 \label{sec:backlog}
@@ -351,25 +301,25 @@ Se estructuran de forma análoga a las \'{e}picas del backlog:
 A partir de cada Historia de Usuario (HU) definida en la sección 6, descomponer el trabajo en tareas técnicas concretas, medibles y acotadas en el tiempo.
 
 \begin{itemize}
-\item Seleccionar entre 2 y 3 tareas por cada historia de usuario.
-\item Cada tarea debe estar claramente formulada, ser técnica, accionable y con una estimación horaria entre 2 y 8 horas.
-\item Evitar tareas genéricas (como ''desarrollar funcionalidad´´) o demasiado amplias.
-\item Si una tarea supera las 8 horas, debe dividirse en subtareas.
-\item Indicar la prioridad relativa de cada tarea (Alta, Media o Baja).
+  \item Seleccionar entre 2 y 3 tareas por cada historia de usuario.
+  \item Cada tarea debe estar claramente formulada, ser técnica, accionable y con una estimación horaria entre 2 y 8 horas.
+  \item Evitar tareas genéricas (como ''desarrollar funcionalidad´´) o demasiado amplias.
+  \item Si una tarea supera las 8 horas, debe dividirse en subtareas.
+  \item Indicar la prioridad relativa de cada tarea (Alta, Media o Baja).
 \end{itemize}
 
 \begin{table}[htpb]
-\centering
-\begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
-\hline
-\rowcolor[HTML]{C0C0C0}
-Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
-HU1 & Tarea 1 HU1 & 6 h & Alta \\ \hline
-HU1 & Tarea 2 HU1 & 8 h & Alta \\ \hline
-HU2 & Tarea 1 HU2 & 5 h & Media \\ \hline
-HU2 & Tarea 2 HU2 & 6 h & Alta \\ \hline
-... & ... & ... & ... \\ \hline
-\end{tabularx}
+  \centering
+  \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
+    HU1 & Tarea 1 HU1 & 6 h & Alta \\ \hline
+    HU1 & Tarea 2 HU1 & 8 h & Alta \\ \hline
+    HU2 & Tarea 1 HU2 & 5 h & Media \\ \hline
+    HU2 & Tarea 2 HU2 & 6 h & Alta \\ \hline
+    ... & ... & ... & ... \\ \hline
+  \end{tabularx}
 \end{table}
 
 \textbf{Criterios para estimar tiempos:}
@@ -431,22 +381,22 @@ Organizar las tareas técnicas del proyecto en sprints de trabajo que permitan d
 \end{itemize}
 
 \begin{table}[htpb]
-\centering
-\caption{Formato sugerido}
-\begin{tabularx}{\linewidth}{@{}|l|l|X|c|l|c|@{}}
-\hline
-\rowcolor[HTML]{C0C0C0}
-Sprint & HU o fase & Tarea & Horas / SP & Responsable & \% Completado \\ \hline
-Sprint 0 & Planificación & Definir alcance y cronograma & 10 h & Alumno & 100\% \\ \hline
-Sprint 0 & Planificación & Reunión con el tutor/cliente & 5 h & Alumno & 50\% \\ \hline
-Sprint 0 & Planificación & Ajuste de los entregables & 6 h & Alumno & 25\% \\ \hline
-Sprint 1 & HU1 & Tarea 1 HU1 & 6 h / 3 SP & Alumno & 0\% \\ \hline
-Sprint 1 & HU1 & Tarea 2 HU1 & 10 h / 5 SP & Alumno & 0\% \\ \hline
-Sprint 2 & HU2 & Tarea 1 HU2 & 7 h / 5 SP & Alumno & 0\% \\ \hline
-... & ... & ... & ... & ... & ... \\ \hline
-Sprint 5 & Escritura & Redacción memoria & 50 h / 34 SP & Alumno & 0\% \\ \hline
-Sprint 6 & Defensa & Preparación de la exposición & 20 h / 13 SP & Alumno & 0\% \\ \hline
-\end{tabularx}
+  \centering
+  \caption{Formato sugerido}
+  \begin{tabularx}{\linewidth}{@{}|l|l|X|c|l|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Sprint & HU o fase & Tarea & Horas / SP & Responsable & \% Completado \\ \hline
+    Sprint 0 & Planificación & Definir alcance y cronograma & 10 h & Alumno & 100\% \\ \hline
+    Sprint 0 & Planificación & Reunión con el tutor/cliente & 5 h & Alumno & 50\% \\ \hline
+    Sprint 0 & Planificación & Ajuste de los entregables & 6 h & Alumno & 25\% \\ \hline
+    Sprint 1 & HU1 & Tarea 1 HU1 & 6 h / 3 SP & Alumno & 0\% \\ \hline
+    Sprint 1 & HU1 & Tarea 2 HU1 & 10 h / 5 SP & Alumno & 0\% \\ \hline
+    Sprint 2 & HU2 & Tarea 1 HU2 & 7 h / 5 SP & Alumno & 0\% \\ \hline
+    ... & ... & ... & ... & ... & ... \\ \hline
+    Sprint 5 & Escritura & Redacción memoria & 50 h / 34 SP & Alumno & 0\% \\ \hline
+    Sprint 6 & Defensa & Preparación de la exposición & 20 h / 13 SP & Alumno & 0\% \\ \hline
+  \end{tabularx}
 \end{table}
 
 \textbf{Recomendaciones:}
@@ -457,7 +407,6 @@ Sprint 6 & Defensa & Preparación de la exposición & 20 h / 13 SP & Alumno & 0\
   \item Considerar un sprint final exclusivo para pruebas, revisión y ajustes antes de la defensa.
 \end{itemize}
 
-
 \section{11. Diagrama de Gantt (sprints)}
 \label{sec:gantt}
 
@@ -467,29 +416,26 @@ Consigna:
 
 \begin{itemize}
 
-\item Elaborar un diagrama de Gantt que muestre la secuencia temporal de los sprints.
+  \item Elaborar un diagrama de Gantt que muestre la secuencia temporal de los sprints.
 
-\item Cada fila debe representar un sprint (con su número o nombre), y el eje horizontal debe indicar el tiempo (en semanas o fechas concretas).
+  \item Cada fila debe representar un sprint (con su número o nombre), y el eje horizontal debe indicar el tiempo (en semanas o fechas concretas).
 
-\item Las tareas técnicas derivadas de HU deben diferenciarse visualmente (por ejemplo, con un color distinto) de las tareas no técnicas (planificación, redacción, defensa).
+  \item Las tareas técnicas derivadas de HU deben diferenciarse visualmente (por ejemplo, con un color distinto) de las tareas no técnicas (planificación, redacción, defensa).
 
-\item Incluir todas las tareas estimadas en cada sprint.
+  \item Incluir todas las tareas estimadas en cada sprint.
 \end{itemize}
 
 Recomendaciones para el Gantt:
 
 \begin{itemize}
 
-	\item Podés usar herramientas gratuitas como TeamGantt, ClickUp, GanttProject, [Google Sheets], [Trello + Planyway], entre otras.
-	\item Ordená los sprints de forma cronológica, comenzando con Sprint 0 (planificación) y finalizando con el sprint de defensa.
-	\item Asegurate de reflejar la duración realista de cada sprint según tu disponibilidad y el cronograma general del posgrado.
-	\item Incluí hitos importantes: reuniones, entregas parciales, defensa.
+  \item Podés usar herramientas gratuitas como TeamGantt, ClickUp, GanttProject, [Google Sheets], [Trello + Planyway], entre otras.
+  \item Ordená los sprints de forma cronológica, comenzando con Sprint 0 (planificación) y finalizando con el sprint de defensa.
+  \item Asegurate de reflejar la duración realista de cada sprint según tu disponibilidad y el cronograma general del posgrado.
+  \item Incluí hitos importantes: reuniones, entregas parciales, defensa.
 \end{itemize}
 
-
 Incluir una imagen legible del diagrama de Gantt. Si es muy ancho, presentar primero la tabla y luego el gráfico de barras.
-
-
 
 \section{12. Gobernanza de datos}
 \label{sec:gobernanza}
@@ -523,80 +469,78 @@ En esta subsección se debe reflexionar sobre los aspectos éticos vinculados al
 Aspectos a considerar:
 
 \begin{itemize}
-	\item Identificar posibles sesgos en los datos o modelos (ideológicos, culturales, de género, geográficos, etc.) y analizar sus consecuencias (por ejemplo: discriminación, manipulación, pérdida de privacidad o desinformación).
-	\item Analizar los posibles riesgos en términos de impacto social del uso indebido de la solución a desarrollar.
-	\item En caso de corresponder, proponer medidas de mitigación y mecanismos de confianza (auditorías, documentación, trazabilidad, revisión humana, etc.).
-	\item Finalmente, elaborar una reflexión general sobre la ética del proyecto, considerando tanto la equidad y transparencia del sistema como su impacto potencial en la sociedad.
+  \item Identificar posibles sesgos en los datos o modelos (ideológicos, culturales, de género, geográficos, etc.) y analizar sus consecuencias (por ejemplo: discriminación, manipulación, pérdida de privacidad o desinformación).
+  \item Analizar los posibles riesgos en términos de impacto social del uso indebido de la solución a desarrollar.
+  \item En caso de corresponder, proponer medidas de mitigación y mecanismos de confianza (auditorías, documentación, trazabilidad, revisión humana, etc.).
+  \item Finalmente, elaborar una reflexión general sobre la ética del proyecto, considerando tanto la equidad y transparencia del sistema como su impacto potencial en la sociedad.
 
 \end{itemize}
-
 
 \section{13. Gestión de riesgos}
 \label{sec:riesgos}
 
 \begin{consigna}{red}
 a) Identificación de los riesgos (al menos cinco) y estimación de sus consecuencias:
- 
+
 Riesgo 1: detallar el riesgo (riesgo es algo que si ocurre altera los planes previstos de forma negativa)
 \begin{itemize}
-	\item Severidad (S): mientras más severo, más alto es el número (usar números del 1 al 10).\\
-	Justificar el motivo por el cual se asigna determinado número de severidad (S).
-	\item Probabilidad de ocurrencia (O): mientras más probable, más alto es el número (usar del 1 al 10).\\
-	Justificar el motivo por el cual se asigna determinado número de (O). 
-\end{itemize}   
+  \item Severidad (S): mientras más severo, más alto es el número (usar números del 1 al 10).\\
+    Justificar el motivo por el cual se asigna determinado número de severidad (S).
+  \item Probabilidad de ocurrencia (O): mientras más probable, más alto es el número (usar del 1 al 10).\\
+    Justificar el motivo por el cual se asigna determinado número de (O).
+\end{itemize}
 
 Riesgo 2:
 \begin{itemize}
-	\item Severidad (S): X.\\
-	Justificación...
-	\item Ocurrencia (O): Y.\\
-	Justificación...
+  \item Severidad (S): X.\\
+    Justificación...
+  \item Ocurrencia (O): Y.\\
+    Justificación...
 \end{itemize}
 
 Riesgo 3:
 \begin{itemize}
-	\item Severidad (S):  X.\\
-	Justificación...
-	\item Ocurrencia (O): Y.\\
-	Justificación...
+  \item Severidad (S):  X.\\
+    Justificación...
+  \item Ocurrencia (O): Y.\\
+    Justificación...
 \end{itemize}
-
 
 b) Tabla de gestión de riesgos:      (El RPN se calcula como RPN=SxO)
 
 \begin{table}[htpb]
 \centering
 \begin{tabularx}{\linewidth}{@{}|X|c|c|c|c|c|c|@{}}
-\hline
-\rowcolor[HTML]{C0C0C0} 
-Riesgo & S & O & RPN & S* & O* & RPN* \\ \hline
-       &   &   &     &    &    &      \\ \hline
-       &   &   &     &    &    &      \\ \hline
-       &   &   &     &    &    &      \\ \hline
-       &   &   &     &    &    &      \\ \hline
-       &   &   &     &    &    &      \\ \hline
+  \hline
+  \rowcolor[HTML]{C0C0C0}
+  Riesgo & S & O & RPN & S* & O* & RPN* \\ \hline
+  &   &   &     &    &    &      \\ \hline
+  &   &   &     &    &    &      \\ \hline
+  &   &   &     &    &    &      \\ \hline
+  &   &   &     &    &    &      \\ \hline
+  &   &   &     &    &    &      \\ \hline
 \end{tabularx}%
 \end{table}
 
-Criterio adoptado: 
+Criterio adoptado:
 
 Se tomarán medidas de mitigación en los riesgos cuyos números de RPN sean mayores a...
 
 Nota: los valores marcados con (*) en la tabla corresponden luego de haber aplicado la mitigación.
 
 c) Plan de mitigación de los riesgos que originalmente excedían el RPN máximo establecido:
- 
+
 Riesgo 1: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
-  Nueva asignación de S y O, con su respectiva justificación:
-  \begin{itemize}
-	\item Severidad (S*): mientras más severo, más alto es el número (usar números del 1 al 10).
-          Justificar el motivo por el cual se asigna determinado número de severidad (S).
-	\item Probabilidad de ocurrencia (O*): mientras más probable, más alto es el número (usar del 1 al 10).
-          Justificar el motivo por el cual se asigna determinado número de (O).
-	\end{itemize}
+Nueva asignación de S y O, con su respectiva justificación:
+\begin{itemize}
+\item Severidad (S*): mientras más severo, más alto es el número (usar números del 1 al 10).
+Justificar el motivo por el cual se asigna determinado número de severidad (S).
+\item Probabilidad de ocurrencia (O*): mientras más probable, más alto es el número (usar del 1 al 10).
+Justificar el motivo por el cual se asigna determinado número de (O).
+\end{itemize}
 
 Riesgo 2: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
- 
+
 Riesgo 3: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
 
 \end{consigna}
@@ -610,37 +554,36 @@ Aunque el proyecto aún se encuentre en etapa de planificación, esta sección p
 
 \textbf{Objetivo:} anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \emph{Product Backlog}.
 
-
 Seleccionar al menos 4 HU del Product Backlog. Para cada una, completar la siguiente tabla de revisión proyectada:
 
 \textbf{Formato sugerido:}
 \begin{table}[htpb]
 \renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|>{\raggedright\arraybackslash}m{2.4cm}|
-                >{\raggedright\arraybackslash}m{2.3cm}|
-                >{\raggedright\arraybackslash}m{3cm}|
-                >{\raggedright\arraybackslash}m{3cm}|
-                >{\raggedright\arraybackslash}m{3cm}|}
+>{\raggedright\arraybackslash}m{2.3cm}|
+>{\raggedright\arraybackslash}m{3cm}|
+>{\raggedright\arraybackslash}m{3cm}|
+>{\raggedright\arraybackslash}m{3cm}|}
 \hline
 \rowcolor[HTML]{CCCCCC}
 \textbf{HU seleccionada} & \textbf{Tareas asociadas} & \textbf{Entregable esperado} & \textbf{¿Cómo sabrás que está cumplida?} & \textbf{Observaciones o riesgos} \\
 \hline
-                         & Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
+& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
 \multirow{-2}{=}{HU1}    & Tarea 2 & \multirow{-2}{=}{Módulo funcional} & \multirow{-2}{=}{Cumple criterios de aceptación definidos} & \multirow{-2}{=}{Falta validar con el tutor} \\
 \hline
-                         & Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
+& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
 \multirow{-2}{=}{HU3}    & Tarea 2 & \multirow{-2}{=}{Reporte generado} & \multirow{-2}{=}{Exportación disponible y clara} & \multirow{-2}{=}{Requiere datos reales} \\
 \hline
-                         & Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
+& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
 \multirow{-2}{=}{HU5}    & Tarea 2 & \multirow{-2}{=}{Panel de gestión} & \multirow{-2}{=}{Roles diferenciados operativos} & \multirow{-2}{=}{Riesgo en integración} \\
 \hline
-                         & Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
+& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
 \multirow{-2}{=}{HU7}    & Tarea 2 & \multirow{-2}{=}{Informe trimestral} & \multirow{-2}{=}{PDF con gráficos y evolución} & \multirow{-2}{=}{Puede faltar tiempo para ajustes} \\
 \hline
 \end{tabular}
 \end{table}
 
-\section{15. Sprint Retrospective}    
+\section{15. Sprint Retrospective}
 \label{sec:sprint_retro}
 
 La retrospectiva de sprint es una práctica orientada a la mejora continua. Al finalizar un sprint, el equipo (o el alumno, si trabaja de forma individual) reflexiona sobre lo que funcionó bien, lo que puede mejorarse y qué acciones concretas pueden implementarse para trabajar mejor en el futuro.
@@ -659,7 +602,6 @@ Aun en una etapa temprana, esta herramienta permite que el alumno planifique su 
 
 \textbf{Objetivo:} reflexionar sobre las condiciones iniciales del proyecto, identificando fortalezas, posibles dificultades y estrategias de mejora, incluso antes del inicio del desarrollo.
 
-
 Completar la siguiente tabla tomando como referencia los cinco ejes de la Estrella de la Retrospectiva (\emph{Starfish} o estrella de mar). Esta instancia te ayudará a definir buenas prácticas desde el inicio y prepararte para enfrentar el trabajo de forma organizada y flexible. Se deberá completar la tabla al menos para 3 sprints técnicos y 1 no técnico.
 
 \textbf{Formato sugerido:}
@@ -667,13 +609,13 @@ Completar la siguiente tabla tomando como referencia los cinco ejes de la Estrel
 \begin{table}[htpb]
 \renewcommand{\arraystretch}{1.4}
 \begin{tabular}{|>{\raggedright\arraybackslash}p{1.8cm}|
-                >{\raggedright\arraybackslash}p{2.3cm}|
-                >{\raggedright\arraybackslash}p{2.3cm}|
-                >{\raggedright\arraybackslash}p{2.3cm}|
-                >{\raggedright\arraybackslash}p{2.3cm}|
-                >{\raggedright\arraybackslash}p{2.3cm}|}
+>{\raggedright\arraybackslash}p{2.3cm}|
+>{\raggedright\arraybackslash}p{2.3cm}|
+>{\raggedright\arraybackslash}p{2.3cm}|
+>{\raggedright\arraybackslash}p{2.3cm}|
+>{\raggedright\arraybackslash}p{2.3cm}|}
 \hline
-\rowcolor[HTML]{CCCCCC} 
+\rowcolor[HTML]{CCCCCC}
 \textbf{Sprint tipo y N°} & \textbf{¿Qué hacer más?} & \textbf{¿Qué hacer menos?} & \textbf{¿Qué mantener?} & \textbf{¿Qué empezar a hacer?} & \textbf{¿Qué dejar de hacer?} \\
 \hline
 Sprint técnico - 1 & Validaciones continuas con el alumno & Cambios sin versión registrada & Pruebas con datos simulados & Documentar cambios propuestos & Ajustes sin análisis de impacto \\
@@ -686,8 +628,5 @@ Sprint no técnico - 12 (por ej.: ``Defensa'') & Ensayos orales con feedback & C
 \hline
 \end{tabular}
 \end{table}
-
-
-
 
 \end{document}
