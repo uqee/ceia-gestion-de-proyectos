@@ -4,7 +4,7 @@
 ]{charter}
 
 % El títulos de la memoria, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \ttitle
-\titulo{Verificación Biométrica de Identidad para Plataformas de Gestión de Personal Tercerizado}
+\titulo{Verificación biométrica de identidad para plataformas de gestión de personal tercerizado}
 
 % Nombre del posgrado, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \degreename
 %\posgrado{Carrera de Especialización en Sistemas Embebidos}
@@ -78,7 +78,7 @@
 
 \vspace{2cm}
 
-Por medio de la presente se acuerda con \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en el desarrollo de un módulo de verificación biométrica de identidad basado en reconocimiento facial para plataformas de gestión de personal tercerizado. El trabajo tendrá un presupuesto preliminar estimado de 600 horas y un costo estimado de USD 36000, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
+Por medio de la presente se acuerda con \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en el diseño e implementación de un sistema que, mediante reconocimiento facial, permita contrastar la identidad de los trabajadores en el momento de su incorporación y al inicio de cada turno laboral, reduciendo así el fraude de identidad en la plantilla externa. El trabajo tendrá un presupuesto preliminar estimado de 600 horas y un costo estimado de USD 36000, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
 
 Se adjunta a esta acta la planificación inicial.
 
@@ -101,11 +101,11 @@ Se adjunta a esta acta la planificación inicial.
 \section{1. Descripción técnica-conceptual del proyecto a realizar}
 \label{sec:descripcion}
 
-El presente trabajo se desarrolla en el marco de \empclientename, empresa francesa líder en mejoramiento del hogar y bricolaje, que enfrenta una problemática recurrente en la gestión de personal tercerizado de baja calificación (mozos de depósito, personal de limpieza, mecánicos, peones): el fraude de identidad. Este fenómeno se manifiesta de dos formas principales: la presentación de documentos falsificados durante la selección y la suplantación de identidad, donde la persona que aprueba el proceso de ingreso no es la misma que se presenta a trabajar cada turno. Esta problemática representa un riesgo operativo, de seguridad y de cumplimiento normativo para la organización.
+El presente trabajo se desarrolla en el marco de \empclientename, empresa francesa líder en mejoramiento del hogar y bricolaje, que enfrenta una problemática recurrente en la gestión de personal operativo tercerizado (mozos de depósito, personal de limpieza, mecánicos, peones): el fraude de identidad. Este fenómeno se manifiesta de dos formas principales: la presentación de documentos falsificados durante la selección y la suplantación de identidad, donde la persona que aprueba el proceso de ingreso no es la misma que se presenta a trabajar cada turno. Esta problemática representa un riesgo operativo, de seguridad y de cumplimiento normativo para la organización.
 
-En cuanto al estado del arte, el reconocimiento facial es un campo maduro con modelos consolidados como FaceNet y ArcFace para la generación de embeddings faciales, y arquitecturas de detección como MTCNN y RetinaFace. El paradigma de \textit{face verification} permite operar sin necesidad de reentrenamiento ante nuevos usuarios, ya que no requiere clasificación de identidades sino comparación de similitud entre representaciones vectoriales. Sin embargo, las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral de baja calificación: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
+En cuanto al estado del arte, el reconocimiento facial es un campo maduro con modelos consolidados como FaceNet y ArcFace para la generación de embeddings faciales, y arquitecturas de detección como MTCNN y RetinaFace. El paradigma de \textit{face verification} permite operar sin necesidad de reentrenamiento ante nuevos usuarios, ya que no requiere clasificación de identidades sino comparación de similitud entre representaciones vectoriales. Sin embargo, las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
 
-La solución propuesta consiste en un módulo de verificación biométrica que se integra a la plataforma de gestión de personal existente y opera en dos instancias críticas:
+La solución propuesta consiste en un módulo de verificación biométrica concebido para integrarse con la plataforma de gestión de personal existente. Dado que el proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa, la validación del módulo se realizará exclusivamente con datasets públicos, y la integración con la plataforma empresarial se llevará a cabo mediante un entorno de simulación o una API mock que replique las interfaces reales. El módulo opera en dos instancias críticas:
 
 \begin{itemize}
   \item Durante la selección: al momento de incorporar un candidato al sistema, se captura su rostro (mediante cámara del dispositivo) y se verifica su correspondencia con la fotografía del documento de identidad presentado (DNI, licencia de conducir, carné de residencia, etc.).
@@ -125,7 +125,7 @@ En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistem
 
 Por tratarse de un proyecto de vinculación con una empresa, no contempla financiamiento de programas públicos o privados adicionales. No existen acuerdos de confidencialidad ni de propiedad intelectual que restrinjan la difusión de los resultados.
 
-El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en outsourcing de baja calificación) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis comparativo sistemático de arquitecturas y funciones de pérdida métricas evaluando no solo precisión sino también costo computacional, un factor crítico para el despliegue en entornos con recursos limitados. Tercero, establece un marco de ajuste de umbral de decisión que permite balancear explícitamente seguridad y usabilidad según los requerimientos específicos de cada organización, utilizando exclusivamente datasets públicos y éticamente obtenidos para garantizar el cumplimiento de la normativa de protección de datos personales.
+El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en outsourcing operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis comparativo sistemático de arquitecturas y funciones de pérdida métricas evaluando no solo precisión sino también costo computacional, un factor crítico para el despliegue en entornos con recursos limitados. Tercero, establece un marco de ajuste de umbral de decisión que permite balancear explícitamente seguridad y usabilidad según los requerimientos específicos de cada organización, utilizando exclusivamente datasets públicos y éticamente obtenidos para garantizar el cumplimiento de la normativa de protección de datos personales.
 
 \section{2. Identificación y análisis de los interesados}
 \label{sec:interesados}
@@ -137,23 +137,24 @@ En un proyecto es prioritario conocer y gestionar a los interesados, sus expecta
     \hline
     \rowcolor[HTML]{C0C0C0}
     Rol           & Nombre y Apellido & Organización    & Puesto        \\ \hline
-    Cliente       & -                 & \empclientename & \clientename  \\ \hline
-    Orientador    & \supname          & \empclientename & \pertesupname \\ \hline
+    Orientadora   & \supname          & \empclientename & \pertesupname \\ \hline
     Responsable   & \authorname       & FIUBA           & Alumno        \\ \hline
+    Usuario final & -                 & \empclientename & \clientename  \\ \hline
   \end{tabularx}
 \end{table}
 
 Principales características de los interesados:
 
 \begin{itemize}
-  \item Cliente: \empclientename\hspace{1px} es la empresa adoptante del módulo. Valora la reducción del fraude laboral, el cumplimiento normativo y la seguridad operativa en la gestión de personal tercerizado. El personal de RRHH y los supervisores de turno que utilizarán el sistema a diario para verificar la identidad de los trabajadores al inicio de cada jornada laboral.
-  \item Orientador: \supname\hspace{1px} es experta en Machine Learning y supervisará la definición de requerimientos, la selección de arquitecturas y el desarrollo del pipeline biométrico.
+  \item Orientadora: \supname\hspace{1px} es experta en Machine Learning y supervisará la definición de requerimientos, la selección de arquitecturas y el desarrollo del pipeline biométrico.
+  \item Responsable: \authorname\hspace{1px} es el encargado de ejecutar el proyecto, desde la planificación hasta la defensa del Trabajo Final.
+  \item Usuario final: \empclientename\hspace{1px} es la empresa adoptante del módulo. Valora la reducción del fraude laboral, el cumplimiento normativo y la seguridad operativa en la gestión de personal tercerizado. El personal de RRHH y los supervisores de turno utilizarán el sistema a diario para verificar la identidad de los trabajadores al inicio de cada jornada laboral.
 \end{itemize}
 
 \section{3. Propósito del proyecto}
 \label{sec:proposito}
 
-Desarrollar un módulo de verificación biométrica de identidad basado en reconocimiento facial que permita a \empclientename\hspace{1px} detectar y prevenir el fraude de identidad en la contratación y gestión de personal tercerizado, mejorando la seguridad operativa, el cumplimiento normativo y la trazabilidad de los procesos de admisión y control de acceso laboral.
+El propósito de este proyecto es desarrollar un módulo de verificación biométrica de identidad basado en reconocimiento facial que permita a \empclientename\hspace{1px} detectar y prevenir el fraude de identidad en la contratación y gestión de personal tercerizado, mejorando la seguridad operativa, el cumplimiento normativo y la trazabilidad de los procesos de admisión y control de acceso laboral.
 
 \section{4. Alcance del proyecto}
 \label{sec:alcance}
@@ -163,7 +164,7 @@ El proyecto incluye:
 \begin{itemize}
   \item Implementación de un pipeline completo de detección facial y generación de embeddings.
   \item Desarrollo de un módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad.
-  \item Integración del módulo con la plataforma de gestión de personal existente mediante una interfaz API.
+  \item Integración del módulo con la plataforma de gestión de personal existente mediante una interfaz API simulada (mock) que represente las interfaces reales.
   \item Evaluación del sistema utilizando datasets públicos (LFW, VGGFace2, CASIA-WebFace) y métricas estándar (EER, FAR, FRR, ROC).
   \item Análisis comparativo de al menos dos arquitecturas de generación de embeddings (FaceNet, ArcFace).
   \item Documentación técnica completa del desarrollo, resultados y manual de uso.
@@ -177,7 +178,7 @@ El presente proyecto no incluye:
   \item Despliegue en producción ni mantenimiento post-entrega.
   \item Desarrollo de hardware de captura o adquisición de cámaras.
   \item Capacitación del personal de la empresa en el uso del sistema.
-  \item Cumplimiento de certificaciones formales de seguridad o normativas específicas.
+  \item No incluye certificaciones externas, auditorías formales de seguridad ni procesos regulatorios de homologación. No obstante, el proyecto contempla el análisis de cumplimiento normativo aplicable al tratamiento de datos biométricos y personales.
 \end{itemize}
 
 \section{5. Supuestos del proyecto}
@@ -186,12 +187,13 @@ El presente proyecto no incluye:
 Para el desarrollo del presente proyecto se supone que:
 
 \begin{itemize}
-  \item Los datasets públicos seleccionados (LFW, VGGFace2, CASIA-WebFace) están disponibles y son suficientes para entrenar y evaluar los modelos propuestos.
+  \item Los datasets públicos seleccionados (LFW, VGGFace2, CASIA-WebFace) están disponibles y son suficientes para evaluar, calibrar umbrales y, si corresponde, realizar ajuste fino de los modelos propuestos.
+  \item Los datasets públicos utilizados cuentan con condiciones de uso compatibles con fines académicos y experimentales.
   \item Se cuenta con los recursos computacionales necesarios (GPU) para el entrenamiento de los modelos de deep learning.
   \item Se dispone del tiempo necesario para completar las 600 horas estimadas del proyecto dentro del plazo establecido.
   \item Las condiciones macroeconómicas y reglamentarias no sufrirán cambios significativos que afecten la ejecución o el presupuesto del proyecto.
   \item Se cuenta con las habilidades técnicas necesarias en Python, PyTorch/TensorFlow y visión por computadora para implementar la solución.
-  \item La plataforma de gestión de personal existente expone una API que permite la integración del módulo biométrico.
+  \item La plataforma de gestión de personal contará con un entorno de prueba, documentación de API o interfaz simulada suficiente para validar la integración sin acceder a datos reales de trabajadores.
   \item No habrá cambios significativos en los requisitos del proyecto durante su ejecución.
 \end{itemize}
 
