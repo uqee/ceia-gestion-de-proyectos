@@ -52,10 +52,11 @@
   \begin{tabularx}{\linewidth}{@{}|c|X|c|@{}}
     \hline
     \rowcolor[HTML]{C0C0C0}
-    Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios realizados} & Fecha              \\ \hline
-    0        & Creación del documento                                                          & \fechaInicioName   \\ \hline
-    1        & Se completa hasta el punto 5 inclusive                                          & 3 de julio de 2026 \\ \hline
-    %2      & Se completa hasta el punto 9 inclusive
+    Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios realizados} & Fecha               \\ \hline
+    0        & Creación del documento                                                          & \fechaInicioName    \\ \hline
+    1        & Se completa hasta el punto 5 inclusive                                          & 3 de julio de 2026  \\ \hline
+    2        & Se completan los puntos 6 y 7                                                   & 10 de julio de 2026 \\ \hline
+    %3      & Se completa hasta el punto 9 inclusive
     %      Se puede agregar algo más \newline
     %      En distintas líneas \newline
     %      Así                                                    & {día} de {mes} de 202X \\ \hline
@@ -197,94 +198,181 @@ Para el desarrollo del presente proyecto se supone que:
   \item No habrá cambios significativos en los requisitos del proyecto durante su ejecución.
 \end{itemize}
 
-\section{6. Product Backlog}
+\section{6. \textit{Product backlog}}
 \label{sec:backlog}
 
-El Product Backlog debe organizarse en cuatro \textbf{\textit{\'{e}picas}} fundamentales del proyecto. Cada \'{e}pica debe contener al menos dos historias de usuario que describan funcionalidades clave.
+El \textit{product backlog} se organiza en cuatro épicas fundamentales del proyecto, cada una con al menos dos historias de usuario que describen funcionalidades clave del sistema de verificación biométrica de identidad.
 
-El Product Backlog debe permitir interpretar cómo será el proyecto y su funcionalidad. Se deben indicar claramente las prioridades entre las historias de usuario y si hay alguna opcional.
+\subsection{Criterio de ponderación: \textit{story points}}
 
-Las historias de usuario deben ser breves, claras y medibles, expresando el rol, la necesidad y el propósito de cada funcionalidad. También deben tener una prioridad definida para facilitar la planificación de los sprints.
-
-Cada historia de usuario debe incluir una ponderación en \textit{Story Points}, un número entero que representa el tama\~no relativo de la historia. El criterio para calcular los Story Points debe indicarse explícitamente.
-
-Las historias deben seguir el formato: ``\textit{Como [rol], quiero [tal cosa] para [tal otra cosa]}''.
-
-Las \'{e}picas deben estructurarse de la siguiente forma:
+Cada historia de usuario se evalúa según tres dimensiones:
 
 \begin{itemize}
-  \item \textbf{\'{E}pica 1}
-    \begin{itemize}
-      \item HU1
-      \item HU2
-    \end{itemize}
-  \item \textbf{\'{E}pica 2}
-    \begin{itemize}
-      \item HU3
-      \item HU4
-    \end{itemize}
-  \item \textbf{\'{E}pica 3}
-    \begin{itemize}
-      \item HU5
-      \item HU6
-    \end{itemize}
-  \item \textbf{\'{E}pica 4}
-    \begin{itemize}
-      \item HU7
-      \item HU8
-    \end{itemize}
+  \item Dificultad: cantidad de trabajo estimado (escala del 1 al 8).
+  \item Complejidad: nivel técnico requerido (escala del 1 al 8).
+  \item Incertidumbre: riesgo o novedad asociada (escala del 1 al 8).
 \end{itemize}
 
-\textbf{Reglas para definir historias de usuario:}
+La suma de las tres dimensiones se redondea hacia el número superior más próximo de la serie de Fibonacci: 1, 2, 3, 5, 8, 13, 21, 34\dots Los \textit{story points} son relativos y no equivalen directamente a horas de trabajo.
+
+\subsection{Épica 1: Registro de trabajadores y captura de datos biométricos}
+
+\textbf{HU1: Registro de candidato con captura facial}
 \begin{itemize}
-  \item Ser concisas y claras.
-  \item Expresarlas en términos cuantificables y medibles.
-  \item No dejar margen para interpretaciones ambiguas.
-  \item Indicar claramente su prioridad y si son opcionales.
-  \item Considerar regulaciones y normas vigentes.
+  \item Como especialista de RRHH, quiero registrar un nuevo candidato capturando su rostro mediante la cámara del dispositivo para almacenar su representación biométrica como referencia futura.
+  \item Prioridad: alta
+  \item Dificultad: 5
+  \item Complejidad: 5
+  \item Incertidumbre: 4
+  \item \textit{Story points}: 21
+\end{itemize}
+
+\textbf{HU2: Extracción de rostro desde documento de identidad}
+\begin{itemize}
+  \item Como especialista de RRHH, quiero que el sistema extraiga el rostro de la fotografía del documento de identidad (DNI, licencia, carné) para utilizarlo como referencia complementaria en el proceso de registro.
+  \item Prioridad: alta
+  \item Dificultad: 5
+  \item Complejidad: 5
+  \item Incertidumbre: 5
+  \item \textit{Story points}: 21
+\end{itemize}
+
+\subsection{Épica 2: Verificación de identidad al inicio de turno}
+
+\textbf{HU3: Verificación facial en tiempo real}
+\begin{itemize}
+  \item Como operario de seguridad, quiero que el sistema verifique la identidad del trabajador al inicio de cada turno mediante reconocimiento facial para prevenir suplantaciones de identidad.
+  \item Prioridad: alta
+  \item Dificultad: 8
+  \item Complejidad: 5
+  \item Incertidumbre: 5
+  \item \textit{Story points}: 21
+\end{itemize}
+
+\textbf{HU4: Visualización del resultado de verificación}
+\begin{itemize}
+  \item Como supervisor de turno, quiero que el sistema muestre de forma inmediata y clara el resultado de cada verificación (aceptada o rechazada) para autorizar o denegar el acceso al puesto de trabajo.
+  \item Prioridad: alta
+  \item Dificultad: 3
+  \item Complejidad: 3
+  \item Incertidumbre: 3
+  \item \textit{Story points}: 13
+\end{itemize}
+
+\subsection{Épica 3: Configuración y calibración del sistema}
+
+\textbf{HU5: Configuración del umbral de aceptación}
+\begin{itemize}
+  \item Como administrador del sistema, quiero ajustar el umbral de aceptación del sistema para equilibrar la seguridad (tasa de falsos positivos) y la usabilidad (tasa de falsos negativos) según las necesidades de la empresa.
+  \item Prioridad: alta
+  \item Dificultad: 5
+  \item Complejidad: 5
+  \item Incertidumbre: 3
+  \item \textit{Story points}: 13
+\end{itemize}
+
+\textbf{HU6: Visualización de métricas de rendimiento (opcional)}
+\begin{itemize}
+  \item Como gerente de RRHH, quiero visualizar métricas de rendimiento del sistema (FAR, FRR, EER) para tomar decisiones informadas sobre la calibración del umbral de verificación.
+  \item Prioridad: baja (opcional)
+  \item Dificultad: 5
+  \item Complejidad: 5
+  \item Incertidumbre: 3
+  \item \textit{Story points}: 13
+\end{itemize}
+
+\subsection{Épica 4: Auditoría, reportes e integración}
+
+\textbf{HU7: Registro de intentos de verificación (opcional)}
+\begin{itemize}
+  \item Como gerente de RRHH, quiero que cada intento de verificación quede registrado en un archivo con timestamp, ID del trabajador, resultado y nivel de similitud para consultas básicas de auditoría.
+  \item Prioridad: baja (opcional)
+  \item Dificultad: 3
+  \item Complejidad: 2
+  \item Incertidumbre: 2
+  \item \textit{Story points}: 8
+\end{itemize}
+
+\textbf{HU8: Integración mediante API simulada (opcional)}
+\begin{itemize}
+  \item Como especialista de RRHH, quiero que el sistema exponga una API que permita consultar el estado de verificación de los trabajadores para integrarse con la plataforma de gestión de personal existente.
+  \item Prioridad: baja (opcional)
+  \item Dificultad: 3
+  \item Complejidad: 3
+  \item Incertidumbre: 2
+  \item \textit{Story points}: 8
 \end{itemize}
 
 \section{7. Criterios de aceptación de historias de usuario}
 \label{sec:criteriosAceptacion}
 
-Los criterios de aceptación deben establecerse para cada historia de usuario, asegurando que se cumplan las condiciones necesarias para que la funcionalidad sea validada correctamente.
+Los criterios de aceptación se definen para cada historia de usuario del \textit{product backlog}, asegurando que se cumplan las condiciones necesarias para que la funcionalidad sea validada correctamente.
 
-Cada historia debe tener criterios medibles, específicos y verificables. Deben permitir validar que se cumple con las necesidades del usuario.
+Cada historia tiene criterios medibles, específicos y verificables. Se incluyen al menos tres criterios por historia: uno funcional, uno visual y uno técnico (cuando aplica).
 
-Se estructuran de forma análoga a las \'{e}picas del backlog:
+\subsection{Épica 1: Registro de trabajadores y captura de datos biométricos}
 
-\begin{itemize}
-  \item \textbf{\'{E}pica 1}
-    \begin{itemize}
-      \item Criterios de aceptación HU1
-      \item Criterios de aceptación HU2
-    \end{itemize}
-  \item \textbf{\'{E}pica 2}
-    \begin{itemize}
-      \item Criterios de aceptación HU3
-      \item Criterios de aceptación HU4
-    \end{itemize}
-  \item \textbf{\'{E}pica 3}
-    \begin{itemize}
-      \item Criterios de aceptación HU5
-      \item Criterios de aceptación HU6
-    \end{itemize}
-  \item \textbf{\'{E}pica 4}
-    \begin{itemize}
-      \item Criterios de aceptación HU7
-      \item Criterios de aceptación HU8
-    \end{itemize}
-\end{itemize}
+\textbf{Criterios de aceptación HU1: Registro de candidato con captura facial}
+\begin{enumerate}
+  \item Funcional: El sistema permite ingresar los datos del candidato (nombre, DNI, puesto) y capturar su imagen facial mediante la cámara del dispositivo.
+  \item Visual: La interfaz muestra una vista previa de la imagen capturada con el rostro delimitado antes de confirmar el registro.
+  \item Técnico: La imagen capturada cumple con la resolución mínima requerida por el modelo de generación de embeddings (al menos 160$\times$160 píxeles).
+\end{enumerate}
 
-\textbf{Reglas para definir criterios de aceptación:}
-\begin{itemize}
-  \item Medibles y verificables.
-  \item Especificar cuándo una historia se considera completada.
-  \item Incluir condiciones específicas.
-  \item No ambiguos.
-  \item Probables de testear funcional o técnicamente.
-  \item Mínimo 3 criterios por HU.
-\end{itemize}
+\textbf{Criterios de aceptación HU2: Extracción de rostro desde documento de identidad}
+\begin{enumerate}
+  \item Funcional: El sistema permite cargar una imagen del documento de identidad y extrae la fotografía del titular de manera automática.
+  \item Visual: Se muestra una vista previa de la imagen extraída del documento antes de confirmar el registro, permitiendo al usuario validar la calidad.
+  \item Técnico: La extracción mediante \textit{face detection} funciona correctamente al menos en el 90\% de los documentos probados con datasets públicos, y la imagen resultante es compatible con el pipeline de generación de embeddings.
+\end{enumerate}
+
+\subsection{Épica 2: Verificación de identidad al inicio de turno}
+
+\textbf{Criterios de aceptación HU3: Verificación facial en tiempo real}
+\begin{enumerate}
+  \item Funcional: El sistema detecta el rostro del trabajador, genera su embedding y lo compara con el almacenado, devolviendo un resultado de aceptación o rechazo.
+  \item Visual: La interfaz muestra en tiempo real la cámara con el rostro detectado, y tras la verificación, un indicador verde (aceptado) o rojo (rechazado) junto con el nivel de similitud.
+  \item Técnico: El pipeline completo (detección --- generación de embedding --- comparación --- decisión) se ejecuta en menos de 5 segundos en el hardware de referencia.
+\end{enumerate}
+
+\textbf{Criterios de aceptación HU4: Visualización del resultado de verificación}
+\begin{enumerate}
+  \item Funcional: Cada verificación muestra de forma inmediata si el trabajador fue aceptado o rechazado, junto con su nombre e ID.
+  \item Visual: El resultado se presenta con colores diferenciados (verde para aceptado, rojo para rechazado) y un mensaje descriptivo.
+  \item Técnico: El resultado de verificación se refleja en la interfaz en menos de 1 segundo después de completado el pipeline biométrico.
+\end{enumerate}
+
+\subsection{Épica 3: Configuración y calibración del sistema}
+
+\textbf{Criterios de aceptación HU5: Configuración del umbral de aceptación}
+\begin{enumerate}
+  \item Funcional: El administrador puede modificar el valor del umbral de distancia coseno desde un panel de configuración, y los cambios se aplican inmediatamente a las verificaciones posteriores.
+  \item Visual: El panel de configuración muestra el umbral actual, una descripción del efecto de modificarlo (más estricto: más permisivo) y un botón de guardar.
+  \item Técnico: El umbral configurado se persiste en la base de datos y se carga automáticamente al iniciar el sistema.
+\end{enumerate}
+
+\textbf{Criterios de aceptación HU6: Visualización de métricas de rendimiento}
+\begin{enumerate}
+  \item Funcional: El sistema calcula y muestra las métricas FAR (\textit{False Acceptance Rate}), FRR (\textit{False Rejection Rate}) y EER (\textit{Equal Error Rate}) a partir de los resultados de verificación.
+  \item Visual: Se presentan las métricas en gráficos de curva ROC y/o tablas comparativas, filtrables por período y configuración de umbral.
+  \item Técnico: Las métricas se calculan correctamente utilizando los datasets de evaluación (LFW, VGGFace2) y los resultados son reproducibles.
+\end{enumerate}
+
+\subsection{Épica 4: Auditoría, reportes e integración}
+
+\textbf{Criterios de aceptación HU7: Registro de intentos de verificación}
+\begin{enumerate}
+  \item Funcional: Cada intento de verificación genera un registro con timestamp, ID del trabajador, resultado (aceptado/rechazado) y nivel de similitud.
+  \item Visual: El sistema muestra un indicador de estado de logging (activo/inactivo) en la interfaz principal.
+  \item Técnico: Los registros se almacenan en un archivo CSV o JSON accesible desde el directorio del sistema.
+\end{enumerate}
+
+\textbf{Criterios de aceptación HU8: Integración mediante API simulada}
+\begin{enumerate}
+  \item Funcional: El módulo expone una API REST simulada (\textit{mock}) que permite consultar el estado de verificación de un trabajador y registrar resultados de verificación.
+  \item Visual: La documentación de la API (formato Swagger/OpenAPI) es accesible desde la interfaz del sistema.
+  \item Técnico: La API mock cumple con los estándares REST, devuelve códigos de respuesta apropiados (200, 400, 404, 500) y maneja errores de forma consistente.
+\end{enumerate}
 
 \section{8. Fases de CRISP-DM}
 
@@ -359,7 +447,7 @@ Organizar las tareas técnicas del proyecto en sprints de trabajo que permitan d
 
 \textbf{Conceptos clave:}
 \begin{itemize}
-  \item Una \'{e}pica es una unidad funcional amplia; una historia de usuario es una funcionalidad concreta; un sprint es una unidad de tiempo donde se ejecutan tareas.
+  \item Una épica es una unidad funcional amplia; una historia de usuario es una funcionalidad concreta; un sprint es una unidad de tiempo donde se ejecutan tareas.
   \item Las tareas son el nivel más desagregado: permiten estimar tiempos, asignar responsables y monitorear progreso.
 \end{itemize}
 
@@ -554,9 +642,9 @@ La revisión de sprint (\emph{Sprint Review}) es una práctica fundamental en me
 
 Aunque el proyecto aún se encuentre en etapa de planificación, esta sección permite proyectar cómo se evaluarán las funcionalidades más importantes del backlog. Esta mirada anticipada favorece la planificación enfocada en valor y permite reflexionar sobre posibles obstáculos.
 
-\textbf{Objetivo:} anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \emph{Product Backlog}.
+\textbf{Objetivo:} anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \textit{product backlog}.
 
-Seleccionar al menos 4 HU del Product Backlog. Para cada una, completar la siguiente tabla de revisión proyectada:
+Seleccionar al menos 4 HU del \textit{product backlog}. Para cada una, completar la siguiente tabla de revisión proyectada:
 
 \textbf{Formato sugerido:}
 \begin{table}[htpb]
