@@ -277,4 +277,5 @@ TSWLatexianTemp*
 
 # custom
 .DS_Store
-/Materiales
+/data
+/AGENTS.md
