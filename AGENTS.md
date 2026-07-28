@@ -1,0 +1,52 @@
+## Files
+
+- ./charter.tex and ./charter.pdf - the current (latest) version of the plan of my 'trabajo final', the source and the compiled PDF correspondingly
+- ./context - additional helpful files you need to read before making any changes to the plan
+  - Comments - the professor's comments on previous versions (need to be extracted from inside the PDFs), the versions are referenced in the section "Registros de cambios" inside the current version of the plan
+  - Examples - the examples of the same plans done by different students in different years, but more or less similar to mine, so worth taking into consideration
+  - Info - additional information about my own 'trabajo final', which is already approved by the university
+  - Template - the initial template and description of how to do the plan
+
+## Rules
+
+### Palabras en inglés dentro de texto en español
+
+Toda palabra o expresión en inglés que aparezca dentro de texto en español debe:
+
+- Escribirse en **minúsculas**, salvo cuando se trate de un **nombre propio** (persona, marca, acrónimo consolidado, nombre propio de métrica/modelo, etc.) o cuando inicien una oración, un elemento de lista, u otra posición que exija mayúscula inicial por la ortografía del español.
+- Envolverse con la macro `\textit{...}` para cursivizarla.
+
+Ejemplos:
+- Correcto: `\textit{product backlog}`, `\textit{story points}`, `\textit{face verification}`, `\textit{mock}`, `\textit{product owner}`, `\textit{pipeline}`, `\textit{embedding}`, `\textit{deep learning}`, `\textit{outsourcing}`, `\textit{dataset}`.
+- Correcto (nombre propio / acrónimo conservan mayúsculas): `FaceNet`, `ArcFace`, `MTCNN`, `RetinaFace`, `LFW`, `VGGFace2`, `CASIA-WebFace`, `API`, `REST`, `ROC`, `FAR`, `FRR`, `EER`, `GDPR`, `HIPAA`.
+- Correcto (nombre propio de métrica, en cursiva): `\textit{False Acceptance Rate}`, `\textit{Equal Error Rate}`.
+- Incorrecto: `Product Owner`, `Pipeline`, `Mock`, `Outsourcing` (mayúsculas injustificadas y/o sin cursiva).
+
+### Gerundio de posterioridad
+
+Evitar el gerundio que expresa una acción posterior a la principal (p. ej. «\textit{...capturando su rostro ... para almacenar ...}» si la captura y el almacenamiento no son simultáneos). Reescribir con oración coordinada o subordinada final.
+
+### Mayúscula seguida de dos puntos
+
+No se usa mayúscula después de dos puntos a menos que lo que siga sea un nombre propio (p. ej. evitar «\textit{El proyecto incluye: Implementación ...}»).
+
+### Cursiva y negrita solo con motivo real
+
+No usar `\textit{...}`, `\emph{...}` ni `\textbf{...}` para enfatizar, resaltar o «decorar» texto. La cursiva se reserva a motivos lingüísticos ya definidos (p. ej. palabras o expresiones en inglés dentro de prosa en español). La negrita no se usa en el cuerpo del plan salvo estructura tipográfica del \emph{template} de la clase (títulos de sección, etc.) o tablas de consignas aún no reescritas.
+
+Ejemplos:
+- Correcto: `correspondencia de identidad` (español, sin cursiva ni negrita); `\textit{face verification}` (inglés).
+- Incorrecto: `\textit{correspondencia de identidad}`, `\textbf{muy importante}` (énfasis decorativo).
+- Preferible: `HU1: Registro de candidato...` en lugar de `\textbf{HU1: Registro...}` si el rótulo no es un título de sección.
+
+### Mayúsculas de expresiones del posgrado
+
+Expresiones como «trabajo final», «plan de proyecto», «acta de constitución», etc. **no** son nombres propios. Dentro de una oración van en minúsculas, salvo cuando inicien la oración, un título de sección o una posición ortográfica que exija mayúscula inicial.
+
+Ejemplos:
+- Correcto: `la defensa del trabajo final`, `su trabajo final de la Carrera...`, `Director del trabajo final`.
+- Incorrecto: `la defensa del Trabajo Final`, `su Trabajo Final de la...` (mayúsculas injustificadas a mitad de frase).
+
+## Tasks
+
+When I ask to double check everything, please, read all the provided files and the whole plan of my 'trabajo final' and make sure that the result is absolutely coherent, that there are no logical contradictions not inaccuracies, that everything looks as legit as possible in a logical sense, that all the comments you found in the attached files are satisfied, that all the directions you found inside the plan's template are satisfied. And of course that the result successfully compiles into a PDF.
