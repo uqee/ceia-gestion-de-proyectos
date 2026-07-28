@@ -29,7 +29,7 @@
 
 \fechaINICIO{23 de junio de 2026}    %Fecha de inicio de la cursada de GdP \fechaInicioName
 \fechaFINALPlan{18 de agosto de 2026}   %Fecha de final de cursada de GdP
-\fechaFINALTrabajo{1 de enero de 2027}  %Fecha de defensa pública del trabajo final
+\fechaFINALTrabajo{TBD}  % Fecha de defensa pública del trabajo final
 
 \begin{document}
 
@@ -56,14 +56,8 @@
     0        & Creación del documento                                                          & \fechaInicioName    \\ \hline
     1        & Se completa hasta el punto 5 inclusive                                          & 3 de julio de 2026  \\ \hline
     2        & Se completan los puntos 6 y 7                                                   & 10 de julio de 2026 \\ \hline
-    %3      & Se completa hasta el punto 9 inclusive
-    %      Se puede agregar algo más \newline
-    %      En distintas líneas \newline
-    %      Así                                                    & {día} de {mes} de 202X \\ \hline
-    %3      & Se completa hasta el punto 12 inclusive                & {día} de {mes} de 202X \\ \hline
-    %4      & Se completa el plan                                   & {día} de {mes} de 202X \\ \hline
-
-    % Si hay más correcciones pasada la versión 4 también se deben especificar acá
+    3        & Se completa hasta el punto 12 inclusive                                         & 27 de julio de 2026 \\ \hline
+    4        & Reestructuración: el ajuste fino y la evaluación adversarial pasan a ser el núcleo del trabajo; se incorporan AdaFace, \textit{datasets} y \textit{benchmarks} modernos (Glint360K/WebFace4M, LFW, AgeDB, RFW), un módulo de liveness mínimo y un \textit{harness} de evaluación end-to-end con \textit{demo} interactiva; se elimina la API REST \textit{mock} y se completan las secciones 13, 14 y 15 & 27 de julio de 2026 \\ \hline
 
   \end{tabularx}
 \end{table}
@@ -79,7 +73,7 @@
 
 \vspace{2cm}
 
-Por medio de la presente se acuerda con \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en el diseño e implementación de un sistema que, mediante reconocimiento facial, permita contrastar la identidad de los trabajadores en el momento de su incorporación y al inicio de cada turno laboral, reduciendo así el fraude de identidad en la plantilla externa. El trabajo tendrá un presupuesto preliminar estimado de 600 horas y un costo estimado de USD 36000, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
+Por medio de la presente se acuerda con \authorname\hspace{1px} que su trabajo final de la \degreename\hspace{1px} se titulará ``\ttitle'' y consistirá en el diseño, ajuste fino y evaluación de un módulo de verificación biométrica que, mediante reconocimiento facial, permita contrastar la identidad de los trabajadores al inicio de cada turno laboral y frente a la fotografía del documento de identidad presentado, contribuyendo a verificar la correspondencia de identidad en la plantilla externa. El trabajo se ejecuta en un marco académico (evaluación con \textit{datasets} públicos, ajuste fino de modelos preentrenados e integración mediante \textit{harness} CLI y \textit{demo} interactiva), con un presupuesto preliminar estimado de 600 horas y un costo económico de referencia de USD 36000, calculado a una tarifa profesional de mercado (USD 60/h) para proyectos de consultoría en AI de esta envergadura, sin implicar el cobro efectivo al cliente bajo el acuerdo académico, con fecha de inicio el \fechaInicioName\hspace{1px} y fecha de presentación pública el \fechaFinalName.
 
 Se adjunta a esta acta la planificación inicial.
 
@@ -94,7 +88,7 @@ Se adjunta a esta acta la planificación inicial.
     \begin{tabular}[c]{@{}c@{}}\clientename \\ \empclientename
     \end{tabular} \vspace{2.5cm} \\
     \multicolumn{3}{c}{
-      \begin{tabular}[c]{@{}c@{}} \supname \\ Director del Trabajo Final
+      \begin{tabular}[c]{@{}c@{}} \supname \\ Director del trabajo final
     \end{tabular}} \vspace{2.5cm} \\
   \end{tabular}
 \end{table}
@@ -102,20 +96,15 @@ Se adjunta a esta acta la planificación inicial.
 \section{1. Descripción técnica-conceptual del proyecto a realizar}
 \label{sec:descripcion}
 
-El presente trabajo se desarrolla en el marco de \empclientename, empresa francesa líder en mejoramiento del hogar y bricolaje, que enfrenta una problemática recurrente en la gestión de personal operativo tercerizado (mozos de depósito, personal de limpieza, mecánicos, peones): el fraude de identidad. Este fenómeno se manifiesta de dos formas principales: la presentación de documentos falsificados durante la selección y la suplantación de identidad, donde la persona que aprueba el proceso de ingreso no es la misma que se presenta a trabajar cada turno. Esta problemática representa un riesgo operativo, de seguridad y de cumplimiento normativo para la organización.
+El presente trabajo se desarrolla en el marco de \empclientename, empresa internacional del sector de mejoramiento del hogar, que enfrenta una problemática recurrente en la gestión de personal operativo tercerizado (mozos de depósito, personal de limpieza, mecánicos, peones): la falta de certeza de que la persona presente sea la misma que figura en la documentación o en el registro laboral. En la práctica, el riesgo operativo se concentra en dos situaciones de correspondencia de identidad: (1) en la selección, que quien se presenta ante el reclutador no coincida con la fotografía del documento de identidad exhibido; y (2) en la operación diaria, que quien asiste a un turno no sea la misma persona que fue dada de alta como trabajador. Queda fuera del problema tratado en este trabajo la determinación de si el documento de identidad es auténtico o falsificado, así como la verificación de que la imagen capturada corresponda a una persona en vivo y no a una reproducción.
 
-En cuanto al estado del arte, el reconocimiento facial es un campo maduro con modelos consolidados como FaceNet y ArcFace para la generación de embeddings faciales, y arquitecturas de detección como MTCNN y RetinaFace. El paradigma de \textit{face verification} permite operar sin necesidad de reentrenamiento ante nuevos usuarios, ya que no requiere clasificación de identidades sino comparación de similitud entre representaciones vectoriales. Sin embargo, las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
+En cuanto al estado del arte, el reconocimiento facial es un campo maduro con arquitecturas de referencia como ArcFace y AdaFace para la generación de \textit{embeddings} faciales, y modelos de detección como MTCNN y RetinaFace. La pregunta central que motiva este trabajo no es ya qué modelo preentrenado es mejor en abstracto (esa pregunta tiene respuesta conocida en la literatura), sino \textbf{cuánto mejora un modelo de reconocimiento facial al ajustarse mediante \textit{fine-tuning} a un subconjunto representativo del dominio de referencia, y cuál es el \textit{trade-off} de costo computacional asociado}. Esta pregunta es relevante porque las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
 
-La solución propuesta consiste en un módulo de verificación biométrica concebido para integrarse con la plataforma de gestión de personal existente. Dado que el proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa, la validación del módulo se realizará exclusivamente con datasets públicos, y la integración con la plataforma empresarial se llevará a cabo mediante un entorno de simulación o una API mock que replique las interfaces reales. El módulo opera en dos instancias críticas:
+La solución propuesta consiste en un módulo de verificación biométrica basado en \textit{fine-tuning} de modelos preentrenados modernos (ArcFace, AdaFace) sobre un subconjunto de un \textit{dataset} público de gran escala (Glint360K o WebFace4M), y su evaluación sistemática sobre tres \textit{benchmarks} estándar con condiciones complementarias: LFW (\textit{benchmark} clásico saturado, esperable >99\% en ambos modelos), AgeDB (verificación \textit{cross-age}, que ataca directamente el problema de envejecimiento declarado) y RFW (\textit{Racial Faces in the Wild}, que mide sesgo demográfico y se vincula con la sección de gobernanza). El proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa; la integración se materializa mediante un \textit{harness} CLI que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} y produce métricas reproducibles, y una \textit{demo} interactiva con Gradio para la presentación.
 
-\begin{itemize}
-  \item Durante la selección: al momento de incorporar un candidato al sistema, se captura su rostro (mediante cámara del dispositivo) y se verifica su correspondencia con la fotografía del documento de identidad presentado (DNI, licencia de conducir, carné de residencia, etc.).
-  \item Al inicio de cada turno laboral: se realiza un escaneo facial en tiempo real (de manera similar a los sistemas de autenticación biométrica utilizados en aplicaciones bancarias móviles) y se compara con la representación almacenada del trabajador registrado.
-\end{itemize}
+El \textit{pipeline} técnico central consiste en: (1) detección facial mediante modelos como MTCNN o RetinaFace; (2) alineación basada en \textit{landmarks}; (3) generación de \textit{embeddings} faciales mediante ArcFace o AdaFace, en su configuración preentrenada o con \textit{fine-tuning} sobre el subconjunto seleccionado; (4) cálculo de similitud por distancia coseno entre el \textit{embedding} del sujeto presente y el de referencia; (5) decisión umbralizada que equilibre la tasa de falsos positivos y falsos negativos según los requerimientos de seguridad del escenario; y (6) un módulo mínimo de \textit{liveness} basado en un modelo preentrenado, que opera como \textit{baseline} extensible (no como sistema de producción). Se incluye también una \textit{demo} interactiva que materializa los flujos de captura y verificación para la presentación.
 
-El pipeline técnico central consiste en: (1) detección facial mediante modelos como MTCNN o RetinaFace, (2) generación de embeddings faciales (representaciones vectoriales compactas del rostro) mediante redes neuronales preentrenadas como FaceNet o ArcFace, (3) cálculo de similitud por distancia coseno entre el embedding del sujeto presente y el almacenado en la base de datos, y (4) decisión umbralizada que equilibre la tasa de falsos positivos y falsos negativos según los requerimientos de seguridad de la aplicación.
-
-En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistema. El pipeline consta de seis etapas secuenciales: primero, la captura de imagen (mediante cámara del dispositivo o digitalización de un documento); luego, la detección facial, realizada con modelos como MTCNN o RetinaFace; a continuación, la generación del embedding facial mediante redes como FaceNet o ArcFace; ese embedding se almacena en la base de datos; posteriormente se realiza la comparación por distancia coseno entre el embedding generado y el almacenado; y finalmente se produce la decisión del sistema, que determina si la identidad queda verificada o rechazada. Este mismo pipeline se aplica tanto al registro inicial del candidato como a la verificación diaria al inicio de cada turno, variando únicamente el origen de la imagen capturada (documento de identidad en el primer caso, escaneo en vivo en el segundo) y si el embedding resultante se almacena como referencia o se compara contra uno ya existente.
+En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistema. El \textit{pipeline} consta de seis etapas secuenciales: primero, la captura de imagen (mediante cámara del dispositivo o digitalización de un documento); luego, la detección facial y la validación de calidad; a continuación, la generación del \textit{embedding} facial mediante el modelo seleccionado; ese \textit{embedding} se compara con el de referencia por distancia coseno; se realiza la verificación de liveness mediante un clasificador auxiliar; y finalmente se produce la decisión del sistema, que determina si la identidad queda verificada o rechazada. Este mismo \textit{pipeline} se aplica a la verificación documento--rostro durante el registro y a la verificación facial al inicio de cada turno, variando el origen de la imagen y si el \textit{embedding} resultante se almacena como referencia o se compara contra uno ya existente.
 
 \begin{figure}[htpb]
   \centering
@@ -124,9 +113,9 @@ En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistem
   \label{fig:diagBloques}
 \end{figure}
 
-Por tratarse de un proyecto de vinculación con una empresa, no contempla financiamiento de programas públicos o privados adicionales. No existen acuerdos de confidencialidad ni de propiedad intelectual que restrinjan la difusión de los resultados.
+Por tratarse de un proyecto de vinculación con una empresa en el marco académico del posgrado, no contempla financiamiento de programas públicos o privados adicionales. No existen acuerdos de propiedad intelectual que restrinjan la difusión de los resultados.
 
-El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en outsourcing operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis comparativo sistemático de arquitecturas y funciones de pérdida métricas evaluando no solo precisión sino también costo computacional, un factor crítico para el despliegue en entornos con recursos limitados. Tercero, establece un marco de ajuste de umbral de decisión que permite balancear explícitamente seguridad y usabilidad según los requerimientos específicos de cada organización, utilizando exclusivamente datasets públicos y éticamente obtenidos para garantizar el cumplimiento de la normativa de protección de datos personales.
+El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en \textit{outsourcing} operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis experimental sistemático del impacto del \textit{fine-tuning} sobre el rendimiento y el costo computacional, un aspecto escasamente reportado en la literatura comparativa reciente. Tercero, integra consideraciones de equidad y robustez demográfica desde el diseño (evaluación sobre RFW) y sienta las bases para un módulo de liveness extensible en una iteración posterior (por ejemplo, en una etapa de Maestría), y se basa exclusivamente en \textit{datasets} públicos sujetos a verificación de sus licencias y condiciones de uso para garantizar el cumplimiento de la normativa de protección de datos personales en el ámbito del trabajo final.
 
 \section{2. Identificación y análisis de los interesados}
 \label{sec:interesados}
@@ -138,26 +127,26 @@ En un proyecto es prioritario conocer y gestionar a los interesados, sus expecta
     \hline
     \rowcolor[HTML]{C0C0C0}
     Rol           & Nombre y Apellido & Organización    & Puesto        \\ \hline
-    Cliente       & \clientename      & Empresa externa (NDA) & Asesora externa (\textit{product owner})   \\ \hline
+    Cliente       & \clientename      & Empresa externa (NDA) & \textit{product owner} \\ \hline
     Orientadora   & \supname          & \empclientename & \pertesupname                     \\ \hline
     Responsable   & \authorname       & FIUBA           & Alumno                            \\ \hline
-    Usuario final & -                 & \empclientename & Personal de RRHH y supervisores   \\ \hline
+    Usuario final & ---               & Perfiles operativos de \empclientename & Especialista de RRHH, supervisor de turno \\ \hline
   \end{tabularx}
 \end{table}
 
 Principales características de los interesados:
 
 \begin{itemize}
-  \item Cliente: \clientename\hspace{1px} actúa como asesora externa del proyecto. En su rol de \textit{product owner} aporta la perspectiva de producto y validará que las funcionalidades desarrolladas respondan a las necesidades del negocio; aprobará los resultados del proyecto.
-  \item Orientadora: \supname\hspace{1px} es experta en Machine Learning y supervisará la definición de requerimientos, la selección de arquitecturas y el desarrollo del pipeline biométrico.
-  \item Responsable: \authorname\hspace{1px} es el encargado de ejecutar el proyecto, desde la planificación hasta la defensa del Trabajo Final.
-  \item Usuario final: \empclientename\hspace{1px} es la empresa adoptante del módulo. Valora la reducción del fraude laboral, el cumplimiento normativo y la seguridad operativa en la gestión de personal tercerizado. El personal de RRHH y los supervisores de turno utilizarán el sistema a diario para verificar la identidad de los trabajadores al inicio de cada jornada laboral.
+  \item Cliente (\clientename): actúa como \textit{product owner} bajo NDA. Expectativas: que el prototipo demuestre los flujos de verificación, que el análisis experimental sea riguroso y que los resultados aporten evidencia técnica útil para una eventual decisión de despliegue. Influencia: alta --- define prioridades del \textit{backlog} y aprueba el cierre. Información que recibe: avances periódicos, resultados de evaluación, documentación técnica. Entregables que revisa: \textit{backlog} priorizado, \textit{harness} de evaluación y resultados, documentación, entregable final del trabajo.
+  \item Orientadora (\supname): experta en \textit{machine learning}. Expectativas: que las decisiones técnicas estén fundamentadas y que la evaluación experimental sea rigurosa y reproducible. Influencia: alta --- supervisa la dirección técnica y valida la elección de modelos y protocolos. Información que recibe: requerimientos, resultados de experimentos, métricas de rendimiento. Entregables que revisa: selección de arquitecturas, configuración de \textit{fine-tuning}, informe comparativo, \textit{harness} de evaluación. Supervisa la definición de requerimientos técnicos, la selección de arquitecturas, el \textit{fine-tuning} y la evaluación del \textit{pipeline} biométrico.
+  \item Responsable (\authorname): Expectativas: completar el trabajo final con calidad, dentro del plazo y las horas estimadas. Influencia: media --- ejecuta y documenta, pero depende de las decisiones del cliente y la orientadora. Información que recibe: reuniones con cliente y orientadora, retroalimentación sobre entregables. Entregables que revisa: todo el código, la documentación técnica y la memoria del trabajo final. Encargado de planificar, implementar, ajustar, evaluar y documentar el prototipo hasta la defensa del trabajo final.
+  \item Usuario final (especialista de RRHH, supervisor de turno): Expectativas: que el sistema sea intuitivo, rápido y confiable para los flujos de registro y verificación. Influencia: baja --- son usuarios de referencia del prototipo; no participan en decisiones del proyecto. Información que recibe: \textit{demo} interactiva, manuales de uso. Entregables que revisa: \textit{demo} y experiencia de uso en las pruebas con \textit{datasets} públicos. Los roles operativos de referencia del prototipo son el especialista de RRHH (flujo de registro y verificación documento--rostro) y el supervisor de turno (flujo de verificación al inicio de jornada). En este trabajo no se despliega el sistema sobre operaciones reales de \empclientename; dichos roles guían el diseño de la \textit{demo} y de las historias de usuario.
 \end{itemize}
 
 \section{3. Propósito del proyecto}
 \label{sec:proposito}
 
-El propósito de este proyecto es desarrollar un módulo de verificación biométrica de identidad basado en reconocimiento facial que permita a \empclientename\hspace{1px} detectar y prevenir el fraude de identidad en la contratación y gestión de personal tercerizado, mejorando la seguridad operativa, el cumplimiento normativo y la trazabilidad de los procesos de admisión y control de acceso laboral.
+El propósito de este proyecto es diseñar, ajustar, evaluar y documentar, en un marco académico, un módulo de verificación biométrica basado en reconocimiento facial, con el fin de responder experimentalmente la pregunta: \textbf{¿cuánto mejora un modelo moderno de verificación facial (ArcFace, AdaFace) al ajustarse mediante \textit{fine-tuning} a un subconjunto representativo del dominio de referencia, medido sobre \textit{benchmarks} estándar con condiciones operativas realistas (envejecimiento, sesgo demográfico), y cuál es el \textit{trade-off} de costo computacional asociado?} El prototipo se aplica al dominio de verificación de identidad en la gestión de personal tercerizado de \empclientename, y se complementa con un módulo mínimo de \textit{liveness} y una \textit{demo} interactiva. La evaluación se realiza sobre \textit{datasets} públicos y el \textit{pipeline} se materializa mediante un \textit{harness} CLI y una UI de demostración. No forma parte del propósito detectar documentación falsificada, validar la autenticidad del documento de identidad, ni certificar el sistema para producción; el módulo de \textit{liveness} incluido es un \textit{baseline} extensible y se documenta como línea de trabajo futuro en una etapa posterior (por ejemplo, en una Maestría).
 
 \section{4. Alcance del proyecto}
 \label{sec:alcance}
@@ -165,23 +154,29 @@ El propósito de este proyecto es desarrollar un módulo de verificación biomé
 El proyecto incluye:
 
 \begin{itemize}
-  \item Implementación de un pipeline completo de detección facial y generación de embeddings.
-  \item Desarrollo de un módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad.
-  \item Integración del módulo con la plataforma de gestión de personal existente mediante una interfaz API simulada (mock) que represente las interfaces reales.
-  \item Evaluación del sistema utilizando datasets públicos (LFW, VGGFace2, CASIA-WebFace) y métricas estándar (EER, FAR, FRR, ROC).
-  \item Análisis comparativo de al menos dos arquitecturas de generación de embeddings (FaceNet, ArcFace).
-  \item Documentación técnica completa del desarrollo, resultados y manual de uso.
+  \item implementación de un \textit{pipeline} de verificación biométrica basado en modelos preentrenados modernos (ArcFace, AdaFace): detección facial, alineación, generación de \textit{embeddings} y comparación por similitud;
+  \item verificación de correspondencia entre el rostro en vivo y la fotografía del documento en el flujo de registro, y verificación facial frente a la referencia almacenada al inicio de turno;
+  \item módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad;
+  \item \textit{fine-tuning} de al menos uno de los modelos (ArcFace o AdaFace) sobre un subconjunto seleccionado de un \textit{dataset} público de gran escala (Glint360K o WebFace4M), evaluando el impacto frente a la versión preentrenada;
+  \item evaluación comparativa de los modelos preentrenados y ajustados sobre al menos tres \textit{benchmarks} públicos: LFW (\textit{baseline}), AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), con métricas EER, FAR, FRR, curva ROC, AUC y tiempo medio de inferencia;
+  \item módulo mínimo de \textit{liveness} basado en un modelo preentrenado (por ejemplo, MiniFASNet o FeatherNet) evaluado sobre un \textit{dataset} público de \textit{spoofing} (OULU-NPU o CASIA-FASD), operando como \textit{baseline} extensible;
+  \item \textit{harness} de evaluación end-to-end ejecutable como CLI o notebook parametrizable, que corra el \textit{pipeline} completo sobre un \textit{benchmark} y produzca métricas y figuras reproducibles;
+  \item \textit{demo} interactiva con Gradio o Streamlit para la presentación del prototipo;
+  \item documentación que incluya: informe de avance, memoria técnica, manual de uso del prototipo, documentación del \textit{harness} y repositorio con instrucciones de reproducción de experimentos.
 \end{itemize}
 
 El presente proyecto no incluye:
 
 \begin{itemize}
-  \item Recolección ni procesamiento de datos biométricos de personas reales fuera de datasets públicos.
-  \item Desarrollo de la plataforma de gestión de personal ni de sus funcionalidades existentes.
-  \item Despliegue en producción ni mantenimiento post-entrega.
-  \item Desarrollo de hardware de captura o adquisición de cámaras.
-  \item Capacitación del personal de la empresa en el uso del sistema.
-  \item No incluye certificaciones externas, auditorías formales de seguridad ni procesos regulatorios de homologación. No obstante, el proyecto contempla el análisis de cumplimiento normativo aplicable al tratamiento de datos biométricos y personales.
+  \item validación de autenticidad, integridad o vigencia de documentos de identidad (detección de documentos falsificados, manipulación de soportes, OCR de seguridad, \textit{chips} o códigos de verificación oficiales);
+  \item \textit{liveness detection} robusta para producción: el módulo incluido opera como \textit{baseline} académico y no como sistema anti-\textit{spoofing} certificado. Su desarrollo robusto queda como línea de trabajo futuro;
+  \item entrenamiento desde cero de modelos de reconocimiento facial: el proyecto parte de pesos preentrenados y, en su caso, realiza \textit{fine-tuning} limitado sobre un subconjunto del \textit{dataset};
+  \item recolección de imágenes biométricas de trabajadores ni datos internos de la empresa. La evaluación se realizará exclusivamente con \textit{datasets} públicos o sintéticos autorizados para uso académico;
+  \item desarrollo de la plataforma de gestión de personal de \empclientename\hspace{1px} ni de sus funcionalidades existentes;
+  \item despliegue en producción, integración con sistemas reales de la empresa ni mantenimiento post-entrega;
+  \item desarrollo de \textit{hardware} de captura o adquisición de cámaras;
+  \item certificación externa del módulo de \textit{liveness} o auditoría formal de seguridad;
+  \item certificación de cumplimiento de HIPAA, ISO u otros marcos normativos, aunque sí se contempla el análisis de cumplimiento normativo aplicable al tratamiento de datos biométricos y personales (sección 12).
 \end{itemize}
 
 \section{5. Supuestos del proyecto}
@@ -190,20 +185,20 @@ El presente proyecto no incluye:
 Para el desarrollo del presente proyecto se supone que:
 
 \begin{itemize}
-  \item Los datasets públicos seleccionados (LFW, VGGFace2, CASIA-WebFace) están disponibles y son suficientes para evaluar, calibrar umbrales y, si corresponde, realizar ajuste fino de los modelos propuestos.
-  \item Los datasets públicos utilizados cuentan con condiciones de uso compatibles con fines académicos y experimentales.
-  \item Se cuenta con los recursos computacionales necesarios (GPU) para el entrenamiento de los modelos de deep learning.
+  \item Será posible acceder a \textit{datasets} públicos con cantidad y calidad suficientes para realizar la evaluación y el \textit{fine-tuning}, dentro de las limitaciones del proyecto. En particular, Glint360K (o WebFace4M como alternativa) estará disponible para descarga académica con licencia compatible.
+  \item Las condiciones de licencia de cada \textit{dataset} público utilizado serán verificadas antes de su empleo y documentadas en la sección de gobernanza de datos.
+  \item Se cuenta con acceso a recursos computacionales suficientes (GPU o equivalente) para la experimentación, inferencia y \textit{fine-tuning} de los modelos. En caso de no disponer de \textit{hardware} local adecuado, se recurrirá a \textit{platforms} de cómputo gratuitas o de bajo costo (Google Colab, Kaggle, Lightning AI) dentro de los límites de uso gratuito disponibles. Si el \textit{fine-tuning} requiere recursos adicionales no cubiertos por los \textit{tiers} gratuitos, se evaluará el uso de \textit{credits} académicos o de nube de bajo costo (USD 100--200 mensuales), justificado explícitamente.
   \item Se dispone del tiempo necesario para completar las 600 horas estimadas del proyecto dentro del plazo establecido.
   \item Las condiciones macroeconómicas y reglamentarias no sufrirán cambios significativos que afecten la ejecución o el presupuesto del proyecto.
-  \item Se cuenta con las habilidades técnicas necesarias en Python, PyTorch/TensorFlow y visión por computadora para implementar la solución.
-  \item La plataforma de gestión de personal contará con un entorno de prueba, documentación de API o interfaz simulada suficiente para validar la integración sin acceder a datos reales de trabajadores.
-  \item No habrá cambios significativos en los requisitos del proyecto durante su ejecución.
+  \item Se cuenta con las habilidades técnicas necesarias en Python, PyTorch y visión por computadora para implementar la solución. Se contempla una curva de aprendizaje al inicio del proyecto, ya que el responsable se está iniciando en reconocimiento facial; la misma se compensa con la elección de modelos y herramientas bien documentadas (InsightFace, \textit{adaface-pytorch}, Gradio).
+  \item El \textit{fine-tuning} se realiza sobre un subconjunto representativo de un \textit{dataset} público, no sobre datos reales de la empresa, por lo que la pregunta experimental se acota a la mejora sobre condiciones sintéticas de dominio.
+  \item Los cambios de alcance serán excepcionales y se gestionarán mediante acuerdo con la orientadora y el cliente.
 \end{itemize}
 
 \section{6. \textit{Product backlog}}
 \label{sec:backlog}
 
-El \textit{product backlog} se organiza en cuatro épicas fundamentales del proyecto, cada una con al menos dos historias de usuario que describen funcionalidades clave del sistema de verificación biométrica de identidad.
+El \textit{product backlog} se organiza en cuatro épicas alineadas con el problema de correspondencia de identidad, el alcance académico del prototipo y los resultados experimentales esperados. Las historias describen funcionalidades del módulo de demostración; no implican despliegue operativo en \empclientename.
 
 \subsection{Criterio de ponderación: \textit{story points}}
 
@@ -217,388 +212,768 @@ Cada historia de usuario se evalúa según tres dimensiones:
 
 La suma de las tres dimensiones se redondea hacia el número superior más próximo de la serie de Fibonacci: 1, 2, 3, 5, 8, 13, 21, 34\dots Los \textit{story points} son relativos y no equivalen directamente a horas de trabajo.
 
-\subsection{Épica 1: Registro de trabajadores y captura de datos biométricos}
+\subsection{Épica 1: Registro y verificación documento--rostro}
 
-\textbf{HU1: Registro de candidato con captura facial}
+HU1: Captura facial del candidato
 \begin{itemize}
-  \item Como especialista de RRHH, quiero registrar un nuevo candidato capturando su rostro mediante la cámara del dispositivo para almacenar su representación biométrica como referencia futura.
+  \item Como especialista de RRHH, quiero capturar el rostro de un candidato mediante la cámara del dispositivo, a fin de generar y almacenar su representación biométrica como referencia futura.
   \item Prioridad: alta
-  \item Dificultad: 5
-  \item Complejidad: 5
-  \item Incertidumbre: 4
+  \item Dificultad: 5, Complejidad: 5, Incertidumbre: 4
   \item \textit{Story points}: 21
 \end{itemize}
 
-\textbf{HU2: Extracción de rostro desde documento de identidad}
+HU2: Extracción de rostro desde documento de identidad
 \begin{itemize}
-  \item Como especialista de RRHH, quiero que el sistema extraiga el rostro de la fotografía del documento de identidad (DNI, licencia, carné) para utilizarlo como referencia complementaria en el proceso de registro.
+  \item Como especialista de RRHH, quiero que el sistema extraiga el rostro de la fotografía del documento de identidad (DNI, licencia, carné) para usarlo en el cotejo biométrico del alta.
   \item Prioridad: alta
-  \item Dificultad: 5
-  \item Complejidad: 5
-  \item Incertidumbre: 5
+  \item Dificultad: 5, Complejidad: 5, Incertidumbre: 5
   \item \textit{Story points}: 21
+\end{itemize}
+
+HU3: Verificación documento--rostro en la selección
+\begin{itemize}
+  \item Como especialista de RRHH, quiero que el sistema compare el rostro capturado en vivo con el rostro extraído del documento y emita una decisión de aceptación o rechazo.
+  \item Prioridad: alta
+  \item Dificultad: 5, Complejidad: 6, Incertidumbre: 5
+  \item \textit{Story points}: 21
+\end{itemize}
+
+HU4: Manejo de capturas inválidas
+\begin{itemize}
+  \item Como especialista de RRHH, quiero que el sistema detecte y notifique situaciones anómalas en la captura (ningún rostro detectado, varios rostros, imagen desenfocada, iluminación insuficiente, rostro parcialmente oculto) y solicite una nueva captura.
+  \item Prioridad: alta
+  \item Dificultad: 5, Complejidad: 5, Incertidumbre: 3
+  \item \textit{Story points}: 13
 \end{itemize}
 
 \subsection{Épica 2: Verificación de identidad al inicio de turno}
 
-\textbf{HU3: Verificación facial en tiempo real}
+HU5: Verificación facial al inicio de turno
 \begin{itemize}
-  \item Como operario de seguridad, quiero que el sistema verifique la identidad del trabajador al inicio de cada turno mediante reconocimiento facial para prevenir suplantaciones de identidad.
+  \item Como supervisor de turno, quiero que el sistema verifique al inicio de cada turno, mediante reconocimiento facial frente a la referencia almacenada, que la persona presente corresponda a la registrada en el alta.
   \item Prioridad: alta
-  \item Dificultad: 8
-  \item Complejidad: 5
-  \item Incertidumbre: 5
+  \item Dificultad: 8, Complejidad: 5, Incertidumbre: 5
   \item \textit{Story points}: 21
 \end{itemize}
 
-\textbf{HU4: Visualización del resultado de verificación}
+HU6: Reintento y gestión de rechazos
 \begin{itemize}
-  \item Como supervisor de turno, quiero que el sistema muestre de forma inmediata y clara el resultado de cada verificación (aceptada o rechazada) para autorizar o denegar el acceso al puesto de trabajo.
+  \item Como supervisor de turno, quiero que el sistema permita hasta tres reintentos ante un rechazo o captura inválida y, de persistir, derive a revisión manual, registrando la incidencia.
+  \item Prioridad: media
+  \item Dificultad: 3, Complejidad: 3, Incertidumbre: 3
+  \item \textit{Story points}: 13
+\end{itemize}
+
+\subsection{Épica 3: Evaluación experimental y \textit{fine-tuning}}
+
+Esta épica concentra el núcleo experimental del trabajo. Su objetivo es producir resultados reproducibles sobre \textit{benchmarks} estándar que respondan la pregunta central del proyecto.
+
+HU7: Configuración del umbral de aceptación
+\begin{itemize}
+  \item Como administrador del prototipo, quiero seleccionar y configurar un umbral de distancia coseno previamente evaluado, a fin de equilibrar seguridad (FAR) y usabilidad (FRR) según el escenario de referencia.
   \item Prioridad: alta
-  \item Dificultad: 3
-  \item Complejidad: 3
-  \item Incertidumbre: 3
+  \item Dificultad: 5, Complejidad: 5, Incertidumbre: 3
   \item \textit{Story points}: 13
 \end{itemize}
 
-\subsection{Épica 3: Configuración y calibración del sistema}
-
-\textbf{HU5: Configuración del umbral de aceptación}
+HU8: Evaluación comparativa de arquitecturas preentrenadas
 \begin{itemize}
-  \item Como administrador del sistema, quiero ajustar el umbral de aceptación del sistema para equilibrar la seguridad (tasa de falsos positivos) y la usabilidad (tasa de falsos negativos) según las necesidades de la empresa.
+  \item Como orientadora técnica, quiero un análisis comparativo de las arquitecturas de generación de \textit{embeddings} seleccionadas (ArcFace, AdaFace) en configuración preentrenada, sobre los \textit{benchmarks} LFW, AgeDB y RFW, con métricas EER, FAR, FRR, AUC, curva ROC, tiempo medio de inferencia y uso de memoria, a fin de establecer el \textit{baseline} experimental.
   \item Prioridad: alta
-  \item Dificultad: 5
-  \item Complejidad: 5
-  \item Incertidumbre: 3
+  \item Dificultad: 8, Complejidad: 8, Incertidumbre: 5
+  \item \textit{Story points}: 21
+\end{itemize}
+
+HU9: \textit{Fine-tuning} sobre subconjunto del dominio
+\begin{itemize}
+  \item Como orientadora técnica, quiero que al menos uno de los modelos sea ajustado mediante \textit{fine-tuning} sobre un subconjunto seleccionado de Glint360K o WebFace4M, documentando la partición de datos, el esquema de \textit{freeze} de capas, el \textit{learning rate} y el número de épocas, a fin de cuantificar la mejora frente a la versión preentrenada.
+  \item Prioridad: alta
+  \item Dificultad: 8, Complejidad: 8, Incertidumbre: 5
+  \item \textit{Story points}: 21
+\end{itemize}
+
+HU10: Re-evaluación post-\textit{fine-tuning} y análisis comparativo
+\begin{itemize}
+  \item Como orientadora técnica, quiero que los modelos ajustados se reevalúen sobre los mismos \textit{benchmarks} (LFW, AgeDB, RFW) en idénticas condiciones que la HU8, y que se elaboren tablas, curvas ROC superpuestas y un análisis de \textit{trade-off} entre precisión y costo computacional, a fin de fundamentar la selección del modelo del prototipo.
+  \item Prioridad: alta
+  \item Dificultad: 5, Complejidad: 6, Incertidumbre: 3
+  \item \textit{Story points}: 21
+\end{itemize}
+
+HU11: Módulo de \textit{liveness} (\textit{baseline})
+\begin{itemize}
+  \item Como administrador del prototipo, quiero integrar un clasificador de \textit{liveness} preentrenado (por ejemplo, MiniFASNet o FeatherNet) capaz de discriminar entre rostro genuino y ataque de presentación (foto impresa, \textit{replay}), evaluado sobre un \textit{dataset} público de \textit{spoofing} (OULU-NPU o CASIA-FASD), a fin de contar con un \textit{baseline} documentado y extensible.
+  \item Prioridad: media
+  \item Dificultad: 3, Complejidad: 5, Incertidumbre: 4
   \item \textit{Story points}: 13
 \end{itemize}
 
-\textbf{HU6: Visualización de métricas de rendimiento (opcional)}
+\subsection{Épica 4: \textit{Harness} de evaluación, \textit{demo} y entrega}
+
+HU12: \textit{Harness} de evaluación end-to-end
 \begin{itemize}
-  \item Como gerente de RRHH, quiero visualizar métricas de rendimiento del sistema (FAR, FRR, EER) para tomar decisiones informadas sobre la calibración del umbral de verificación.
-  \item Prioridad: baja (opcional)
-  \item Dificultad: 5
-  \item Complejidad: 5
-  \item Incertidumbre: 3
+  \item Como administrador del prototipo, quiero un \textit{harness} ejecutable como CLI o notebook parametrizable que corra el \textit{pipeline} completo (detección, alineación, \textit{embedding}, comparación, decisión) sobre un \textit{benchmark} seleccionado y produzca métricas y figuras reproducibles (ROC, EER, FAR, FRR, AUC, tiempo de inferencia), a fin de permitir la verificación independiente de los resultados.
+  \item Prioridad: alta
+  \item Dificultad: 5, Complejidad: 5, Incertidumbre: 2
   \item \textit{Story points}: 13
 \end{itemize}
 
-\subsection{Épica 4: Auditoría, reportes e integración}
-
-\textbf{HU7: Registro de intentos de verificación (opcional)}
+HU13: \textit{Demo} interactiva y documentación
 \begin{itemize}
-  \item Como gerente de RRHH, quiero que cada intento de verificación quede registrado en un archivo con timestamp, ID del trabajador, resultado y nivel de similitud para consultas básicas de auditoría.
-  \item Prioridad: baja (opcional)
-  \item Dificultad: 3
-  \item Complejidad: 2
-  \item Incertidumbre: 2
-  \item \textit{Story points}: 8
-\end{itemize}
-
-\textbf{HU8: Integración mediante API simulada (opcional)}
-\begin{itemize}
-  \item Como especialista de RRHH, quiero que el sistema exponga una API que permita consultar el estado de verificación de los trabajadores para integrarse con la plataforma de gestión de personal existente.
-  \item Prioridad: baja (opcional)
-  \item Dificultad: 3
-  \item Complejidad: 3
-  \item Incertidumbre: 2
+  \item Como usuario final (RRHH o supervisor de turno), quiero una \textit{demo} interactiva con Gradio o Streamlit que permita ejecutar los flujos de registro y verificación y visualizar el resultado, y documentación de uso del \textit{harness} y de la \textit{demo}, a fin de contar con material claro para la presentación y para eventuales réplicas.
+  \item Prioridad: media
+  \item Dificultad: 3, Complejidad: 2, Incertidumbre: 2
   \item \textit{Story points}: 8
 \end{itemize}
 
 \section{7. Criterios de aceptación de historias de usuario}
 \label{sec:criteriosAceptacion}
 
-Los criterios de aceptación se definen para cada historia de usuario del \textit{product backlog}, asegurando que se cumplan las condiciones necesarias para que la funcionalidad sea validada correctamente.
+Los criterios de aceptación se definen para cada historia de usuario del \textit{product backlog}, de modo que puedan validarse las condiciones necesarias para considerar cumplida la funcionalidad. Cada historia tiene criterios medibles, específicos y verificables. Se incluyen al menos tres criterios por historia: uno funcional, uno visual y uno técnico (cuando aplica). En la HU8, HU9 y HU10 el criterio ``visual'' se interpreta como presentación clara de resultados (tablas o gráficos en la documentación o en la \textit{demo}).
 
-Cada historia tiene criterios medibles, específicos y verificables. Se incluyen al menos tres criterios por historia: uno funcional, uno visual y uno técnico (cuando aplica).
+Cada criterio técnico especifica, cuando corresponde, el conjunto de prueba, el protocolo experimental y el \textit{hardware} de referencia, a fin de garantizar la reproducibilidad. El \textit{hardware} de referencia para todas las métricas de tiempo es un MacBook Pro 16'' 2019 (Intel, 16\,GB de RAM, AMD Radeon Pro 5300M 4\,GB). Las corridas de \textit{fine-tuning} y evaluación se realizan preferentemente en un entorno con GPU con \textit{framework} CUDA (Google Colab, Kaggle o equivalente), a fin de asegurar tiempos de entrenamiento razonables dentro del plazo del trabajo.
 
-\subsection{Épica 1: Registro de trabajadores y captura de datos biométricos}
+\subsection{Épica 1: Registro y verificación documento--rostro}
 
-\textbf{Criterios de aceptación HU1: Registro de candidato con captura facial}
+Criterios de aceptación HU1: Captura facial del candidato
 \begin{enumerate}
-  \item Funcional: El sistema permite ingresar los datos del candidato (nombre, DNI, puesto) y capturar su imagen facial mediante la cámara del dispositivo.
-  \item Visual: La interfaz muestra una vista previa de la imagen capturada con el rostro delimitado antes de confirmar el registro.
-  \item Técnico: La imagen capturada cumple con la resolución mínima requerida por el modelo de generación de embeddings (al menos 160$\times$160 píxeles).
+  \item Funcional: el sistema permite ingresar los datos del candidato (nombre, DNI, puesto), capturar su imagen facial mediante la cámara del dispositivo y almacenar el \textit{embedding} generado, asociándolo al candidato correcto.
+  \item Visual: la interfaz muestra una vista previa de la imagen capturada con el rostro delimitado antes de confirmar el registro.
+  \item Técnico: se detecta exactamente un rostro en la imagen capturada con un nivel de confianza superior al 80\%, el rostro está alineado y la imagen tiene una resolución mínima de 160$\times$160 píxeles y nitidez suficiente para la generación del \textit{embedding}. El \textit{embedding} resultante se almacena exitosamente y puede recuperarse para comparaciones posteriores.
 \end{enumerate}
 
-\textbf{Criterios de aceptación HU2: Extracción de rostro desde documento de identidad}
+Criterios de aceptación HU2: Extracción de rostro desde documento de identidad
 \begin{enumerate}
-  \item Funcional: El sistema permite cargar una imagen del documento de identidad y extrae la fotografía del titular de manera automática.
-  \item Visual: Se muestra una vista previa de la imagen extraída del documento antes de confirmar el registro, permitiendo al usuario validar la calidad.
-  \item Técnico: La extracción mediante \textit{face detection} funciona correctamente al menos en el 90\% de los documentos probados con datasets públicos, y la imagen resultante es compatible con el pipeline de generación de embeddings.
+  \item Funcional: el sistema permite cargar una imagen de un documento de identidad (DNI, licencia de conducir, carné de residencia) y extrae la fotografía del titular de manera automática.
+  \item Visual: se muestra una vista previa de la imagen extraída del documento antes de confirmar el registro, de modo que el usuario pueda validar la calidad.
+  \item Técnico: sobre un conjunto de al menos 50 imágenes de documentos construidas a partir de \textit{datasets} públicos o datos sintéticos (con variaciones de tipo de documento, ángulo de captura e iluminación), la extracción detecta y recorta el rostro del titular con un \textit{IoU} superior al 70\% respecto de la anotación manual en al menos el 90\% de los casos. La imagen resultante es compatible con el \textit{pipeline} de generación de \textit{embeddings}.
+\end{enumerate}
+
+Criterios de aceptación HU3: Verificación documento--rostro en la selección
+\begin{enumerate}
+  \item Funcional: el sistema compara el \textit{embedding} del rostro en vivo con el del rostro extraído del documento y emite un resultado de aceptación o rechazo según el umbral configurado.
+  \item Visual: la interfaz presenta ambas imágenes (o recortes faciales), el resultado del cotejo (aceptado/rechazado) y el nivel de similitud.
+  \item Técnico: sobre pares derivados de LFW o pares sintéticos controlados, el cotejo alcanza un EER inferior al 10\% y el tiempo total del \textit{pipeline} (detección + alineación + generación de \textit{embedding} + comparación) es inferior a 5 segundos en el \textit{hardware} de referencia.
+  \item Manejo de errores: ante la ausencia de rostro, la detección de varios rostros o una imagen que no alcanza la calidad mínima, el sistema emite un mensaje descriptivo y solicita una nueva captura sin proceder a la comparación.
+\end{enumerate}
+
+Criterios de aceptación HU4: Manejo de capturas inválidas
+\begin{enumerate}
+  \item Funcional: el sistema detecta las siguientes situaciones anómalas y notifica al usuario con un mensaje descriptivo: ningún rostro detectado, varios rostros detectados, imagen desenfocada, iluminación insuficiente, rostro parcialmente oculto.
+  \item Visual: cada tipo de error se distingue visualmente (por ejemplo, con un mensaje o ícono específico) y la interfaz indica la acción correctiva esperada.
+  \item Técnico: la detección de calidad de imagen (nitidez, iluminación, oclusión) se realiza antes de la generación del \textit{embedding}, evitando procesar entradas no válidas. En el conjunto de pruebas con al menos 20 imágenes por cada tipo de error, la tasa de detección correcta de la anomalía es superior al 85\%.
 \end{enumerate}
 
 \subsection{Épica 2: Verificación de identidad al inicio de turno}
 
-\textbf{Criterios de aceptación HU3: Verificación facial en tiempo real}
+Criterios de aceptación HU5: Verificación facial al inicio de turno
 \begin{enumerate}
-  \item Funcional: El sistema detecta el rostro del trabajador, genera su embedding y lo compara con el almacenado, devolviendo un resultado de aceptación o rechazo.
-  \item Visual: La interfaz muestra en tiempo real la cámara con el rostro detectado, y tras la verificación, un indicador verde (aceptado) o rojo (rechazado) junto con el nivel de similitud.
-  \item Técnico: El pipeline completo (detección --- generación de embedding --- comparación --- decisión) se ejecuta en menos de 5 segundos en el hardware de referencia.
+  \item Funcional: el sistema detecta el rostro del trabajador, genera su \textit{embedding}, lo compara con el almacenado y emite un resultado de aceptación o rechazo.
+  \item Visual: la \textit{demo} muestra la cámara con el rostro detectado y, tras la verificación, un indicador verde (aceptado) o rojo (rechazado) junto con el nivel de similitud.
+  \item Técnico: el \textit{pipeline} completo (detección, alineación, generación de \textit{embedding}, comparación, decisión) se ejecuta en menos de 5 segundos en el \textit{hardware} de referencia, sobre el protocolo de verificación definido con el \textit{benchmark} de evaluación.
+  \item Manejo de errores: ante ausencia de rostro, múltiples rostros o calidad insuficiente, el sistema solicita una nueva captura sin emitir decisión.
 \end{enumerate}
 
-\textbf{Criterios de aceptación HU4: Visualización del resultado de verificación}
+Criterios de aceptación HU6: Reintento y gestión de rechazos
 \begin{enumerate}
-  \item Funcional: Cada verificación muestra de forma inmediata si el trabajador fue aceptado o rechazado, junto con su nombre e ID.
-  \item Visual: El resultado se presenta con colores diferenciados (verde para aceptado, rojo para rechazado) y un mensaje descriptivo.
-  \item Técnico: El resultado de verificación se refleja en la interfaz en menos de 1 segundo después de completado el pipeline biométrico.
+  \item Funcional: ante un rechazo o una captura inválida, el sistema permite hasta tres reintentos. Si tras los reintentos la verificación persiste como rechazada, la \textit{demo} indica que se derive a una revisión manual y registra la incidencia con \textit{timestamp} y datos del intento.
+  \item Visual: cada reintento muestra un contador (intento 1 de 3, etc.) y, tras el tercer rechazo, se muestra un mensaje de derivación.
+  \item Técnico: cada intento (rechazo o inválido) queda registrado en el archivo de auditoría con \textit{timestamp}, identificador del trabajador, tipo de fallo y nivel de similitud cuando corresponda.
 \end{enumerate}
 
-\subsection{Épica 3: Configuración y calibración del sistema}
+\subsection{Épica 3: Evaluación experimental y \textit{fine-tuning}}
 
-\textbf{Criterios de aceptación HU5: Configuración del umbral de aceptación}
+Criterios de aceptación HU7: Configuración del umbral de aceptación
 \begin{enumerate}
-  \item Funcional: El administrador puede modificar el valor del umbral de distancia coseno desde un panel de configuración, y los cambios se aplican inmediatamente a las verificaciones posteriores.
-  \item Visual: El panel de configuración muestra el umbral actual, una descripción del efecto de modificarlo (más estricto: más permisivo) y un botón de guardar.
-  \item Técnico: El umbral configurado se persiste en la base de datos y se carga automáticamente al iniciar el sistema.
+  \item Funcional: el administrador puede seleccionar entre umbrales previamente evaluados (resultados de HU8, HU9 y HU10) y aplicarlos a las verificaciones posteriores. El panel indica el efecto de cada umbral (más estricto: menor FAR, mayor FRR; más permisivo: mayor FAR, menor FRR).
+  \item Visual: el panel de configuración muestra el umbral actual, una tabla comparativa de umbrales evaluados con sus métricas asociadas y un control para guardar la selección.
+  \item Técnico: el umbral seleccionado se persiste en un archivo de configuración y se carga automáticamente al iniciar el sistema.
 \end{enumerate}
 
-\textbf{Criterios de aceptación HU6: Visualización de métricas de rendimiento}
+Criterios de aceptación HU8: Evaluación comparativa de arquitecturas preentrenadas
 \begin{enumerate}
-  \item Funcional: El sistema calcula y muestra las métricas FAR (\textit{False Acceptance Rate}), FRR (\textit{False Rejection Rate}) y EER (\textit{Equal Error Rate}) a partir de los resultados de verificación.
-  \item Visual: Se presentan las métricas en gráficos de curva ROC y/o tablas comparativas, filtrables por período y configuración de umbral.
-  \item Técnico: Las métricas se calculan correctamente utilizando los datasets de evaluación (LFW, VGGFace2) y los resultados son reproducibles.
+  \item Funcional: se ejecutan las arquitecturas ArcFace y AdaFace en configuración preentrenada sobre los \textit{benchmarks} LFW, AgeDB y RFW, en idénticas condiciones de preprocesamiento y métrica, y se reportan EER, FAR, FRR, AUC, curva ROC, tiempo medio de inferencia y uso de memoria por \textit{embedding}.
+  \item Visual: los resultados se presentan en tablas comparativas y curvas ROC superpuestas en la documentación y en la \textit{demo}.
+  \item Técnico: el procedimiento es reproducible. Se documenta la versión de cada modelo, la configuración de inferencia, los \textit{benchmarks} y su protocolo, las semillas aleatorias y la tolerancia esperada de las métricas. Las corridas se ejecutan en el \textit{hardware} de referencia o en un entorno GPU equivalente documentado.
 \end{enumerate}
 
-\subsection{Épica 4: Auditoría, reportes e integración}
-
-\textbf{Criterios de aceptación HU7: Registro de intentos de verificación}
+Criterios de aceptación HU9: \textit{Fine-tuning} sobre subconjunto del dominio
 \begin{enumerate}
-  \item Funcional: Cada intento de verificación genera un registro con timestamp, ID del trabajador, resultado (aceptado/rechazado) y nivel de similitud.
-  \item Visual: El sistema muestra un indicador de estado de logging (activo/inactivo) en la interfaz principal.
-  \item Técnico: Los registros se almacenan en un archivo CSV o JSON accesible desde el directorio del sistema.
+  \item Funcional: al menos uno de los modelos (ArcFace o AdaFace) se ajusta mediante \textit{fine-tuning} sobre un subconjunto seleccionado de Glint360K o WebFace4M, con un esquema documentado de partición, \textit{freeze} de capas, \textit{learning rate}, número de épocas y \textit{batch size}, y los \textit{checkpoints} intermedios se preservan.
+  \item Visual: las curvas de \textit{loss} y de las métricas de validación durante el entrenamiento se grafican y se incluyen en la documentación.
+  \item Técnico: la mejora de EER sobre AgeDB respecto del modelo preentrenado se reporta con un intervalo de confianza o con réplicas suficientes; si la mejora es estadísticamente nula, se documenta y analiza la causa (tamaño del subconjunto, capacidad del modelo, dominio del \textit{dataset}).
 \end{enumerate}
 
-\textbf{Criterios de aceptación HU8: Integración mediante API simulada}
+Criterios de aceptación HU10: Re-evaluación post-\textit{fine-tuning} y análisis comparativo
 \begin{enumerate}
-  \item Funcional: El módulo expone una API REST simulada (\textit{mock}) que permite consultar el estado de verificación de un trabajador y registrar resultados de verificación.
-  \item Visual: La documentación de la API (formato Swagger/OpenAPI) es accesible desde la interfaz del sistema.
-  \item Técnico: La API mock cumple con los estándares REST, devuelve códigos de respuesta apropiados (200, 400, 404, 500) y maneja errores de forma consistente.
+  \item Funcional: los modelos ajustados se reevalúan sobre LFW, AgeDB y RFW en idénticas condiciones que la HU8, y se elaboran tablas y figuras que comparan preentrenado vs ajustado.
+  \item Visual: la documentación incluye curvas ROC superpuestas, tabla de métricas por modelo y \textit{benchmark}, y un gráfico de \textit{trade-off} entre precisión (EER) y costo computacional (tiempo de inferencia).
+  \item Técnico: el análisis se almacena en un archivo con la configuración experimental completa (modelo, \textit{benchmark}, umbral, versión, semilla, partición), reproducible a partir del \textit{harness} de la HU12.
+\end{enumerate}
+
+Criterios de aceptación HU11: Módulo de \textit{liveness} (\textit{baseline})
+\begin{enumerate}
+  \item Funcional: el sistema integra un clasificador de \textit{liveness} preentrenado que, dada una imagen facial, devuelve una probabilidad de ``rostro genuino'' y aplica un umbral para emitir la decisión.
+  \item Visual: la \textit{demo} muestra la decisión de \textit{liveness} junto con la decisión de verificación, y un ejemplo de ataque (foto impresa) etiquetado correctamente como ataque en una corrida de demostración.
+  \item Técnico: sobre el \textit{benchmark} público de \textit{spoofing} seleccionado (OULU-NPU o CASIA-FASD), se reporta el ACER (\textit{Average Classification Error Rate}) o HTER (\textit{Half Total Error Rate}) y se compara con la línea base reportada en la literatura. La elección de umbrales y las limitaciones del \textit{baseline} se documentan explícitamente.
+\end{enumerate}
+
+\subsection{Épica 4: \textit{Harness} de evaluación, \textit{demo} y entrega}
+
+Criterios de aceptación HU12: \textit{Harness} de evaluación end-to-end
+\begin{enumerate}
+  \item Funcional: el \textit{harness} acepta por línea de comandos los argumentos mínimos (modelo, \textit{benchmark}, partición, semilla) y produce un directorio de salida con métricas (JSON o CSV) y figuras (PNG) reproducibles.
+  \item Visual: la documentación del \textit{harness} (formato Markdown) describe los argumentos, las salidas esperadas y un ejemplo de uso.
+  \item Técnico: la ejecución completa del \textit{harness} sobre el \textit{benchmark} más pequeño (LFW) tarda menos de 30 minutos en el \textit{hardware} de referencia o en el entorno GPU documentado. El \textit{README} del repositorio incluye los comandos exactos para reproducir las cifras de la memoria.
+\end{enumerate}
+
+Criterios de aceptación HU13: \textit{Demo} interactiva y documentación
+\begin{enumerate}
+  \item Funcional: la \textit{demo} en Gradio o Streamlit permite cargar una imagen (o capturarla desde la cámara), seleccionar el modelo y visualizar la decisión de verificación, el nivel de similitud, la decisión de \textit{liveness} y, cuando aplique, el resultado del cotejo documento--rostro.
+  \item Visual: la \textit{demo} incluye una pestaña o vista de resultados experimentales con las curvas ROC y las tablas comparativas de los modelos.
+  \item Técnico: la \textit{demo} se ejecuta localmente con un único comando y la documentación describe su puesta en marcha. La documentación del trabajo final incluye, además, el manual de uso del prototipo y las instrucciones de reproducción.
 \end{enumerate}
 
 \section{8. Fases de CRISP-DM}
+\label{sec:crispdm}
 
-\begin{enumerate}
-  \item \textbf{Comprensión del negocio:} objetivo, valor agregado de IA, métricas de éxito.
-  \item \textbf{Comprensión de los datos:} tipo, origen, cantidad, calidad.
-  \item \textbf{Preparación de los datos:} características clave, transformaciones necesarias.
-  \item \textbf{Modelado:} tipo de problema, algoritmos posibles.
-  \item \textbf{Evaluación del modelo:} métricas de rendimiento.
-  \item \textbf{Despliegue del modelo (opcional):} tipo de despliegue y herramientas.
-\end{enumerate}
+El proyecto se adhiere al modelo \textit{Cross-Industry Standard Process for Data Mining} (CRISP-DM), adaptado a las características propias de un sistema de verificación biométrica por reconocimiento facial. A continuación se describe la adaptación de cada fase al contexto del proyecto, con énfasis en la fase experimental que constituye el núcleo del trabajo.
+
+\subsection{Fase 1: Comprensión del negocio}
+
+\textbf{Objetivo:} comprender el contexto organizacional, los objetivos del proyecto y los criterios de éxito desde la perspectiva del negocio.
+
+El proyecto se enmarca en la necesidad de \empclientename\hspace{1px} de verificar la correspondencia de identidad de su personal operativo tercerizado. El valor agregado de la inteligencia artificial reside en automatizar el cotejo facial, que de otro modo sería manual, subjetivo y propenso a errores. Las métricas de éxito del negocio son: reducción de incidentes de suplantación de identidad, disminución del tiempo de verificación por turno y disponibilidad de un registro trazable de intentos de verificación. La pregunta experimental del proyecto (\textit{fine-tuning} vs preentrenado, \textit{trade-off} con costo computacional) responde al interés del cliente en contar con evidencia técnica para una eventual decisión de despliegue.
+
+El alcance del prototipo es académico: la validación se realizará con \textit{datasets} públicos y el \textit{fine-tuning} se realiza sobre un subconjunto representativo del dominio, no sobre datos reales de la empresa. No se contempla despliegue operativo en la empresa.
+
+\subsection{Fase 2: Comprensión de los datos}
+
+\textbf{Objetivo:} identificar las fuentes de datos necesarias, su naturaleza y las condiciones de calidad requeridas para el \textit{fine-tuning} y la evaluación.
+
+Los datos provienen exclusivamente de \textit{datasets} públicos de reconocimiento facial, seleccionados por su volumen, diversidad demográfica y licencia compatible con uso académico. Se utilizarán los siguientes:
+
+\begin{itemize}
+  \item Glint360K (InsightFace): aproximadamente 17 millones de imágenes de 360.000 identidades, recopiladas con consentimiento y licenciadas para investigación. Se utilizará como fuente principal para el \textit{fine-tuning}, sobre un subconjunto seleccionado.
+  \item WebFace4M (Zenodo, 2023): aproximadamente 4 millones de imágenes de 200.000 identidades, disponible como alternativa moderna y con licencia clara. Se considerará como fuente complementaria si Glint360K no estuviese disponible.
+  \item LFW (\textit{Labeled Faces in the Wild}): más de 13.000 imágenes faciales de 5.749 personas, con pares genuinos y adversarios predefinidos. Se utilizará como \textit{benchmark} de \textit{baseline} (saturado, esperable >99\%).
+  \item AgeDB: \textit{benchmark} de verificación \textit{cross-age} con 16.516 imágenes de 568 personas, con rangos etarios de hasta 101 años. Se utilizará para evaluar la capacidad de los modelos ante el envejecimiento entre la foto del documento y la captura en vivo, directamente vinculado al problema declarado.
+  \item RFW (\textit{Racial Faces in the Wild}): \textit{benchmark} diseñado específicamente para medir sesgo demográfico en modelos de reconocimiento facial. Se utilizará para reportar el rendimiento por subgrupo demográfico y vincular el análisis con la sección de gobernanza de datos.
+  \item OULU-NPU o CASIA-FASD: \textit{datasets} públicos de \textit{spoofing} facial, utilizados para la evaluación del módulo de \textit{liveness} (\textit{baseline}).
+\end{itemize}
+
+\textbf{Nota:} se excluyen explícitamente \textit{MS-Celeb-1M} (retractado por Microsoft en 2019 por problemas de consentimiento) y \textit{CASIA-WebFace} (retirado y con licencia ambigua), ambos mencionados en la propuesta original. Se verificó que los \textit{datasets} seleccionados cuentan con licencias compatibles con el uso previsto.
+
+\subsection{Fase 3: Preparación de los datos}
+
+\textbf{Objetivo:} transformar los datos brutos en entradas aptas para el \textit{fine-tuning} y para el \textit{pipeline} de generación de \textit{embeddings}.
+
+Las transformaciones clave son:
+
+\begin{itemize}
+  \item Detección facial: localizar y recortar la zona rostral de cada imagen, eliminando el fondo irrelevante. Se emplearán modelos de detección como MTCNN o RetinaFace.
+  \item Alineación facial: corregir la orientación del rostro detectado mediante alineación basada en puntos de referencia faciales (\textit{landmarks}).
+  \item Normalización: redimensionar los recortes faciales a la resolución de entrada esperada por cada modelo de generación de \textit{embeddings} (por ejemplo, 112$\times$112 píxeles para ArcFace, 112$\times$112 o 160$\times$160 para AdaFace).
+  \item Generación de \textit{embeddings} \textit{baseline}: conversión de cada rostro alineado en un vector numérico de dimensionalidad fija (por ejemplo, 512 dimensiones) con el modelo preentrenado.
+  \item Partición de datos: dividir los \textit{datasets} en conjuntos de entrenamiento, validación y prueba, respetando los protocolos de evaluación establecidos para cada \textit{benchmark}.
+  \item Subconjunto de \textit{fine-tuning}: selección de un subconjunto representativo de Glint360K o WebFace4M (por ejemplo, 5.000--10.000 identidades, 100.000--300.000 imágenes), con partición \textit{hold-out} para validación.
+\end{itemize}
+
+\subsection{Fase 4: Modelado}
+
+\textbf{Objetivo:} seleccionar, configurar y ajustar los modelos de generación de \textit{embeddings} faciales.
+
+El tipo de problema es la verificación de identidad binaria: determinar si dos imágenes faciales corresponden a la misma persona. No se trata de clasificación de identidades sino de estimación de similitud entre representaciones vectoriales.
+
+Los algoritmos evaluados son:
+
+\begin{itemize}
+  \item ArcFace (ResNet-100): red neuronal que emplea una función de pérdida aditiva angular (\textit{Additive Angular Margin Loss}) para generar \textit{embeddings} con alta discriminabilidad. Se utilizará la implementación preentrenada de InsightFace con \textit{weights} públicos, y se realizará \textit{fine-tuning} sobre el subconjunto seleccionado.
+  \item AdaFace (CVPR 2022): red neuronal que introduce una función de pérdida con margen adaptativo a la calidad (\textit{quality-adaptive margin}), reportando mejoras sobre ArcFace en condiciones adversas. Se utilizará la implementación preentrenada pública, y opcionalmente se ajustará sobre el mismo subconjunto.
+\end{itemize}
+
+El método de comparación entre \textit{embeddings} es la distancia coseno. La decisión se realiza mediante un umbral configurable que balancea la tasa de falsos aceptos (FAR) y la tasa de falsos rechazos (FRR).
+
+\subsection{Fase 5: Evaluación}
+
+\textbf{Objetivo:} medir el rendimiento de los modelos y fundamentar la elección del modelo del prototipo, con énfasis en la comparación preentrenado vs ajustado.
+
+Las métricas de rendimiento son:
+
+\begin{itemize}
+  \item \textit{Equal Error Rate} (EER): punto en el que FAR y FRR son iguales; se busca minimizarlo.
+  \item \textit{False Acceptance Rate} (FAR): proporción de pares adversarios aceptados erróneamente.
+  \item \textit{False Rejection Rate} (FRR): proporción de pares genuinos rechazados erróneamente.
+  \item Curva ROC (\textit{Receiver Operating Characteristic}): representación gráfica del compromiso entre sensibilidad y especificidad.
+  \item AUC (\textit{Area Under the Curve}): área bajo la curva ROC; capacidad discriminativa global.
+  \item Tiempo medio de inferencia por \textit{embedding} y uso de memoria, en el \textit{hardware} de referencia.
+\end{itemize}
+
+Los \textit{benchmarks} utilizados son:
+
+\begin{itemize}
+  \item LFW: \textit{baseline} clásico, esperable saturación en ambos modelos.
+  \item AgeDB: \textit{cross-age}, donde se espera observar la mayor mejora por \textit{fine-tuning}.
+  \item RFW: sesgo demográfico, con reporte por subgrupo.
+  \item OULU-NPU o CASIA-FASD (para \textit{liveness}): ACER/HTER.
+\end{itemize}
+
+\subsection{Fase 6: Despliegue}
+
+\textbf{Objetivo:} integrar el modelo seleccionado en un prototipo demostrable y documentar los resultados de manera reproducible.
+
+Dado el alcance académico del proyecto, el despliegue se limita a:
+
+\begin{itemize}
+  \item \textit{Harness} CLI o notebook parametrizable que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} seleccionados y produce métricas y figuras reproducibles.
+  \item \textit{Demo} interactiva con Gradio o Streamlit que materializa los flujos de captura y verificación para la presentación.
+  \item Repositorio con documentación técnica, instrucciones de reproducción de experimentos y \textit{scripts} de evaluación.
+\end{itemize}
+
+No se contempla despliegue en producción, integración con sistemas reales de \empclientename\hspace{1px} ni mantenimiento post-entrega.
 
 \section{9. Desglose del trabajo en tareas}
 \label{sec:wbs}
 
-A partir de cada Historia de Usuario (HU) definida en la sección 6, descomponer el trabajo en tareas técnicas concretas, medibles y acotadas en el tiempo.
+A partir de cada historia de usuario definida en la sección~\ref{sec:backlog}, se descompone el trabajo en tareas técnicas concretas, medibles y acotadas en el tiempo. Cada tarea se estima en horas y se le asigna una prioridad relativa (Alta, Media o Baja) según su relevancia funcional y su impacto en los entregables. Las tareas excedentes de cada HU se desglosan para mantenerse dentro del rango recomendado de 2 a 8 horas por tarea; las tareas que demanden más se dividen en subtareas.
 
-\begin{itemize}
-  \item Seleccionar entre 2 y 3 tareas por cada historia de usuario.
-  \item Cada tarea debe estar claramente formulada, ser técnica, accionable y con una estimación horaria entre 2 y 8 horas.
-  \item Evitar tareas genéricas (como ''desarrollar funcionalidad´´) o demasiado amplias.
-  \item Si una tarea supera las 8 horas, debe dividirse en subtareas.
-  \item Indicar la prioridad relativa de cada tarea (Alta, Media o Baja).
-\end{itemize}
+La suma total de las horas técnicas (358 h) más las actividades no técnicas (242 h) asciende a 600 h, que coincide con el presupuesto total del proyecto distribuido a lo largo de los 12 sprints (sección~\ref{sec:sprints}).
 
 \begin{table}[htpb]
   \centering
+  \caption{Desglose de tareas por historia de usuario (1/4).}
   \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
     \hline
     \rowcolor[HTML]{C0C0C0}
     Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
-    HU1 & Tarea 1 HU1 & 6 h & Alta \\ \hline
-    HU1 & Tarea 2 HU1 & 8 h & Alta \\ \hline
-    HU2 & Tarea 1 HU2 & 5 h & Media \\ \hline
-    HU2 & Tarea 2 HU2 & 6 h & Alta \\ \hline
-    ... & ... & ... & ... \\ \hline
+
+    HU1 & Instalación del entorno de desarrollo (Python, PyTorch, CUDA) y de las librerías de detección facial (MTCNN, RetinaFace) y de \textit{frameworks} de generación de \textit{embeddings} (InsightFace, \textit{adaface-pytorch}) & 14 h & Alta \\ \cline{2-4}
+    HU1 & Implementación del módulo de captura facial: interfaz de captura desde cámara, detección del rostro, validación de calidad (un solo rostro, resolución mínima, nitidez) y generación del \textit{embedding} de referencia & 14 h & Alta \\ \cline{2-4}
+    HU1 & Implementación del flujo de registro de candidato: asociación del \textit{embedding} con los datos del candidato (nombre, DNI, puesto) y almacenamiento persistente & 10 h & Alta \\ \hline
+
+    HU2 & Desarrollo del módulo de extracción facial desde imagen de documento: detección automática del recorte del titular en DNI, licencia de conducir o carné de residencia & 14 h & Alta \\ \cline{2-4}
+    HU2 & Validación de la calidad del recorte extraído (alineación, iluminación, resolución) y generación del \textit{embedding} correspondiente & 8 h & Media \\ \hline
+
+    HU3 & Implementación del módulo de comparación biométrica: cálculo de distancia coseno entre \textit{embeddings}, aplicación del umbral de decisión y emisión del resultado (aceptado/rechazado) & 14 h & Alta \\ \cline{2-4}
+    HU3 & Integración del flujo completo de verificación documento--rostro: captura en vivo, extracción desde documento, comparación y presentación del resultado con imágenes y nivel de similitud & 14 h & Alta \\ \hline
+
   \end{tabularx}
 \end{table}
-
-\textbf{Criterios para estimar tiempos:}
-\begin{itemize}
-  \item Considerar la complejidad técnica, el nivel de incertidumbre y la experiencia previa.
-  \item Evitar subestimar el esfuerzo: estimar el tiempo realista que llevaría implementar, testear y documentar cada tarea.
-  \item Basar la estimación en la experiencia propia o en referencias de tareas similares.
-\end{itemize}
-
-\textbf{Sobre la prioridad:}
-\begin{itemize}
-  \item Asignar una prioridad relativa (Alta, Media o Baja) según la relevancia funcional de la tarea y su impacto en los entregables.
-  \item Priorizar tareas que estén vinculadas a criterios de aceptación de las HU o que sean necesarias para desbloquear otras.
-  \item Incluir tareas opcionales solo si están bien justificadas.
-\end{itemize}
-
-\textbf{Recomendaciones generales:}
-\begin{itemize}
-  \item -Enfocarse en tareas que surgen directamente de las HU planteadas.
-  \item No es necesario cubrir las 600 horas del proyecto en esta sección: el foco está en el desglose de funcionalidades clave.
-  \item Este trabajo será la base para organizar algunos de los sprints y elaborar el cronograma del proyecto, por lo que debe ser claro y realista.
-\end{itemize}
-
-\section{10. Planificación de Sprints}
-
-Organizar las tareas técnicas del proyecto en sprints de trabajo que permitan distribuir de forma equilibrada la carga horaria total, estimada en 600 horas.
-
-\textbf{Consigna:}
-\begin{itemize}
-  \item Completar una tabla que relacione sprints con HU y tareas técnicas correspondientes.
-  \item Incluir estimación en horas para cada tarea.
-  \item Indicar responsable y porcentaje de avance estimado o completado.
-  \item Contemplar también tareas de planificación, documentación, redacción de memoria y preparación de defensa.
-\end{itemize}
-
-\textbf{Conceptos clave:}
-\begin{itemize}
-  \item Una épica es una unidad funcional amplia; una historia de usuario es una funcionalidad concreta; un sprint es una unidad de tiempo donde se ejecutan tareas.
-  \item Las tareas son el nivel más desagregado: permiten estimar tiempos, asignar responsables y monitorear progreso.
-\end{itemize}
-
-\textbf{Duración sugerida:}
-\begin{itemize}
-  \item Para un proyecto de 600 h, se recomienda planificar entre 10 y 12 sprints de aproximadamente 2 semanas cada uno.
-  \item Asignar entre 45 y 50 horas efectivas por sprint a tareas técnicas.
-  \item Reservar 100 a 120 h para actividades no técnicas (planificación, escritura, reuniones, defensa).
-\end{itemize}
-
-\textbf{Importante:}
-\begin{itemize}
-  \item En proyectos individuales, el responsable suele ser el propio autor.
-  \item Aun así, desagregar tareas facilita el seguimiento y mejora continua.
-\end{itemize}
-
-\textbf{Conversión opcional de Story Points a horas:}
-\begin{itemize}
-  \item 1 SP \(\approx\) 2 h como referencia flexible.
-  \item Tener en cuenta aproximaciones tipo Fibonacci.
-\end{itemize}
 
 \begin{table}[htpb]
   \centering
-  \caption{Formato sugerido}
-  \begin{tabularx}{\linewidth}{@{}|l|l|X|c|l|c|@{}}
+  \caption{Desglose de tareas por historia de usuario (2/4).}
+  \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
     \hline
     \rowcolor[HTML]{C0C0C0}
-    Sprint & HU o fase & Tarea & Horas / SP & Responsable & \% Completado \\ \hline
-    Sprint 0 & Planificación & Definir alcance y cronograma & 10 h & Alumno & 100\% \\ \hline
-    Sprint 0 & Planificación & Reunión con el tutor/cliente & 5 h & Alumno & 50\% \\ \hline
-    Sprint 0 & Planificación & Ajuste de los entregables & 6 h & Alumno & 25\% \\ \hline
-    Sprint 1 & HU1 & Tarea 1 HU1 & 6 h / 3 SP & Alumno & 0\% \\ \hline
-    Sprint 1 & HU1 & Tarea 2 HU1 & 10 h / 5 SP & Alumno & 0\% \\ \hline
-    Sprint 2 & HU2 & Tarea 1 HU2 & 7 h / 5 SP & Alumno & 0\% \\ \hline
-    ... & ... & ... & ... & ... & ... \\ \hline
-    Sprint 5 & Escritura & Redacción memoria & 50 h / 34 SP & Alumno & 0\% \\ \hline
-    Sprint 6 & Defensa & Preparación de la exposición & 20 h / 13 SP & Alumno & 0\% \\ \hline
+    Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
+
+    HU4 & Implementación del módulo de validación de calidad de imagen: detección de oclusión, estimación de nitidez (varianza del Laplaciano), evaluación de iluminación y conteo de rostros detectados & 18 h & Alta \\ \cline{2-4}
+    HU4 & Diseño de la interfaz de notificación de errores: mensajes descriptivos por tipo de anomalía (ningún rostro, varios rostros, imagen desenfocada, iluminación insuficiente, rostro parcialmente oculto) y solicitud de nueva captura & 14 h & Media \\ \hline
+
+    HU5 & Implementación del \textit{pipeline} de verificación en tiempo real al inicio de turno: captura por cámara, detección facial, generación de \textit{embedding}, comparación con referencia almacenada y emisión de decisión & 16 h & Alta \\ \cline{2-4}
+    HU5 & Desarrollo de la \textit{demo} del flujo de turno: vista previa de cámara con rostro detectado, indicador visual de aceptación/rechazado y nivel de similitud & 12 h & Alta \\ \hline
+
+    HU6 & Implementación del mecanismo de reintento: control de intentos (máximo tres), registro de cada intento (rechazo o inválido) y derivación a revisión manual tras el tercer fallo & 10 h & Media \\ \cline{2-4}
+    HU6 & Implementación del registro de incidencias de verificación: \textit{timestamp}, identificador del trabajador, tipo de fallo y nivel de similitud en cada intento & 6 h & Media \\ \hline
+
   \end{tabularx}
 \end{table}
 
-\textbf{Recomendaciones:}
-\begin{itemize}
-  \item Verificar que la carga horaria por sprint sea equilibrada.
-  \item Usar sprints de 1 a 3 semanas, acordes al cronograma general.
-  \item Actualizar el \% completado durante el seguimiento del proyecto.
-  \item Considerar un sprint final exclusivo para pruebas, revisión y ajustes antes de la defensa.
-\end{itemize}
+\begin{table}[htpb]
+  \centering
+  \caption{Desglose de tareas por historia de usuario (3/4).}
+  \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
+
+    HU7 & Diseño e implementación del panel de configuración de umbral: interfaz para seleccionar entre umbrales previamente evaluados, visualización del efecto de cada umbral (FAR/FRR) y persistencia de la selección & 10 h & Alta \\ \hline
+
+    HU8 & Diseño del protocolo experimental: definición de particiones de LFW, AgeDB y RFW, semillas aleatorias, configuración de inferencia (resolución, \textit{batch size}, dispositivo) y documentación de la configuración & 14 h & Alta \\ \cline{2-4}
+    HU8 & Ejecución de la evaluación \textit{baseline}: corridas de ArcFace y AdaFace preentrenados sobre LFW, AgeDB y RFW, con medición de EER, FAR, FRR, AUC, curva ROC, tiempo de inferencia y uso de memoria & 20 h & Alta \\ \hline
+
+    HU9 & Preparación del subconjunto de \textit{fine-tuning}: descarga, filtrado y partición de un subconjunto de Glint360K (o WebFace4M) en \textit{train}/\textit{val}, con documentación de identidad por partición & 8 h & Alta \\ \cline{2-4}
+    HU9 & Ejecución del \textit{fine-tuning} de ArcFace: configuración de \textit{hyperparámetros} (\textit{learning rate}, número de épocas, \textit{batch size}, esquema de \textit{freeze}), entrenamiento y registro de curvas de \textit{loss}/métricas & 30 h & Alta \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+\begin{table}[htpb]
+  \centering
+  \caption{Desglose de tareas por historia de usuario (4/4).}
+  \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
+
+    HU10 & Re-evaluación de los modelos ajustados sobre LFW, AgeDB y RFW en idénticas condiciones que la HU8, con almacenamiento de los resultados en formato reproducible & 20 h & Alta \\ \cline{2-4}
+    HU10 & Análisis comparativo preentrenado vs ajustado: tablas, curvas ROC superpuestas, análisis de \textit{trade-off} entre EER y tiempo de inferencia, discusión de los resultados por \textit{benchmark} y fundamentación de la elección del modelo del prototipo & 18 h & Alta \\ \hline
+
+    HU11 & Integración del clasificador de \textit{liveness} preentrenado (MiniFASNet o FeatherNet) y evaluación sobre OULU-NPU (o CASIA-FASD), con cálculo de ACER/HTER y documentación de limitaciones del \textit{baseline} & 18 h & Media \\ \cline{2-4}
+    HU11 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} principal y a la \textit{demo}, con ejemplo etiquetado de ataque (foto impresa) & 14 h & Media \\ \hline
+
+    HU12 & Implementación del \textit{harness} CLI: argparse con argumentos (modelo, \textit{benchmark}, partición, semilla), ejecución del \textit{pipeline} end-to-end y guardado de métricas y figuras en un directorio de salida & 18 h & Alta \\ \cline{2-4}
+    HU12 & Documentación del \textit{harness} en formato Markdown: argumentos, salidas esperadas, ejemplo de uso, comandos exactos para reproducir las cifras de la memoria & 6 h & Media \\ \hline
+
+    HU13 & Implementación de la \textit{demo} interactiva con Gradio o Streamlit: pestañas para verificación en vivo, resultados experimentales y, cuando aplique, cotejo documento--rostro & 12 h & Media \\ \cline{2-4}
+    HU13 & Redacción del manual de uso del prototipo y de las instrucciones de reproducción de experimentos en el repositorio & 6 h & Media \\ \hline
+
+    No técnica & Planificación inicial: reuniones con la orientadora y el cliente, definición y ajuste del \textit{backlog} y del cronograma & 50 h & Alta \\ \hline
+    No técnica & Informes de avance, reportes intermedios y documentación técnica parcial & 60 h & Alta \\ \hline
+    No técnica & Memoria técnica del trabajo final (incluye capítulos experimental, CRISP-DM, gobernanza, riesgos, conclusiones) & 60 h & Alta \\ \hline
+    No técnica & Preparación de la presentación de defensa, ensayos y ajustes finales & 30 h & Alta \\ \hline
+    No técnica & Reuniones de seguimiento, revisiones integrales y organización del acto de cierre & 42 h & Alta \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+La suma de las estimaciones de las tareas técnicas asciende a 358 horas y la de las actividades no técnicas a 242 horas, totalizando 600 horas estimadas en la desagregación, coherente con la planificación de sprints y con el presupuesto declarado en el Acta de constitución.
+
+\section{10. Planificación de Sprints}
+\label{sec:sprints}
+
+Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de aproximadamente 2 semanas de duración cada uno, distribuidos a lo largo de 4 bimesters curriculares (8 meses, desde el 24 de agosto de 2026 hasta principios de abril de 2027). La carga estimada es de aproximadamente 20 horas semanales (50 h por sprint de 2 semanas), con semanas de transición entre bimestres dedicadas a repaso, redacción de informes parciales y revisión con la orientadora. El responsable de todas las tareas es el autor del trabajo final. La planificación contempla tanto tareas técnicas derivadas de las historias de usuario como actividades no técnicas (planificación, documentación, reuniones y preparación de la defensa). El núcleo experimental (\textit{fine-tuning} y evaluación sobre \textit{benchmarks} múltiples) se concentra en los sprints 5 a 7, mientras que los sprints 1 a 4 corresponden a la construcción del \textit{pipeline} base y los sprints 8 a 11 a la integración, \textit{liveness}, \textit{demo}, documentación y cierre. El cuarto bimestre se reserva para revisión final, ajustes y defensa.
+
+\begin{table}[htpb]
+  \centering
+  \caption{Planificación de sprints (1/3).}
+  \begin{tabularx}{\linewidth}{@{}|l|X|X|c|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Sprint & HU o fase & Tarea & Horas & Resp. & \% \\ \hline
+
+    Sprint 0 & Planif. & Def. alcance, cronograma y \textit{backlog}; reuniones con orientadora y cliente & 30 h & Al. & 0 \\ \cline{2-6}
+    Sprint 0 & Planif. & Config. entorno, instalación de dependencias y preparación del repositorio & 20 h & Al. & 0 \\ \hline
+
+    Sprint 1 & HU1 & Implementación del módulo de captura facial y generación de \textit{embedding} de referencia & 28 h & Al. & 0 \\ \cline{2-6}
+    Sprint 1 & HU1 & Implementación del flujo de registro de candidato (datos + \textit{embedding} + almacenamiento) & 10 h & Al. & 0 \\ \cline{2-6}
+    Sprint 1 & No téc. & Redacción de informe de avance parcial & 12 h & Al. & 0 \\ \hline
+
+    Sprint 2 & HU2 & Desarrollo del módulo de extracción facial desde imagen de documento & 14 h & Al. & 0 \\ \cline{2-6}
+    Sprint 2 & HU2 & Validación de calidad del recorte y generación del \textit{embedding} del documento & 8 h & Al. & 0 \\ \cline{2-6}
+    Sprint 2 & HU3 & Implementación del módulo de comparación biométrica (distancia coseno + umbral) & 14 h & Al. & 0 \\ \cline{2-6}
+    Sprint 2 & HU3 & Integración del flujo completo de verificación documento--rostro & 14 h & Al. & 0 \\ \hline
+
+    Sprint 3 & HU4 & Implementación del módulo de validación de calidad de imagen & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 3 & HU4 & Diseño de la interfaz de notificación de errores y solicitud de nueva captura & 14 h & Al. & 0 \\ \cline{2-6}
+    Sprint 3 & No téc. & Redacción de documentación técnica del módulo de registro y verificación & 18 h & Al. & 0 \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+\begin{table}[htpb]
+  \centering
+  \caption{Planificación de sprints (2/3).}
+  \begin{tabularx}{\linewidth}{@{}|l|X|X|c|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Sprint & HU o fase & Tarea & Horas & Resp. & \% \\ \hline
+
+    Sprint 4 & HU5 & Implementación del \textit{pipeline} de verificación en tiempo real al inicio de turno & 16 h & Al. & 0 \\ \cline{2-6}
+    Sprint 4 & HU5 & Desarrollo de la \textit{demo} del flujo de turno & 12 h & Al. & 0 \\ \cline{2-6}
+    Sprint 4 & HU6 & Implementación del mecanismo de reintento y registro de incidencias & 16 h & Al. & 0 \\ \cline{2-6}
+    Sprint 4 & No téc. & Reuniones de seguimiento y ajuste del cronograma & 6 h & Al. & 0 \\ \hline
+
+    Sprint 5 & HU7 & Diseño e implementación del panel de configuración de umbral & 10 h & Al. & 0 \\ \cline{2-6}
+    Sprint 5 & HU8 & Diseño del protocolo experimental y descarga de \textit{benchmarks} (LFW, AgeDB, RFW) & 14 h & Al. & 0 \\ \cline{2-6}
+    Sprint 5 & HU8 & Ejecución de la evaluación \textit{baseline} (ArcFace, AdaFace preentrenados) & 20 h & Al. & 0 \\ \cline{2-6}
+    Sprint 5 & No téc. & Redacción de informe de avance & 6 h & Al. & 0 \\ \hline
+
+    Sprint 6 & HU9 & Preparación del subconjunto de \textit{fine-tuning} (Glint360K o WebFace4M) & 8 h & Al. & 0 \\ \cline{2-6}
+    Sprint 6 & HU9 & Ejecución del \textit{fine-tuning} de ArcFace & 30 h & Al. & 0 \\ \cline{2-6}
+    Sprint 6 & No téc. & Monitoreo del entrenamiento y registro de curvas de \textit{loss} y métricas & 12 h & Al. & 0 \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+\begin{table}[htpb]
+  \centering
+  \caption{Planificación de sprints (3/3).}
+  \begin{tabularx}{\linewidth}{@{}|l|X|X|c|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Sprint & HU o fase & Tarea & Horas & Resp. & \% \\ \hline
+
+    Sprint 7 & HU10 & Re-evaluación de modelos ajustados sobre LFW, AgeDB y RFW & 20 h & Al. & 0 \\ \cline{2-6}
+    Sprint 7 & HU10 & Análisis comparativo preentrenado vs ajustado, gráficos y \textit{trade-off} & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 7 & No téc. & Redacción de sección experimental de la memoria & 12 h & Al. & 0 \\ \hline
+
+    Sprint 8 & HU11 & Integración del clasificador de \textit{liveness} y evaluación sobre OULU-NPU & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 8 & HU11 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} y a la \textit{demo} & 14 h & Al. & 0 \\ \cline{2-6}
+    Sprint 8 & HU12 & Implementación del \textit{harness} CLI de evaluación end-to-end & 18 h & Al. & 0 \\ \hline
+
+    Sprint 9 & HU12 & Documentación del \textit{harness} y comandos de reproducción & 6 h & Al. & 0 \\ \cline{2-6}
+    Sprint 9 & HU13 & Implementación de la \textit{demo} interactiva con Gradio/Streamlit & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 9 & No téc. & Revisión integral del \textit{pipeline} y de la documentación & 26 h & Al. & 0 \\ \hline
+
+    Sprint 10 & No téc. & Preparación de la presentación de defensa & 16 h & Al. & 0 \\ \cline{2-6}
+    Sprint 10 & No téc. & Ensayos de la exposición con retroalimentación de la orientadora & 12 h & Al. & 0 \\ \cline{2-6}
+    Sprint 10 & --- & Ajustes finales al prototipo según observaciones de la orientadora & 10 h & Al. & 0 \\ \cline{2-6}
+    Sprint 10 & No téc. & Revisión final de la memoria y preparación de la entrega & 12 h & Al. & 0 \\ \hline
+
+    Sprint 11 & No téc. & Reuniones finales con orientadora y cliente & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 11 & No téc. & Organización del acto de cierre y agradecimientos & 12 h & Al. & 0 \\ \cline{2-6}
+    Sprint 11 & No téc. & Entrega final de documentación, código y repositorio & 20 h & Al. & 0 \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+La distribución totaliza 600 horas, distribuidas a lo largo de 12 sprints (Sprint 0 al Sprint 11) en un plazo de 8 meses (4 bimestres), desde el 24 de agosto de 2026 hasta principios de abril de 2027. La carga promedio es de aproximadamente 20 horas semanales (50 h por sprint de 2 semanas), con semanas de transición entre bimestres. El núcleo experimental (sprints 5 a 7) recibe aproximadamente 150 horas técnicas, lo que refleja su carácter central. El cuarto bimestre (sprints 10 y 11) se reserva para revisión final, ajustes al prototipo, preparación de la defensa y entrega de documentación.
 
 \section{11. Diagrama de Gantt (sprints)}
 \label{sec:gantt}
 
-Visualizar en un diagrama de Gantt la planificación temporal del proyecto, tomando como base los sprints definidos en la sección anterior. Debe contemplar todas las horas del proyecto.
+La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando como base los sprints definidos en la sección~\ref{sec:sprints}. El eje horizontal representa las semanas del proyecto, distribuidas en 4 bimestres curriculares desde el 24 de agosto de 2026 hasta principios de abril de 2027 (32 semanas, aproximadamente 8 meses). Cada fila corresponde a un sprint. Las tareas técnicas derivadas de historias de usuario se diferencian visualmente de las actividades no técnicas (planificación, documentación, defensa). Las bandas en gris claro representan semanas de transición entre bimestres, dedicadas a revisión, redacción de informes parciales y descanso planificado.
 
-Consigna:
+\begin{landscape}
+\begin{figure}[htpb]
+  \centering
+  \begin{ganttchart}[
+      x unit=0.55cm,
+      y unit title=0.35cm,
+      y unit chart=0.35cm,
+      vgrid,
+      hgrid,
+      title height=2,
+      bar/.style={fill=blue!60},
+      bar incomplete/.style={fill=blue!30},
+      bar label font=\scriptsize,
+      title label font=\scriptsize,
+      group right shift=0,
+      group top shift=0.7,
+      group height=.3,
+      milestone label font=\scriptsize,
+      milestone/.style={fill=red!80}
+    ]{1}{34}
+    \gantttitle{Agosto}{5}
+    \gantttitle{Sept.}{4}
+    \gantttitle{Oct.}{5}
+    \gantttitle{Nov.}{4}
+    \gantttitle{Dic.}{4}
+    \gantttitle{Ene.}{4}
+    \gantttitle{Feb.}{4}
+    \gantttitle{Mar.}{4} \\
+    \foreach \i in {1,...,34} {
+      \gantttitle{\scriptsize S\i}{1}
+    } \\
 
-\begin{itemize}
+    % Bimester 1 (Semanas 1-8, agosto-septiembre)
+    \ganttgroup{Sprint 0: Planificación}{1}{2} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Def. alcance}{1}{1} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Config. entorno}{2}{2} \\
 
-  \item Elaborar un diagrama de Gantt que muestre la secuencia temporal de los sprints.
+    \ganttgroup{Sprint 1: Captura facial}{3}{4} \\
+    \ganttbar{HU1: Captura + registro}{3}{4} \\
 
-  \item Cada fila debe representar un sprint (con su número o nombre), y el eje horizontal debe indicar el tiempo (en semanas o fechas concretas).
+    \ganttgroup{Sprint 2: Documento y verif.}{5}{6} \\
+    \ganttbar{HU2: Extracción doc.}{5}{5} \\
+    \ganttbar{HU3: Comparación biométrica}{5}{6} \\
 
-  \item Las tareas técnicas derivadas de HU deben diferenciarse visualmente (por ejemplo, con un color distinto) de las tareas no técnicas (planificación, redacción, defensa).
+    \ganttgroup{Sprint 3: Calidad y errores}{7}{8} \\
+    \ganttbar{HU4: Validación imagen}{7}{8} \\
 
-  \item Incluir todas las tareas estimadas en cada sprint.
-\end{itemize}
+    % Transición bimestre 1-2 (semana 9)
+    \ganttbar[bar/.style={fill=gray!20}]{Transición bimestre 1}{9}{9} \\
 
-Recomendaciones para el Gantt:
+    % Bimester 2 (Semanas 10-17, octubre-noviembre)
+    \ganttgroup{Sprint 4: Verif. turno}{10}{11} \\
+    \ganttbar{HU5: Pipeline tiempo real}{10}{11} \\
+    \ganttbar{HU6: Reintento}{11}{11} \\
 
-\begin{itemize}
+    \ganttgroup{Sprint 5: Baseline}{12}{13} \\
+    \ganttbar{HU7: Config. umbral}{12}{12} \\
+    \ganttbar{HU8: Eval. baseline}{12}{13} \\
 
-  \item Podés usar herramientas gratuitas como TeamGantt, ClickUp, GanttProject, [Google Sheets], [Trello + Planyway], entre otras.
-  \item Ordená los sprints de forma cronológica, comenzando con Sprint 0 (planificación) y finalizando con el sprint de defensa.
-  \item Asegurate de reflejar la duración realista de cada sprint según tu disponibilidad y el cronograma general del posgrado.
-  \item Incluí hitos importantes: reuniones, entregas parciales, defensa.
-\end{itemize}
+    \ganttgroup{Sprint 6: Fine-tuning}{14}{15} \\
+    \ganttbar{HU9: Subset + FT}{14}{15} \\
 
-Incluir una imagen legible del diagrama de Gantt. Si es muy ancho, presentar primero la tabla y luego el gráfico de barras.
+    \ganttgroup{Sprint 7: Análisis}{16}{17} \\
+    \ganttbar{HU10: Re-eval. + trade-off}{16}{17} \\
+
+    % Transición bimestre 2-3 (semana 18)
+    \ganttbar[bar/.style={fill=gray!20}]{Transición bimestre 2}{18}{18} \\
+
+    % Bimester 3 (Semanas 19-26, diciembre-enero)
+    \ganttgroup{Sprint 8: Liveness + harness}{19}{20} \\
+    \ganttbar{HU11: Liveness}{19}{20} \\
+    \ganttbar{HU12: Harness CLI}{20}{20} \\
+
+    \ganttgroup{Sprint 9: Demo + revisión}{21}{22} \\
+    \ganttbar{HU12: Doc. harness}{21}{21} \\
+    \ganttbar{HU13: Demo UI}{21}{22} \\
+
+    \ganttgroup{Sprint 10: Defensa}{23}{24} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Prep. presentación}{23}{24} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Ensayos y ajustes}{23}{24} \\
+
+    \ganttgroup{Sprint 11: Cierre}{25}{26} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Reuniones finales}{25}{25} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Entrega final}{26}{26} \\
+
+    % Transición bimestre 3-4 (semana 27)
+    \ganttbar[bar/.style={fill=gray!20}]{Transición bimestre 3}{27}{27} \\
+
+    % Bimester 4 (Semanas 28-34, febrero-marzo, dedicado a revisión final y defensa)
+    \ganttgroup{Bimester 4: Defensa}{28}{33} \\
+    \ganttbar[bar/.style={fill=blue!40}]{Revisión final del prototipo}{28}{31} \\
+    \ganttbar[bar/.style={fill=blue!40}]{Revisión final de la memoria}{28}{32} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Ensayos finales de defensa}{32}{33} \\
+    \ganttbar[bar/.style={fill=orange!60}]{Ajustes post-revisión}{33}{33} \\
+
+    \ganttmilestone{Defensa}{34}
+  \end{ganttchart}
+  \caption{Diagrama de Gantt del proyecto.}
+  \label{fig:gantt}
+\end{figure}
+\end{landscape}
+
+El color azul representa tareas técnicas derivadas de historias de usuario, el color naranja representa actividades no técnicas (planificación, documentación, preparación de defensa), el color gris claro representa semanas de transición entre bimestres dedicadas a revisión, redacción de informes parciales y descanso planificado, y el color rojo indica el hito de defensa del trabajo final. La secuencia refleja la dependencia lógica entre sprints: las tareas de captura y extracción (sprints 1--2) son prerequisito de la verificación (sprints 2--4), que a su vez son prerequisito de la evaluación experimental (sprints 5--7), la integración del módulo de \textit{liveness} y del \textit{harness} (sprint 8) y la \textit{demo} interactiva (sprint 9). El cuarto bimestre se reserva para revisión final, ajustes y defensa, sin introducir trabajo técnico nuevo significativo.
 
 \section{12. Gobernanza de datos}
 \label{sec:gobernanza}
 
-En esta sección se debe analizar de manera integral el marco normativo y ético asociado al uso de los datos y al desarrollo de soluciones basadas en inteligencia artificial.
-
-El análisis se divide en dos partes:
-
-\begin{itemize}
-  \item Cumplimiento normativo.
-  \item Ética en el uso de inteligencia artificial.
-\end{itemize}
+En esta sección se analiza de manera integral el marco normativo y ético asociado al uso de datos biométricos faciales y al desarrollo de una solución basada en inteligencia artificial para verificación de identidad.
 
 \subsection{Cumplimiento normativo}
-Este análisis es clave para garantizar el cumplimiento normativo y evitar conflictos legales durante el desarrollo y publicación del proyecto.
 
-En esta subsección se debe identificar si los datos utilizados en el proyecto están sujetos a normativas de protección de datos y privacidad, y en qué condiciones pueden emplearse.
+El proyecto involucra datos biométricos faciales (\textit{embeddings} vectoriales derivados de imágenes de rostros), lo que lo ubica en una categoría de datos especialmente sensible desde el punto de vista normativo. A continuación se analiza la aplicabilidad de las normativas relevantes y las condiciones de uso de las fuentes de datos y herramientas empleadas.
 
-Aspectos a considerar:
+\subsubsection{Normativas aplicables}
 
-\begin{itemize}
-  \item Determinar si los datos están regulados por normativas como el GDPR, la Ley 25.326 de Protección de Datos Personales (Argentina), la HIPAA u otras, según la jurisdicción o la temática del proyecto.
-  \item Aclarar si las fuentes de datos son propias, de acceso público o licenciadas. En este último caso, explicitar la licencia correspondiente y sus condiciones de uso. Realizar este mismo análisis para las herramientas y, en caso de corresponder, para los modelos preentrenados a emplear.
-  \item Analizar la viabilidad legal del proyecto, considerando los mecanismos necesarios para garantizar el cumplimiento normativo y la trazabilidad de los datos.
-\end{itemize}
+\textbf{Ley 25.326 de Protección de Datos Personales (Argentina).} La ley argentina de protección de datos personales clasifica los datos biométricos como datos sensibles (art. 2, inc. 2), cuyo tratamiento requiere autorización expresa del titular y está sujeto a restricciones adicionales. Dado que el proyecto se desarrolla en el ámbito de FIUBA (Argentina), esta normativa es directamente aplicable. Sin embargo, el proyecto no recopila datos biométricos de personas reales: el \textit{fine-tuning} y la evaluación se realizan exclusivamente con \textit{datasets} públicos. Por lo tanto, la obligación de obtención de consentimiento no se activa en la fase de experimentación. No obstante, el prototipo se diseñará considerando los principios de la ley (calidad de datos, finalidad, consentimiento, seguridad) como requisitos de implementación, a fin de sentar las bases para que un eventual despliegue futuro cumpla con la normativa.
+
+\textbf{Reglamento General de Protección de Datos (GDPR).} El GDPR europeo clasifica los datos biométricos como datos personales especiales (art. 9) y su tratamiento está prohibido salvo excepciones (consentimiento explícito, interés público, investigación científica). Aunque el proyecto se ejecuta en Argentina, la mención de GDPR se justifica por dos razones: (1) \empclientename\hspace{1px} es una empresa internacional con operaciones en Europa, por lo que un eventual despliegue futuro del sistema podría estar sujeto al GDPR; y (2) algunos de los \textit{datasets} públicos utilizados contienen imágenes de personas de múltiples jurisdicciones. El proyecto, al operar en un contexto académico sin datos reales, no activa las obligaciones del GDPR, pero el diseño del prototipo contempla principios como minimización de datos, derecho de supresión y trazabilidad, compatibles con el GDPR.
+
+\textbf{HIPAA (Health Insurance Portability and Accountability Act).} Esta normativa estadounidense regula la protección de datos de salud. No es directamente aplicable al proyecto, ya que el sistema no procesa información de salud. Sin embargo, se menciona por completitud dado que algunos \textit{datasets} públicos de reconocimiento facial podrían contener metadatos asociados a contextos sanitarios en su origen. En el caso de los \textit{datasets} seleccionados, este riesgo no aplica.
+
+\subsubsection{Fuentes de datos y licencias}
+
+\textbf{Glint360K (InsightFace).} \textit{Dataset} de aproximadamente 17 millones de imágenes de 360.000 identidades, recopilado para la investigación en reconocimiento facial por el equipo de InsightFace. Se distribuye con licencia de uso académico. Se utilizará como fuente principal para el \textit{fine-tuning}, sobre un subconjunto seleccionado. Se verificará la licencia vigente al momento de la descarga.
+
+\textbf{WebFace4M (Zenodo, 2023).} \textit{Dataset} de aproximadamente 4 millones de imágenes de 200.000 identidades, disponible públicamente a través de Zenodo con licencia clara para uso académico. Se considerará como alternativa o complemento a Glint360K si la disponibilidad o las condiciones de licencia de este último no fuesen adecuadas.
+
+\textbf{LFW (\textit{Labeled Faces in the Wild}).} Este \textit{dataset} fue creado por el Laboratorio de Visión Computacional de la Universidad de Massachusetts. Las imágenes fueron obtenidas de artículos de noticias en la web y se distribuyen para uso de investigación académica y no comercial. No se requiere una licencia explícita más allá de la atribución al origen. El uso en este proyecto es exclusivamente académico y de evaluación, lo que es consistente con las condiciones de distribución del \textit{dataset}.
+
+\textbf{AgeDB.} \textit{Dataset} de verificación \textit{cross-age} con 16.516 imágenes de 568 personas, disponible públicamente para uso académico. Se utilizará como \textit{benchmark} para evaluar la capacidad de los modelos ante el envejecimiento.
+
+\textbf{RFW (\textit{Racial Faces in the Wild}).} \textit{Dataset} diseñado para medir sesgo demográfico en modelos de reconocimiento facial, disponible públicamente para uso académico. Se utilizará para reportar el rendimiento por subgrupo demográfico y vincular el análisis con la ética del uso de datos biométricos.
+
+\textbf{OULU-NPU o CASIA-FASD.} \textit{Datasets} públicos de \textit{spoofing} facial, ampliamente utilizados en la literatura de detección de \textit{liveness}. Se utilizarán para la evaluación del módulo de \textit{liveness} (\textit{baseline}).
+
+\textbf{Exclusiones explícitas.} Se descartan \textit{MS-Celeb-1M} (retractado por Microsoft en 2019 por problemas de consentimiento) y \textit{CASIA-WebFace} (retirado y con licencia ambigua), ambos mencionados en la propuesta original pero no utilizables en el estado actual.
+
+\subsubsection{Herramientas y modelos preentrenados}
+
+\textbf{Modelos ArcFace y AdaFace.} Las implementaciones preentrenadas se obtienen de repositorios de código abierto (\textit{InsightFace}, \textit{adaface-pytorch}). Los pesos preentrenados se distribuyen bajo licencias compatibles con uso académico. ArcFace fue publicado por Imperial College London y sus pesos se distribuyen para uso académico. AdaFace fue publicado en CVPR 2022 y sus pesos se distribuyen con licencia académica. No se emplean modelos con licencias restrictivas o comerciales.
+
+\textbf{Herramientas de \textit{software}.} El desarrollo se realiza en Python utilizando bibliotecas de código abierto: PyTorch para \textit{deep learning}, InsightFace / \textit{adaface-pytorch} para los modelos, MTCNN y RetinaFace para detección, scikit-learn para métricas de evaluación, Gradio o Streamlit para la \textit{demo} interactiva. Todas las herramientas son de uso libre y compatibles con el contexto académico del proyecto.
+
+\subsubsection{Viabilidad legal}
+
+El proyecto es viable desde el punto de vista legal por las siguientes razones: (1) no recopila datos biométricos de personas reales; (2) utiliza exclusivamente \textit{datasets} públicos con licencias compatibles con uso académico; (3) los modelos preentrenados se obtienen de fuentes de código abierto con licencias adecuadas; (4) el prototipo no se despliega en producción ni se integra con sistemas reales de la empresa. Para un eventual despliegue futuro, sería necesario: obtener consentimiento informado de los trabajadores, realizar un análisis de impacto sobre protección de datos (DPIA), implementar mecanismos de supresión y actualización de datos, y designar un responsable del tratamiento de datos.
 
 \subsection{Ética en el uso de inteligencia artificial}
 
-En esta subsección se debe reflexionar sobre los aspectos éticos vinculados al uso de datos y algoritmos de inteligencia artificial. Se espera una evaluación de la integridad del sistema y su impacto social.
+La verificación de identidad biométrica mediante reconocimiento facial plantea consideraciones éticas significativas que deben abordarse desde el diseño del prototipo, incluso en un contexto académico.
 
-Aspectos a considerar:
+\subsubsection{Sesgos en los datos y los modelos}
+
+Los \textit{datasets} de reconocimiento facial pueden contener sesgos demográficos que afecten el rendimiento del modelo de manera desigual entre grupos poblacionales. Los sesgos más relevantes para este proyecto son:
 
 \begin{itemize}
-  \item Identificar posibles sesgos en los datos o modelos (ideológicos, culturales, de género, geográficos, etc.) y analizar sus consecuencias (por ejemplo: discriminación, manipulación, pérdida de privacidad o desinformación).
-  \item Analizar los posibles riesgos en términos de impacto social del uso indebido de la solución a desarrollar.
-  \item En caso de corresponder, proponer medidas de mitigación y mecanismos de confianza (auditorías, documentación, trazabilidad, revisión humana, etc.).
-  \item Finalmente, elaborar una reflexión general sobre la ética del proyecto, considerando tanto la equidad y transparencia del sistema como su impacto potencial en la sociedad.
-
+  \item \textbf{Sesgo de representación demográfica:} los \textit{datasets} públicos pueden estar sobrerrepresentados en determinados grupos étnicos, rangos de edad o género. Si el modelo se evalúa exclusivamente sobre estos \textit{datasets}, las métricas de rendimiento podrían no reflejar el rendimiento real sobre la población diversa del contexto laboral de \empclientename. Por ejemplo, LFW contiene una proporción significativamente mayor de hombres que de mujeres, y una representación desigual de grupos étnicos.
+  \item \textbf{Sesgo de edad:} las imágenes de \textit{datasets} pueden no representar adecuadamente a personas en rangos de edad extremos (muy jóvenes o muy mayores), lo que podría afectar la precisión del sistema en poblaciones laborales con diversidad etaria. La evaluación sobre AgeDB aborda parcialmente esta cuestión al incluir rangos etarios amplios.
+  \item \textbf{Sesgo de calidad de imagen:} los \textit{datasets} pueden estar compuestos predominantemente por imágenes de alta calidad, lo que no representa las condiciones reales de captura en el entorno laboral.
 \end{itemize}
+
+Estos sesgos no se originan en una intención discriminatoria, sino en limitaciones de las fuentes de datos disponibles. El uso de RFW como uno de los \textit{benchmarks} del proyecto permite cuantificar la brecha de rendimiento entre subgrupos demográficos y documentarla explícitamente en la memoria.
+
+\subsubsection{Riesgos de impacto social}
+
+El uso indebido de un sistema de verificación biométrica puede generar los siguientes riesgos:
+
+\begin{itemize}
+  \item \textbf{Exclusión o discriminación:} si el sistema presenta una tasa de falsos rechazos significativamente mayor para ciertos grupos demográficos, los trabajadores afectados podrían enfrentar demoras, revisiones adicionales o negación del acceso, generando una experiencia laboral desigual.
+  \item \textbf{Uso más allá de la finalidad declarada:} el sistema de verificación podría ser utilizado para fines distintos a la verificación de identidad al inicio de turno, como vigilancia continua del personal, seguimiento de movimientos o evaluación de rendimiento, lo que excedería la finalidad original del proyecto y podría vulnerar derechos laborales y de privacidad.
+  \item \textbf{Dependencia tecnológica:} una confianza excesiva en la verificación automática podría reducir la supervisión humana, creando riesgos cuando el sistema falla o produce resultados ambiguos.
+  \item \textbf{Almacenamiento inadecuado de datos biométricos:} si los \textit{embeddings} faciales no se protegen adecuadamente, podrían ser objeto de acceso no autorizado, con consecuencias graves para la privacidad de los trabajadores, dado que los datos biométricos son irreemplazables.
+  \item \textbf{Sistema trivialmente derrotable sin \textit{liveness} robusto:} un sistema de verificación facial sin detección de \textit{liveness} puede ser engañado con una foto impresa del trabajador registrado, lo que anula su utilidad como mecanismo de seguridad.
+\end{itemize}
+
+\subsubsection{Medidas de mitigación}
+
+Para abordar los riesgos identificados, el prototipo incorpora las siguientes medidas desde su diseño:
+
+\begin{itemize}
+  \item \textbf{Evaluación con protocolos estándar:} la evaluación comparativa de modelos se realizará sobre protocolos establecidos (LFW, AgeDB, RFW) que permitan reproducción independiente y comparación con la literatura.
+  \item \textbf{Documentación de limitaciones:} la memoria técnica documentará explícitamente las limitaciones de los \textit{datasets} en cuanto a representación demográfica, y señalará que las métricas de rendimiento podrían no ser representativas de poblaciones no representadas en los datos de evaluación.
+  \item \textbf{Minimización de datos:} el prototipo almacena únicamente \textit{embeddings} vectoriales (representaciones numéricas compactas), no imágenes faciales. Los registros de auditoría no contienen imágenes ni \textit{embeddings}, solo metadatos de la verificación.
+  \item \textbf{Control de acceso:} el almacenamiento de \textit{embeddings} está protegido por mecanismos de control de acceso que restringen la consulta y manipulación a los usuarios autorizados.
+  \item \textbf{Derecho de supresión:} el prototipo implementa mecanismos para eliminar o actualizar registros de candidatos o trabajadores, sentando las bases para el cumplimiento del derecho de supresión (``derecho al olvido'').
+  \item \textbf{Revisión humana:} el sistema no emite decisiones definitivas de manera autónoma. Ante rechazos o situaciones ambiguas, el flujo prevé derivación a revisión manual, manteniendo al ser humano como decisor final.
+  \item \textbf{Finalidad acotada:} el sistema se diseña exclusivamente para verificación de identidad al inicio de turno y en el proceso de selección. No se implementan funcionalidades de reconocimiento en tiempo real continuo, seguimiento o identificación de personas en multitudes.
+  \item \textbf{Módulo de \textit{liveness} como \textit{baseline}:} se incluye un clasificador de \textit{liveness} preentrenado como línea base, con la advertencia explícita de que su desarrollo robusto queda como trabajo futuro. Este enfoque reconoce la limitación actual del sistema y abre la puerta a una iteración posterior (por ejemplo, en una etapa de Maestría) donde se incorporen arquitecturas más modernas y datos del dominio.
+\end{itemize}
+
+\subsubsection{Reflexión ética general}
+
+La verificación de identidad biométrica mediante reconocimiento facial es una tecnología con un potencial significativo para mejorar la seguridad operativa, pero que conlleva riesgos inherentes relacionados con la privacidad, la equidad y la proporcionalidad del uso de datos sensibles.
+
+En el contexto de este proyecto, la decisión de operar exclusivamente con \textit{datasets} públicos y sin datos reales de trabajadores es una elección ética deliberada que permite evaluar la viabilidad técnica del sistema sin exponer la privacidad de personas concretas. No obstante, el diseño del prototipo contempla los principios éticos que serían necesarios en un escenario de despliegue real: consentimiento informado, finalidad específica, minimización de datos, seguridad y derecho de supresión.
+
+El proyecto reconoce que la automatización de la verificación de identidad no debe sustituir el juicio humano sino complementarlo. El sistema propuesto emite una recomendación (aceptado/rechazado) que debe ser validada por un responsable, especialmente en casos límite. Esta decisión de diseño refleja el principio de que la inteligencia artificial debe estar sujeta a supervisión humana en contextos donde las decisiones afectan directamente a las personas.
+
+El análisis comparativo de modelos incluye la evaluación de sesgos demográficos como parte del proceso de selección, de modo que la elección del modelo del prototipo no se base únicamente en métricas agregadas de precisión sino también en la equidad del rendimiento entre diferentes grupos poblacionales.
 
 \section{13. Gestión de riesgos}
 \label{sec:riesgos}
 
-\begin{consigna}{red}
-a) Identificación de los riesgos (al menos cinco) y estimación de sus consecuencias:
+a) \textbf{Identificación de los riesgos y estimación de sus consecuencias.}
 
-Riesgo 1: detallar el riesgo (riesgo es algo que si ocurre altera los planes previstos de forma negativa)
+\textbf{Riesgo 1: capacidad computacional insuficiente en \textit{tiers} gratuitos para ejecutar el \textit{fine-tuning} completo.}
+
 \begin{itemize}
-  \item Severidad (S): mientras más severo, más alto es el número (usar números del 1 al 10).\\
-    Justificar el motivo por el cual se asigna determinado número de severidad (S).
-  \item Probabilidad de ocurrencia (O): mientras más probable, más alto es el número (usar del 1 al 10).\\
-    Justificar el motivo por el cual se asigna determinado número de (O).
+  \item Severidad (S): 8. La indisponibilidad de cómputo bloquearía la entrega de la HU9 y, con ella, el núcleo experimental del proyecto. Implicaría reformular el alcance o aceptar un resultado parcial no publicable.
+  \item Probabilidad de ocurrencia (O): 5. Google Colab limita sesiones a ~12 h y disponibilidad por día; Kaggle ofrece 30 h semanales de P100; un \textit{fine-tuning} serio puede requerir 20-40 h de GPU continuas o acumuladas, con riesgo real de quedarse corto o sufrir desconexiones.
 \end{itemize}
 
-Riesgo 2:
+\textbf{Riesgo 2: el \textit{fine-tuning} no produce una mejora medible sobre el \textit{baseline} en los \textit{benchmarks} seleccionados.}
+
 \begin{itemize}
-  \item Severidad (S): X.\\
-    Justificación...
-  \item Ocurrencia (O): Y.\\
-    Justificación...
+  \item Severidad (S): 6. Si la mejora es nula o marginal, el núcleo experimental del trabajo se debilita. No es bloqueante, pero obliga a reorientar el análisis (interpretación de por qué no mejoró, comparación con literatura, ablación).
+  \item Probabilidad de ocurrencia (O): 4. Modelos modernos preentrenados sobre grandes \textit{datasets} ya tienen un \textit{baseline} alto; un subconjunto pequeño puede no aportar información nueva al modelo. Es un riesgo real que debe preverse y documentarse.
 \end{itemize}
 
-Riesgo 3:
+\textbf{Riesgo 3: LFW saturado impide diferenciar ArcFace de AdaFace sobre el \textit{benchmark} de \textit{baseline}.}
+
 \begin{itemize}
-  \item Severidad (S):  X.\\
-    Justificación...
-  \item Ocurrencia (O): Y.\\
-    Justificación...
+  \item Severidad (S): 5. La diferenciación entre los dos modelos se desplazaría hacia AgeDB y RFW, lo que cambia la narrativa pero no impide el trabajo. El \textit{benchmark} LFW quedaría como prueba de saturación más que de diferenciación.
+  \item Probabilidad de ocurrencia (O): 7. Tanto ArcFace como AdaFace rinden >99\% en LFW desde hace años; la probabilidad de obtener EER menores al 0.5\% en ambos es muy alta.
 \end{itemize}
 
-b) Tabla de gestión de riesgos:      (El RPN se calcula como RPN=SxO)
+\textbf{Riesgo 4: \textit{dataset} principal de \textit{fine-tuning} (Glint360K o WebFace4M) se vuelve inaccesible o cambia de licencia durante el proyecto.}
+
+\begin{itemize}
+  \item Severidad (S): 7. Bloquea la HU9 y obliga a reentrenar o reemplazar el subconjunto. El cronograma se vería afectado.
+  \item Probabilidad de ocurrencia (O): 2. Ambos \textit{datasets} están alojados en repositorios institucionales estables; cambios de licencia son improbables en el horizonte de 6 meses, pero no imposibles.
+\end{itemize}
+
+\textbf{Riesgo 5: agotamiento de tiempo o burnout del responsable.}
+
+\begin{itemize}
+  \item Severidad (S): 9. El proyecto es individual; si el responsable no puede dedicar las horas estimadas, la entrega se atrasa o se degrada la calidad.
+  \item Probabilidad de ocurrencia (O): 5. Carga de 600 h en 6 meses implica 25 h semanales, ambicioso pero alcanzable; eventos personales, laborales o académicos pueden reducir la disponibilidad real.
+\end{itemize}
+
+\textbf{Riesgo 6: los datos sintéticos para el cotejo documento--rostro (HU2/HU3) no son representativos de los documentos reales de \empclientename.}
+
+\begin{itemize}
+  \item Severidad (S): 5. Si el prototipo se evalúa con documentos sintéticos, su utilidad en producción quedaría condicionada; sin embargo, el alcance del proyecto es académico y se documenta explícitamente.
+  \item Probabilidad de ocurrencia (O): 5. La generación de pares sintéticos controlados a partir de \textit{datasets} públicos es estándar, pero la calidad del recorte puede degradarse con tipos de documentos no representados.
+\end{itemize}
+
+b) \textbf{Tabla de gestión de riesgos} (el RPN se calcula como RPN = S $\times$ O).
 
 \begin{table}[htpb]
 \centering
@@ -606,71 +981,76 @@ b) Tabla de gestión de riesgos:      (El RPN se calcula como RPN=SxO)
   \hline
   \rowcolor[HTML]{C0C0C0}
   Riesgo & S & O & RPN & S* & O* & RPN* \\ \hline
-  &   &   &     &    &    &      \\ \hline
-  &   &   &     &    &    &      \\ \hline
-  &   &   &     &    &    &      \\ \hline
-  &   &   &     &    &    &      \\ \hline
-  &   &   &     &    &    &      \\ \hline
+  Capacidad computacional insuficiente en \textit{tiers} gratuitos (R1) & 8 & 5 & 40 & 5 & 3 & 15 \\ \hline
+  \textit{Fine-tuning} sin mejora medible sobre el \textit{baseline} (R2) & 6 & 4 & 24 & 6 & 2 & 12 \\ \hline
+  LFW saturado no diferencia modelos (R3) & 5 & 7 & 35 & 5 & 3 & 15 \\ \hline
+  \textit{Dataset} principal inaccesible o cambio de licencia (R4) & 7 & 2 & 14 & 5 & 1 & 5 \\ \hline
+  Agotamiento de tiempo o burnout (R5) & 9 & 5 & 45 & 7 & 3 & 21 \\ \hline
+  Datos sintéticos no representativos para cotejo documento--rostro (R6) & 5 & 5 & 25 & 4 & 3 & 12 \\ \hline
 \end{tabularx}%
 \end{table}
 
-Criterio adoptado:
+c) \textbf{Criterio adoptado.}
 
-Se tomarán medidas de mitigación en los riesgos cuyos números de RPN sean mayores a...
+Se tomarán medidas de mitigación en los riesgos cuyo RPN original supere 30. Aplica a R1, R3 y R5.
 
 Nota: los valores marcados con (*) en la tabla corresponden luego de haber aplicado la mitigación.
 
-c) Plan de mitigación de los riesgos que originalmente excedían el RPN máximo establecido:
+d) \textbf{Plan de mitigación de los riesgos que originalmente excedían el RPN máximo establecido.}
 
-Riesgo 1: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
-Nueva asignación de S y O, con su respectiva justificación:
+\textbf{R1 --- Capacidad computacional insuficiente en \textit{tiers} gratuitos.}
+
 \begin{itemize}
-\item Severidad (S*): mientras más severo, más alto es el número (usar números del 1 al 10).
-Justificar el motivo por el cual se asigna determinado número de severidad (S).
-\item Probabilidad de ocurrencia (O*): mientras más probable, más alto es el número (usar del 1 al 10).
-Justificar el motivo por el cual se asigna determinado número de (O).
+  \item \textbf{Acción:} reducir el tamaño del subconjunto de \textit{fine-tuning} al mínimo que permita una conclusión estadísticamente interpretable (por ejemplo, 50.000--100.000 imágenes en lugar de 300.000); priorizar el \textit{fine-tuning} de un solo modelo (ArcFace) y dejar el de AdaFace como opcional; entrenar por capas (congelar las convolucionales tempranas) para reducir cómputo; documentar tiempos y recursos consumidos en cada corrida.
+  \item Severidad revisada (S*): 5. La reducción del subconjunto y el \textit{fine-tuning} por capas permiten ejecutar el experimento dentro de los límites de los \textit{tiers} gratuitos; el peor caso es un subconjunto más pequeño con resultado menos contundente, no la imposibilidad de ejecutar.
+  \item Ocurrencia revisada (O*): 3. Con el subconjunto reducido y el esquema por capas, las horas de GPU necesarias caen a un rango compatible con Colab Pro (USD 10/mes) o con un saldo de Kaggle generoso, accesibles con presupuesto mínimo.
 \end{itemize}
 
-Riesgo 2: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
+\textbf{R3 --- LFW saturado no diferencia modelos.}
 
-Riesgo 3: plan de mitigación (si por el RPN fuera necesario elaborar un plan de mitigación).
+\begin{itemize}
+  \item \textbf{Acción:} aceptar LFW como prueba de saturación (no de diferenciación) y enfocar la diferenciación en AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), donde se esperan brechas visibles. Reportar explícitamente la saturación y discutir su significado en la memoria.
+  \item Severidad revisada (S*): 5. La saturación de LFW es una observación, no un fracaso: refuerza la decisión metodológica de incorporar \textit{benchmarks} más exigentes.
+  \item Ocurrencia revisada (O*): 3. AgeDB y RFW son los \textit{benchmarks} donde se espera la diferenciación real; la probabilidad de obtener EER distinguibles entre ArcFace y AdaFace en esos dos es alta.
+\end{itemize}
 
-\end{consigna}
+\textbf{R5 --- Agotamiento de tiempo o burnout.}
+
+\begin{itemize}
+  \item \textbf{Acción:} priorizar las HU de los sprints 5 a 7 (núcleo experimental) por sobre las HU de los sprints 1 a 4 (pipeline base). Si el cronograma se ve comprometido, reducir el alcance de las HU de infraestructura (por ejemplo, simplificar la HU4 de manejo de capturas inválidas) antes que reducir el alcance experimental. Solicitar extensión del plazo al posgrado si la situación lo requiere.
+  \item Severidad revisada (S*): 7. La priorización del núcleo experimental reduce la probabilidad de tener que rehacer trabajo central.
+  \item Ocurrencia revisada (O*): 3. Con priorización clara y plan de extensión como red de seguridad, el riesgo de no llegar a la entrega baja.
+\end{itemize}
 
 \section{14. Sprint Review}
 \label{sec:sprint_review}
 
 La revisión de sprint (\emph{Sprint Review}) es una práctica fundamental en metodologías ágiles. Consiste en revisar y evaluar lo que se ha completado al finalizar un sprint. En esta instancia, se presentan los avances y se verifica si las funcionalidades cumplen con los criterios de aceptación establecidos. También se identifican entregables parciales y se consideran ajustes si es necesario.
 
-Aunque el proyecto aún se encuentre en etapa de planificación, esta sección permite proyectar cómo se evaluarán las funcionalidades más importantes del backlog. Esta mirada anticipada favorece la planificación enfocada en valor y permite reflexionar sobre posibles obstáculos.
+Aunque el proyecto aún se encuentre en etapa de planificación, esta sección permite proyectar cómo se evaluarán las funcionalidades más importantes del \textit{backlog}. Esta mirada anticipada favorece la planificación enfocada en valor y permite reflexionar sobre posibles obstáculos.
 
-\textbf{Objetivo:} anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \textit{product backlog}.
+\textbf{Objetivo:} anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \emph{Product Backlog}.
 
-Seleccionar al menos 4 HU del \textit{product backlog}. Para cada una, completar la siguiente tabla de revisión proyectada:
+Se seleccionan las HU1, HU5, HU8 y HU9, que cubren tanto el \textit{pipeline} base (captura, verificación en tiempo real) como el núcleo experimental (evaluación comparativa y \textit{fine-tuning}).
 
-\textbf{Formato sugerido:}
 \begin{table}[htpb]
-\renewcommand{\arraystretch}{1.5}
-\begin{tabular}{|>{\raggedright\arraybackslash}m{2.4cm}|
->{\raggedright\arraybackslash}m{2.3cm}|
->{\raggedright\arraybackslash}m{3cm}|
->{\raggedright\arraybackslash}m{3cm}|
->{\raggedright\arraybackslash}m{3cm}|}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{1.8cm}|
+                >{\raggedright\arraybackslash}p{3.4cm}|
+                >{\raggedright\arraybackslash}p{3cm}|
+                >{\raggedright\arraybackslash}p{3.5cm}|
+                >{\raggedright\arraybackslash}p{3cm}|}
 \hline
 \rowcolor[HTML]{CCCCCC}
 \textbf{HU seleccionada} & \textbf{Tareas asociadas} & \textbf{Entregable esperado} & \textbf{¿Cómo sabrás que está cumplida?} & \textbf{Observaciones o riesgos} \\
 \hline
-& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
-\multirow{-2}{=}{HU1}    & Tarea 2 & \multirow{-2}{=}{Módulo funcional} & \multirow{-2}{=}{Cumple criterios de aceptación definidos} & \multirow{-2}{=}{Falta validar con el tutor} \\
+\multirow{-2}{=}{HU1} & Implementación del módulo de captura facial y del flujo de registro (38 h en Sprint 1) & Módulo de captura y registro funcional con \textit{embedding} almacenado & Detección de un rostro, \textit{embedding} generado y recuperado correctamente; criterios de aceptación de HU1 cumplidos & Validar con cámara real; la calidad de la cámara afecta el EER de toda la cadena \\
 \hline
-& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
-\multirow{-2}{=}{HU3}    & Tarea 2 & \multirow{-2}{=}{Reporte generado} & \multirow{-2}{=}{Exportación disponible y clara} & \multirow{-2}{=}{Requiere datos reales} \\
+\multirow{-2}{=}{HU5} & Implementación del \textit{pipeline} de verificación en tiempo real al inicio de turno (28 h en Sprint 4) & Módulo de verificación en vivo funcional con indicador de aceptado/rechazado & \textit{Pipeline} ejecuta en menos de 5 s en el \textit{hardware} de referencia; criterios de aceptación de HU5 cumplidos & La latencia de captura y procesamiento en el \textit{hardware} de referencia puede ser ajustada \\
 \hline
-& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
-\multirow{-2}{=}{HU5}    & Tarea 2 & \multirow{-2}{=}{Panel de gestión} & \multirow{-2}{=}{Roles diferenciados operativos} & \multirow{-2}{=}{Riesgo en integración} \\
+\multirow{-2}{=}{HU8} & Diseño del protocolo experimental y ejecución de la evaluación \textit{baseline} de ArcFace y AdaFace sobre LFW, AgeDB y RFW (34 h en Sprint 5) & Tablas y curvas ROC comparativas preentrenadas; métricas EER, FAR, FRR, AUC & Resultados documentados con semillas, configuración y particiones; criterios de aceptación de HU8 cumplidos & Riesgo de que LFW esté saturado y no diferencie modelos (R3); respaldarse en AgeDB y RFW \\
 \hline
-& Tarea 1 &                             &                                           &                                     \\ \cline{2-2}
-\multirow{-2}{=}{HU7}    & Tarea 2 & \multirow{-2}{=}{Informe trimestral} & \multirow{-2}{=}{PDF con gráficos y evolución} & \multirow{-2}{=}{Puede faltar tiempo para ajustes} \\
+\multirow{-2}{=}{HU9} & Preparación del subconjunto de \textit{fine-tuning} y ejecución del ajuste de ArcFace sobre Glint360K o WebFace4M (38 h en Sprint 6) & Modelo ArcFace ajustado con curvas de \textit{loss} y \textit{checkpoints} intermedios & EER sobre AgeDB mejorado respecto del \textit{baseline} o análisis documentado de por qué no mejoró; criterios de aceptación de HU9 cumplidos & Riesgo de capacidad computacional (R1) y de no observar mejora (R2) \\
 \hline
 \end{tabular}
 \end{table}
@@ -683,40 +1063,38 @@ La retrospectiva de sprint es una práctica orientada a la mejora continua. Al f
 Durante la cursada se propuso el uso de la \textbf{Estrella de la Retrospectiva}, que organiza la reflexión en torno a cinco ejes:
 
 \begin{itemize}
-\item  ¿Qué hacer más?
-\item  ¿Qué hacer menos?
-\item  ¿Qué mantener?
-\item  ¿Qué empezar a hacer?
-\item  ¿Qué dejar de hacer?
+  \item ¿Qué hacer más?
+  \item ¿Qué hacer menos?
+  \item ¿Qué mantener?
+  \item ¿Qué empezar a hacer?
+  \item ¿Qué dejar de hacer?
 \end{itemize}
 
 Aun en una etapa temprana, esta herramienta permite que el alumno planifique su forma de trabajar, identifique anticipadamente posibles dificultades y diseñe estrategias de organización personal.
 
 \textbf{Objetivo:} reflexionar sobre las condiciones iniciales del proyecto, identificando fortalezas, posibles dificultades y estrategias de mejora, incluso antes del inicio del desarrollo.
 
-Completar la siguiente tabla tomando como referencia los cinco ejes de la Estrella de la Retrospectiva (\emph{Starfish} o estrella de mar). Esta instancia te ayudará a definir buenas prácticas desde el inicio y prepararte para enfrentar el trabajo de forma organizada y flexible. Se deberá completar la tabla al menos para 3 sprints técnicos y 1 no técnico.
-
-\textbf{Formato sugerido:}
+Se completa la tabla para tres sprints técnicos (Sprint 1 de captura facial, Sprint 6 de \textit{fine-tuning} y Sprint 9 de \textit{demo} y revisión) y un sprint no técnico (Sprint 10 de preparación de la defensa), en línea con los hitos centrales del proyecto.
 
 \begin{table}[htpb]
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{1.8cm}|
->{\raggedright\arraybackslash}p{2.3cm}|
->{\raggedright\arraybackslash}p{2.3cm}|
->{\raggedright\arraybackslash}p{2.3cm}|
->{\raggedright\arraybackslash}p{2.3cm}|
->{\raggedright\arraybackslash}p{2.3cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{2.6cm}|
+                >{\raggedright\arraybackslash}p{2.6cm}|
+                >{\raggedright\arraybackslash}p{2.6cm}|
+                >{\raggedright\arraybackslash}p{2.6cm}|
+                >{\raggedright\arraybackslash}p{2.6cm}|
+                >{\raggedright\arraybackslash}p{2.6cm}|}
 \hline
 \rowcolor[HTML]{CCCCCC}
 \textbf{Sprint tipo y N°} & \textbf{¿Qué hacer más?} & \textbf{¿Qué hacer menos?} & \textbf{¿Qué mantener?} & \textbf{¿Qué empezar a hacer?} & \textbf{¿Qué dejar de hacer?} \\
 \hline
-Sprint técnico - 1 & Validaciones continuas con el alumno & Cambios sin versión registrada & Pruebas con datos simulados & Documentar cambios propuestos & Ajustes sin análisis de impacto \\
+Sprint técnico 1 (Captura facial) & Pruebas con cámara y'éclairage real desde el inicio; documentar decisiones de diseño en el repositorio & Reescribir módulos sin versionar; posponer la lectura de la documentación de InsightFace & Commits pequeños y frecuentes con mensajes descriptivos; instalación del entorno en una máquina de referencia & Registrar issues y dudas en un \textit{log} de proyecto; correr pruebas con datasets sintéticos antes de integrar & Cambiar de modelo o librería sin evaluar impacto \\
 \hline
-Sprint técnico - 2 & Verificar configuraciones en múltiples escenarios & Modificar parámetros sin guardar historial & Perfiles reutilizables & Usar logs para configuración & Repetir pruebas manuales innecesarias \\
+Sprint técnico 6 (Fine-tuning) & Monitoreo de \textit{loss} y validación durante el entrenamiento; documentar \textit{hyperparámetros} y semillas & Reentrenar desde cero ante cada cambio; experimentar sin guardar \textit{checkpoints} & Registro riguroso de la configuración experimental; uso de \textit{wandb} o equivalente para tracking & Comparar curvas de entrenamiento entre modelos; calcular tiempo total de cómputo consumido & Modificar \textit{learning rate} o esquema de \textit{freeze} sin justificación documentada \\
 \hline
-Sprint técnico - 8 & Comparar correlaciones con casos previos & Cambiar parámetros sin justificar & Revisión cruzada de métricas & Anotar configuraciones usadas & Trabajar sin respaldo de datos \\
+Sprint técnico 9 (Demo y revisión) & Pruebas de extremo a extremo con la \textit{demo}; revisión cruzada de la documentación con la orientadora & Postergar \textit{bugs} conocidos del \textit{pipeline} por avanzar con la \textit{demo}; acumular deuda técnica sin documentarla & \textit{Demo} reproducible con un único comando; \textit{README} claro del repositorio & Hacer \textit{screencasts} cortos de la \textit{demo} para la defensa; pedirle a un tercero que ejecute el \textit{harness} desde cero & Depurar en vivo durante la defensa \\
 \hline
-Sprint no técnico - 12 (por ej.: ``Defensa'') & Ensayos orales con feedback & Cambiar contenidos en la memoria & Material visual claro & Dividir la presentación por bloques & Agregar gráficos difíciles de explicar \\
+Sprint no técnico 10 (Defensa) & Ensayos cronometrados con público; simulacro de preguntas del tribunal & Reescribir slides de último momento; excederse en detalles técnicos secundarios & Estructura clara: problema, solución, experimento, resultados, limitaciones; figuras con etiquetas legibles & Pedirle a un no-especialista que escuche la presentación; preparar respuestas a preguntas frecuentes (``¿por qué no AdaFace en producción?'', ``¿cuánto mejora el \textit{fine-tuning}?'') & Agregar slides o secciones que no se pueden defender en 15 minutos \\
 \hline
 \end{tabular}
 \end{table}
