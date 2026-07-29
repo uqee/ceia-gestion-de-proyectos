@@ -1,0 +1,110 @@
+# Un solo diagrama, dos flujos apilados: las filas (lanes) se apilan en
+# vertical (orden de declaración) y dentro de cada fila el flujo corre de
+# izquierda a derecha. La BD queda entre ambos flujos.
+# Render: d2 Figuras/diagBloques.d2 Figuras/diagBloques.png
+vars: {
+  blue: "#BDE0FE"
+  green: "#C3FAD5"
+  purple: "#E5DBFF"
+  yellow: "#FFEC99"
+  orange: "#FFD8A8"
+  red: "#FFC9C9"
+  gray: "#DEE2E6"
+}
+
+# LANE 1 (TOP)
+lane1: "Flujo de registro — verificación documento–rostro" {
+  direction: right
+  style.stroke-dash: 5
+
+  # Inputs
+  cámara: "Captura en vivo\n(cámara)" {style.fill: ${blue}}
+  doc: "Documento de identidad\n(digitalizado)" {style.fill: ${blue}}
+
+  # Processing Pipeline
+  deteccion: "Detección facial + validación de calidad\n(un rostro, nitidez, iluminación)" {style.fill: ${green}}
+  alineacion: "Alineación facial\n(landmarks)" {style.fill: ${green}}
+  embedding: "Generación de embedding\n(ArcFace / AdaFace)" {style.fill: ${green}}
+  comparacion: "Comparación\n(distancia coseno + umbral)" {style.fill: ${yellow}}
+
+  # Side path
+  liveness: "Liveness — baseline\n(MiniFASNet / FeatherNet)" {style.fill: ${purple}}
+
+  # Decision and Actions
+  decision: "¿Coincide?" {
+    shape: diamond
+    style.fill: ${orange}
+  }
+  almacenar: "Almacenar embedding\nde referencia" {style.fill: ${green}}
+  error: "Nueva captura /\nrevisión manual" {style.fill: ${red}}
+
+  # Connections Lane 1
+  cámara -> deteccion
+  doc -> deteccion
+  deteccion -> alineacion
+  deteccion -> liveness
+  alineacion -> embedding
+  embedding -> comparacion: "embedding en vivo +\nembedding del documento"
+  liveness -> decision: "score de liveness"
+  comparacion -> decision
+
+  decision -> almacenar: "sí"
+  decision -> error: "no"
+}
+
+# Central Shared Database (queda entre los dos flujos)
+db: "BD de\nembeddings" {
+  shape: cylinder
+  style.fill: ${gray}
+}
+
+# LANE 2 (BOTTOM)
+lane2: "Flujo de verificación de turno" {
+  direction: right
+  style.stroke-dash: 5
+
+  # Pipeline
+  cámara2: "Captura en vivo\n(cámara)" {style.fill: ${blue}}
+  deteccion2: "Detección facial +\nvalidación de calidad" {style.fill: ${green}}
+  alineacion2: "Alineación facial\n(landmarks)" {style.fill: ${green}}
+  embedding2: "Generación de embedding\n(ArcFace / AdaFace)" {style.fill: ${green}}
+  comparacion2: "Comparación con referencia\n(distancia coseno + umbral)" {style.fill: ${yellow}}
+
+  # Side path
+  liveness2: "Liveness — baseline" {style.fill: ${purple}}
+
+  # Decision and Actions
+  decision2: "¿Verificado?" {
+    shape: diamond
+    style.fill: ${orange}
+  }
+  exito: "Verificación exitosa" {style.fill: ${green}}
+
+  # Red chain
+  reintentos: "Reintentos\n(máx. 3)" {style.fill: ${red}}
+  incidencia: "Registro de incidencia\n(auditoría)" {style.fill: ${red}}
+  manual: "Revisión manual" {style.fill: ${red}}
+
+  # Connections Lane 2
+  cámara2 -> deteccion2
+  deteccion2 -> alineacion2
+  deteccion2 -> liveness2
+  alineacion2 -> embedding2
+  embedding2 -> comparacion2
+  liveness2 -> decision2: "score de liveness"
+  comparacion2 -> decision2
+
+  decision2 -> exito: "sí"
+  decision2 -> reintentos: "no"
+  reintentos -> incidencia -> manual
+}
+
+# Inter-lane connections to the database
+lane1.almacenar -> db: "escribe referencia\nvalidada"
+db -> lane2.comparacion2: "lee referencia"
+
+# Print readability (template rule on figure text size)
+**.style.font-size: 30
+(** -> **)[*]: {
+  style.font-size: 22
+}
