@@ -129,7 +129,7 @@ Se adjunta a esta acta la planificación inicial.
 
 El presente trabajo se desarrolla en el marco de \empclientename, empresa internacional del sector de mejoramiento del hogar, que enfrenta una problemática recurrente en la gestión de personal operativo tercerizado (mozos de depósito, personal de limpieza, mecánicos, peones): la falta de certeza de que la persona presente sea la misma que figura en la documentación o en el registro laboral. En la práctica, el riesgo operativo se concentra en dos situaciones de correspondencia de identidad: (1) en la selección, que quien se presenta ante el reclutador no coincida con la fotografía del documento de identidad exhibido; y (2) en la operación diaria, que quien asiste a un turno no sea la misma persona que fue dada de alta como trabajador. Queda fuera del problema tratado en este trabajo la determinación de si el documento de identidad es auténtico o falsificado, así como la verificación de que la imagen capturada corresponda a una persona en vivo y no a una reproducción.
 
-En cuanto al estado del arte, el reconocimiento facial es un campo maduro con arquitecturas de referencia como ArcFace y AdaFace para la generación de \textit{embeddings} faciales, y modelos de detección como MTCNN y RetinaFace. Adicionalmente, TransFace (CVPR 2023) representa una extensión reciente basada en \textit{transformers} que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes; se incluye como modelo opcional de evaluación si el cronograma lo permite (ver sección 4.1). La pregunta central que motiva este trabajo no es ya qué modelo preentrenado es mejor en abstracto (esa pregunta tiene respuesta conocida en la literatura), sino qué efecto produce el ajuste mediante \textit{fine-tuning} de adaptación al dominio (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo de reconocimiento facial, cuando se aplica sobre un subconjunto de un \textit{dataset} público aumentado con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, y cuál es el \textit{trade-off} de costo computacional asociado. Esta pregunta es relevante porque las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
+En cuanto al estado del arte, el reconocimiento facial es un campo maduro con arquitecturas de referencia como ArcFace y AdaFace para la generación de \textit{embeddings} faciales, y modelos de detección como MTCNN y RetinaFace. Adicionalmente, TransFace (ICCV 2023) representa una extensión reciente basada en \textit{transformers} que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes; se incluye como modelo opcional de evaluación si el cronograma lo permite (ver sección 4.1). La pregunta central que motiva este trabajo no es ya qué modelo preentrenado es mejor en abstracto (esa pregunta tiene respuesta conocida en la literatura), sino qué efecto produce el ajuste mediante \textit{fine-tuning} de adaptación al dominio (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo de reconocimiento facial, cuando se aplica sobre un subconjunto de un \textit{dataset} público aumentado con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, y cuál es el \textit{trade-off} de costo computacional asociado. Esta pregunta es relevante porque las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
 
 La solución propuesta consiste en un módulo de verificación biométrica basado en \textit{fine-tuning} de adaptación al dominio de modelos preentrenados modernos (ArcFace y AdaFace como modelos principales, TransFace como opcional) sobre un subconjunto de un \textit{dataset} público de gran escala (Glint360K o WebFace4M) aumentado con degradaciones sintéticas (desenfoque, compresión, baja resolución) y con muestreo orientado a diversidad de edad, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo, y su evaluación sistemática sobre tres \textit{benchmarks} estándar con condiciones complementarias: LFW (\textit{benchmark} clásico saturado, esperable superior al 99~\% en ambos modelos), AgeDB (verificación \textit{cross-age}, que ataca directamente el problema de envejecimiento declarado) y RFW (\textit{Racial Faces in the Wild}, que mide sesgo demográfico y se vincula con la sección de gobernanza). El proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa; la integración se materializa mediante un \textit{harness} CLI que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} y produce métricas reproducibles, y una \textit{demo} interactiva con Gradio para la presentación. A fin de cerrar el lazo entre el entrenamiento y la evaluación en condiciones adversas, las mismas degradaciones sintéticas aplicadas al subconjunto de \textit{fine-tuning} se aplican también para construir variantes degradadas de LFW y AgeDB, que emulan la heterogeneidad de calidad de captura del dominio operativo y permiten medir de manera comparable el rendimiento en condiciones adversas controladas, tanto del modelo preentrenado como del ajustado.
 
@@ -146,7 +146,7 @@ En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistem
 
 Por tratarse de un proyecto de vinculación con una empresa en el marco académico del posgrado, el proyecto no contempla financiamiento de programas públicos o privados adicionales. La relación con el cliente se enmarca en un acuerdo de confidencialidad (NDA) entre el \textit{product owner} y la empresa externa a la que pertenece; dicho NDA cubre información comercial y datos internos del cliente y de la empresa adoptante, y no restringe la difusión de los resultados académicos del trabajo: la metodología, el código del prototipo, los \textit{datasets} públicos utilizados, las métricas de evaluación y el análisis experimental son publicables en el marco del trabajo final. La documentación evita incluir datos confidenciales del cliente o de \empclientename.
 
-El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en \textit{outsourcing} operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis experimental sistemático del impacto del \textit{fine-tuning} de adaptación al dominio (con un subconjunto aumentado con las mismas degradaciones sintéticas que se aplican a los \textit{benchmarks} de evaluación) sobre el rendimiento y el costo computacional, un abordaje escasamente reportado en la literatura comparativa reciente y que, a diferencia del ajuste sobre un subconjunto sin transformar, permite formular una pregunta experimental realmente respondible. Tercero, integra consideraciones de equidad y robustez demográfica desde el diseño (evaluación sobre RFW) y sienta las bases para un módulo de liveness extensible en una iteración posterior (por ejemplo, en una etapa de maestría), y se basa exclusivamente en \textit{datasets} públicos sujetos a verificación de sus licencias y condiciones de uso para garantizar el cumplimiento de la normativa de protección de datos personales en el ámbito del trabajo final.
+El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en \textit{outsourcing} operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis experimental sistemático del impacto del \textit{fine-tuning} de adaptación al dominio (con un subconjunto aumentado con las mismas degradaciones sintéticas que se aplican a los \textit{benchmarks} de evaluación) sobre el rendimiento y el costo computacional, un abordaje escasamente reportado en la literatura comparativa reciente y que, a diferencia del ajuste sobre un subconjunto sin transformar, permite formular una pregunta experimental realmente respondible. Tercero, integra consideraciones de equidad y robustez demográfica desde el diseño (evaluación sobre RFW) y sienta las bases para un módulo de \textit{liveness} extensible en una iteración posterior (por ejemplo, en una etapa de maestría), y se basa exclusivamente en \textit{datasets} públicos sujetos a verificación de sus licencias y condiciones de uso para garantizar el cumplimiento de la normativa de protección de datos personales en el ámbito del trabajo final.
 
 \section{2. Identificación y análisis de los interesados}
 \label{sec:interesados}
@@ -170,10 +170,38 @@ El proyecto se enmarca en \empclientename\hspace{1px} como empresa adoptante y p
 Principales características de los interesados:
 
 \begin{itemize}
-  \item Cliente (\clientename): actúa como \textit{product owner} bajo NDA. Expectativas: que el prototipo demuestre los flujos de verificación, que el análisis experimental sea riguroso y que los resultados aporten evidencia técnica útil para una eventual decisión de despliegue. Influencia: alta --- define prioridades del \textit{backlog} y aprueba el cierre. Información que recibe: avances periódicos, resultados de evaluación, documentación técnica. Entregables que revisa: \textit{backlog} priorizado, \textit{harness} de evaluación y resultados, documentación, entregable final del trabajo.
-  \item Orientadora (\supname): experta en \textit{machine learning}. Expectativas: que las decisiones técnicas estén fundamentadas y que la evaluación experimental sea rigurosa y reproducible. Influencia: alta --- supervisa la dirección técnica y valida la elección de modelos y protocolos. Información que recibe: requerimientos, resultados de experimentos, métricas de rendimiento. Entregables que revisa: selección de arquitecturas, configuración de \textit{fine-tuning}, informe comparativo, \textit{harness} de evaluación. Supervisa la definición de requerimientos técnicos, la selección de arquitecturas, el \textit{fine-tuning} y la evaluación del \textit{pipeline} biométrico.
-  \item Responsable (\authorname): Expectativas: completar el trabajo final con calidad, dentro del plazo y las horas estimadas. Influencia: media --- ejecuta y documenta, pero depende de las decisiones del cliente y la orientadora. Información que recibe: reuniones con cliente y orientadora, retroalimentación sobre entregables. Entregables que revisa: todo el código, la documentación técnica y la memoria del trabajo final. Encargado de planificar, implementar, ajustar, evaluar y documentar el prototipo hasta la defensa del trabajo final. En el contexto académico del trabajo, el rol de administrador del prototipo que aparece en las historias de usuario (HU7, HU14 y HU15) es ejercido por el propio responsable.
-  \item Usuario final (especialista de RRHH, supervisor de turno): Expectativas: que el sistema sea intuitivo, rápido y confiable para los flujos de registro y verificación. Influencia: baja --- son usuarios de referencia del prototipo; no participan en decisiones del proyecto. Información que recibe: \textit{demo} interactiva, manuales de uso. Entregables que revisa: \textit{demo} y experiencia de uso en las pruebas con \textit{datasets} públicos. Los roles operativos de referencia del prototipo son el especialista de RRHH (flujo de registro y verificación documento--rostro) y el supervisor de turno (flujo de verificación al inicio de jornada). En este trabajo no se despliega el sistema sobre operaciones reales de \empclientename; dichos roles guían el diseño de la \textit{demo} y de las historias de usuario.
+  \item Cliente (\clientename)
+    \begin{itemize}
+      \item Rol: actúa como \textit{product owner} bajo NDA.
+      \item Expectativas: que el prototipo demuestre los flujos de verificación, que el análisis experimental sea riguroso y que los resultados aporten evidencia técnica útil para una eventual decisión de despliegue.
+      \item Influencia: alta --- define prioridades del \textit{backlog} y aprueba el cierre.
+      \item Información que recibe: avances periódicos, resultados de evaluación, documentación técnica.
+      \item Entregables que revisa: \textit{backlog} priorizado, \textit{harness} de evaluación y resultados, documentación, entregable final del trabajo.
+    \end{itemize}
+  \item Orientadora (\supname)
+    \begin{itemize}
+      \item Rol: experta en \textit{machine learning}. Supervisa la definición de requerimientos técnicos, la selección de arquitecturas, el \textit{fine-tuning} y la evaluación del \textit{pipeline} biométrico.
+      \item Expectativas: que las decisiones técnicas estén fundamentadas y que la evaluación experimental sea rigurosa y reproducible.
+      \item Influencia: alta --- supervisa la dirección técnica y valida la elección de modelos y protocolos.
+      \item Información que recibe: requerimientos, resultados de experimentos, métricas de rendimiento.
+      \item Entregables que revisa: selección de arquitecturas, configuración de \textit{fine-tuning}, informe comparativo, \textit{harness} de evaluación.
+    \end{itemize}
+  \item Responsable (\authorname)
+    \begin{itemize}
+      \item Rol: encargado de planificar, implementar, ajustar, evaluar y documentar el prototipo hasta la defensa del trabajo final. En el contexto académico del trabajo, el rol de administrador del prototipo que aparece en las historias de usuario (HU7, HU14 y HU15) es ejercido por el propio responsable.
+      \item Expectativas: completar el trabajo final con calidad, dentro del plazo y las horas estimadas.
+      \item Influencia: media --- ejecuta y documenta, pero depende de las decisiones del cliente y la orientadora.
+      \item Información que recibe: reuniones con cliente y orientadora, retroalimentación sobre entregables.
+      \item Entregables que revisa: todo el código, la documentación técnica y la memoria del trabajo final.
+    \end{itemize}
+  \item Usuario final (especialista de RRHH, supervisor de turno)
+    \begin{itemize}
+      \item Rol: los roles operativos de referencia del prototipo son el especialista de RRHH (flujo de registro y verificación documento--rostro) y el supervisor de turno (flujo de verificación al inicio de jornada). En este trabajo no se despliega el sistema sobre operaciones reales de \empclientename; dichos roles guían el diseño de la \textit{demo} y de las historias de usuario.
+      \item Expectativas: que el sistema sea intuitivo, rápido y confiable para los flujos de registro y verificación.
+      \item Influencia: baja --- son usuarios de referencia del prototipo; no participan en decisiones del proyecto.
+      \item Información que recibe: \textit{demo} interactiva, manuales de uso.
+      \item Entregables que revisa: \textit{demo} y experiencia de uso en las pruebas con \textit{datasets} públicos.
+    \end{itemize}
 \end{itemize}
 
 \section{3. Propósito del proyecto}
@@ -196,9 +224,9 @@ El proyecto incluye:
   \item verificación de correspondencia entre el rostro en vivo y la fotografía del documento en el flujo de registro, y verificación facial frente a la referencia almacenada al inicio de turno;
   \item módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad;
   \item \textit{fine-tuning} de adaptación al dominio de al menos uno de los modelos (ArcFace o AdaFace) sobre un subconjunto seleccionado de un \textit{dataset} público de gran escala (Glint360K o WebFace4M), aumentado con degradaciones sintéticas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo, con evaluación de su impacto frente a la versión preentrenada;
-  \item evaluación comparativa de los modelos preentrenados y ajustados sobre al menos tres \textit{benchmarks} públicos: LFW (\textit{baseline}), AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), así como sobre variantes degradadas sintéticamente de LFW y AgeDB (desenfoque, compresión, baja resolución), con métricas EER, FAR, FRR, curva ROC, AUC, TAR a FAR fijo (por ejemplo, TAR con FAR = $10^{-3}$) y tiempo medio de inferencia. Los modelos principales son ArcFace y AdaFace; TransFace (CVPR 2023) puede incluirse como tercer modelo opcional si el cronograma lo permite, a fin de ampliar la cobertura del estado del arte (ver sección 4.1);
+  \item evaluación comparativa de los modelos preentrenados y ajustados sobre al menos tres \textit{benchmarks} públicos: LFW (\textit{baseline}), AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), así como sobre variantes degradadas sintéticamente de LFW y AgeDB (desenfoque, compresión, baja resolución), con métricas EER, FAR, FRR, curva ROC, AUC, TAR a FAR fijo (por ejemplo, TAR con FAR = $10^{-3}$) y tiempo medio de inferencia. Los modelos principales son ArcFace y AdaFace; TransFace (ICCV 2023) puede incluirse como tercer modelo opcional si el cronograma lo permite, a fin de ampliar la cobertura del estado del arte (ver sección 4.1);
   \item módulo de \textit{liveness} (componente obligatorio del MVP) basado en un modelo preentrenado (por ejemplo, MiniFASNet o FeatherNet) evaluado sobre un \textit{dataset} público de \textit{spoofing} (OULU-NPU o CASIA-FASD), operando como \textit{baseline} extensible cuyo desarrollo robusto queda como trabajo futuro;
-  \item \textit{harness} de evaluación end-to-end ejecutable como CLI o notebook parametrizable, que corra el \textit{pipeline} completo sobre un \textit{benchmark} y produzca métricas y figuras reproducibles;
+  \item \textit{harness} de evaluación \textit{end-to-end} ejecutable como CLI o \textit{notebook} parametrizable, que corra el \textit{pipeline} completo sobre un \textit{benchmark} y produzca métricas y figuras reproducibles;
   \item \textit{demo} interactiva con Gradio o Streamlit para la presentación del prototipo;
   \item documentación que incluya: informe de avance, memoria técnica, manual de uso del prototipo, documentación del \textit{harness} y repositorio con instrucciones de reproducción de experimentos.
 \end{itemize}
@@ -234,7 +262,7 @@ Los componentes obligatorios del MVP son aquellos cuya entrega es indispensable 
 
 \paragraph{Componentes opcionales (no pertenecen al MVP).}
 \begin{itemize}
-  \item Evaluación de TransFace (CVPR 2023) como tercer modelo preentrenado, en idénticas condiciones que ArcFace y AdaFace (8 h en el WBS).
+  \item Evaluación de TransFace (ICCV 2023) como tercer modelo preentrenado, en idénticas condiciones que ArcFace y AdaFace (8 h en el WBS).
   \item \textit{Fine-tuning} de adaptación al dominio de AdaFace como segundo ajuste, con la misma metodología del MVP (12 h en el WBS).
   \item Cualquier extensión del módulo de \textit{liveness} más allá del \textit{baseline} (arquitecturas alternativas, ajuste sobre datos de \textit{spoofing} del dominio): se documenta como trabajo futuro.
 \end{itemize}
@@ -348,9 +376,9 @@ HU8: Evaluación comparativa de ArcFace y AdaFace preentrenados
 
 HU9: Evaluación de TransFace preentrenado (opcional, no pertenece al MVP)
 \begin{itemize}
-  \item Como orientadora técnica, quiero que, si el cronograma lo permite, TransFace (CVPR 2023) se evalúe en idénticas condiciones que ArcFace y AdaFace y se reporte en una fila adicional de las tablas comparativas, con la advertencia explícita de que es resultado de una iteración opcional y no afecta los hallazgos principales del trabajo.
+  \item Como orientadora técnica, quiero que, si el cronograma lo permite, TransFace (ICCV 2023) se evalúe en idénticas condiciones que ArcFace y AdaFace y se reporte en una fila adicional de las tablas comparativas, con la advertencia explícita de que es resultado de una iteración opcional y no afecta los hallazgos principales del trabajo.
   \item Prioridad: baja
-  \item Dificultad: 5, complejidad: 5, incertidumbre: 5
+  \item Dificultad: 4, complejidad: 4, incertidumbre: 4
   \item \textit{Story points}: 13
 \end{itemize}
 
@@ -358,7 +386,7 @@ HU10: Preparación del subconjunto de \textit{fine-tuning} de adaptación al dom
 \begin{itemize}
   \item Como orientadora técnica, quiero que se seleccione y documente un subconjunto de Glint360K o WebFace4M (5\,000--10\,000 identidades, 100\,000--300\,000 imágenes) con muestreo orientado a diversidad de edad, y que se aplique \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución) y partición \textit{train}/\textit{val} documentada, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo.
   \item Prioridad: alta
-  \item Dificultad: 5, complejidad: 5, incertidumbre: 4
+  \item Dificultad: 5, complejidad: 4, incertidumbre: 4
   \item \textit{Story points}: 13
 \end{itemize}
 
@@ -374,7 +402,7 @@ HU12: Ejecución del \textit{fine-tuning} de adaptación al dominio de AdaFace (
 \begin{itemize}
   \item Como orientadora técnica, quiero que, si el cronograma lo permite, AdaFace se ajuste mediante \textit{fine-tuning} de adaptación al dominio sobre el mismo subconjunto preparado en la HU10, con la misma metodología de la HU11, a fin de ampliar la comparativa preentrenado vs ajustado.
   \item Prioridad: baja
-  \item Dificultad: 5, complejidad: 5, incertidumbre: 5
+  \item Dificultad: 4, complejidad: 5, incertidumbre: 4
   \item \textit{Story points}: 13
 \end{itemize}
 
@@ -396,9 +424,9 @@ HU14: Módulo de \textit{liveness} (\textit{baseline})
 
 \subsection{Épica 4: \textit{Harness} de evaluación, \textit{demo} y entrega}
 
-HU15: \textit{Harness} de evaluación end-to-end
+HU15: \textit{Harness} de evaluación \textit{end-to-end}
 \begin{itemize}
-  \item Como administrador del prototipo, quiero un \textit{harness} ejecutable como CLI o notebook parametrizable que corra el \textit{pipeline} completo (detección, alineación, \textit{embedding}, comparación, decisión) sobre un \textit{benchmark} seleccionado y produzca métricas y figuras reproducibles (ROC, EER, FAR, FRR, AUC, tiempo de inferencia), a fin de permitir la verificación independiente de los resultados.
+  \item Como administrador del prototipo, quiero un \textit{harness} ejecutable como CLI o \textit{notebook} parametrizable que corra el \textit{pipeline} completo (detección, alineación, \textit{embedding}, comparación, decisión) sobre un \textit{benchmark} seleccionado y produzca métricas y figuras reproducibles (ROC, EER, FAR, FRR, AUC, tiempo de inferencia), a fin de permitir la verificación independiente de los resultados.
   \item Prioridad: alta
   \item Dificultad: 5, complejidad: 5, incertidumbre: 2
   \item \textit{Story points}: 13
@@ -417,7 +445,7 @@ HU16: \textit{Demo} interactiva y documentación
 
 Los criterios de aceptación se definen para cada historia de usuario del \textit{product backlog}, de modo que puedan validarse las condiciones necesarias para considerar cumplida la funcionalidad. Cada historia tiene criterios medibles, específicos y verificables. Se incluyen al menos tres criterios por historia: uno funcional, uno visual y uno técnico (cuando aplica). En las HU8, HU9, HU10, HU11, HU12 y HU13 el criterio ``visual'' se interpreta como presentación clara de resultados (tablas o gráficos en la documentación o en la \textit{demo}).
 
-Cada criterio técnico especifica, cuando corresponde, el conjunto de prueba, el protocolo experimental y el \textit{hardware} de referencia, a fin de garantizar la reproducibilidad. El \textit{hardware} de referencia para todas las métricas de tiempo es un MacBook Pro 16'' 2019 (Intel, 16\,GB de RAM, AMD Radeon Pro 5300M 4\,GB). Las corridas de \textit{fine-tuning} y evaluación se realizan preferentemente en un entorno con GPU con \textit{framework} CUDA (Google Colab, Kaggle o equivalente), a fin de asegurar tiempos de entrenamiento razonables dentro del plazo del trabajo. Se advierte que los tiempos de inferencia medidos en el \textit{hardware} de referencia (CPU/IGPU) son útiles como cotas reproducibles para el prototipo académico y no son representativos de un despliegue productivo sobre GPU; en la memoria se documenta el dispositivo empleado en cada corrida, de modo que las cifras sean trazables y comparables.
+Cada criterio técnico especifica, cuando corresponde, el conjunto de prueba, el protocolo experimental y el \textit{hardware} de referencia, a fin de garantizar la reproducibilidad. El \textit{hardware} de referencia para todas las métricas de tiempo es un MacBook Pro 16'' 2019 (Intel, 16\,GB de RAM, AMD Radeon Pro 5300M 4\,GB). Las corridas de \textit{fine-tuning} y evaluación se realizan preferentemente en un entorno con GPU con soporte CUDA (Google Colab, Kaggle o equivalente), a fin de asegurar tiempos de entrenamiento razonables dentro del plazo del trabajo. Se advierte que los tiempos de inferencia medidos en el \textit{hardware} de referencia (CPU/IGPU) son útiles como cotas reproducibles para el prototipo académico y no son representativos de un despliegue productivo sobre GPU; en la memoria se documenta el dispositivo empleado en cada corrida, de modo que las cifras sean trazables y comparables.
 
 \subsection{Épica 1: Registro y verificación documento--rostro}
 
@@ -527,7 +555,7 @@ Criterios de aceptación HU14: Módulo de \textit{liveness} (\textit{baseline})
 
 \subsection{Épica 4: \textit{Harness} de evaluación, \textit{demo} y entrega}
 
-Criterios de aceptación HU15: \textit{Harness} de evaluación end-to-end
+Criterios de aceptación HU15: \textit{Harness} de evaluación \textit{end-to-end}
 \begin{enumerate}
   \item Funcional: el \textit{harness} acepta por línea de comandos los argumentos mínimos (modelo, \textit{benchmark}, partición, semilla) y produce un directorio de salida con métricas (JSON o CSV) y figuras (PNG) reproducibles.
   \item Visual: la documentación del \textit{harness} (formato Markdown) describe los argumentos, las salidas esperadas y un ejemplo de uso.
@@ -597,7 +625,7 @@ Los algoritmos evaluados son:
 \begin{itemize}
   \item ArcFace (ResNet-100): red neuronal que emplea una función de pérdida aditiva angular (\textit{Additive Angular Margin Loss}) para generar \textit{embeddings} con alta discriminabilidad. Se utilizará la implementación preentrenada de InsightFace con \textit{weights} públicos, y se realizará \textit{fine-tuning} de adaptación al dominio sobre el subconjunto aumentado con degradaciones sintéticas.
   \item AdaFace (CVPR 2022): red neuronal que introduce una función de pérdida con margen adaptativo a la calidad (\textit{quality-adaptive margin}), reportando mejoras sobre ArcFace en condiciones adversas. Se utilizará la implementación preentrenada pública, y opcionalmente se ajustará sobre el mismo subconjunto aumentado con degradaciones sintéticas.
-  \item TransFace (CVPR 2023, opcional): arquitectura basada en \textit{transformers} para la generación de \textit{embeddings} faciales, que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes. Su inclusión queda condicionada a la disponibilidad de tiempo dentro del cronograma y al éxito del \textit{fine-tuning} de adaptación al dominio de los modelos principales. Si se incluye, se evalúa en idénticas condiciones que ArcFace y AdaFace y se reporta en una fila adicional de las tablas comparativas, con la advertencia explícita de que es resultado de una iteración opcional y no afecta los hallazgos principales del trabajo.
+  \item TransFace (ICCV 2023, opcional): arquitectura basada en \textit{transformers} para la generación de \textit{embeddings} faciales, que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes. Su inclusión queda condicionada a la disponibilidad de tiempo dentro del cronograma y al éxito del \textit{fine-tuning} de adaptación al dominio de los modelos principales. Si se incluye, se evalúa en idénticas condiciones que ArcFace y AdaFace y se reporta en una fila adicional de las tablas comparativas, con la advertencia explícita de que es resultado de una iteración opcional y no afecta los hallazgos principales del trabajo.
 \end{itemize}
 
 El método de comparación entre \textit{embeddings} es la distancia coseno. La decisión se realiza mediante un umbral configurable que balancea la tasa de falsos aceptos (FAR) y la tasa de falsos rechazos (FRR).
@@ -733,7 +761,7 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
     HU14 & Integración del clasificador de \textit{liveness} preentrenado (MiniFASNet o FeatherNet) y evaluación sobre OULU-NPU (o CASIA-FASD), con cálculo de ACER/HTER y documentación de limitaciones del \textit{baseline} & 18 h & Media \\ \cline{2-4}
     HU14 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} principal y a la \textit{demo}, con ejemplo etiquetado de ataque (foto impresa) & 14 h & Media \\ \hline
 
-    HU15 & Implementación del \textit{harness} CLI: argparse con argumentos (modelo, \textit{benchmark}, partición, semilla), ejecución del \textit{pipeline} end-to-end y guardado de métricas y figuras en un directorio de salida & 18 h & Alta \\ \cline{2-4}
+    HU15 & Implementación del \textit{harness} CLI: argparse con argumentos (modelo, \textit{benchmark}, partición, semilla), ejecución del \textit{pipeline} \textit{end-to-end} y guardado de métricas y figuras en un directorio de salida & 18 h & Alta \\ \cline{2-4}
     HU15 & Documentación del \textit{harness} en formato Markdown: argumentos, salidas esperadas, ejemplo de uso, comandos exactos para reproducir las cifras de la memoria & 6 h & Media \\ \hline
 
     HU16 & Implementación de la \textit{demo} interactiva con Gradio o Streamlit: pestañas para verificación en vivo, resultados experimentales y, cuando aplique, cotejo documento--rostro & 12 h & Media \\ \cline{2-4}
@@ -766,14 +794,14 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
   \end{tabularx}
 \end{table}
 
-La suma de las estimaciones de las tareas técnicas asciende a 388 horas y la de las actividades no técnicas a 212 horas, totalizando 600 horas estimadas en la desagregación, coherente con la planificación de sprints y con el presupuesto declarado en el acta de constitución. La proporción de actividades no técnicas (212 h) supera la franja sugerida de 100 a 120 h a causa del peso de la memoria técnica, los informes parciales por bimestre y la preparación de la defensa en un proyecto individual con núcleo experimental; se adopta como una desviación justificada y deliberada. Adicionalmente, se contemplan 20 horas de tareas opcionales (TransFace como tercer modelo de evaluación y como segundo \textit{fine-tuning} de adaptación al dominio), presentes únicamente en el WBS y no en la planificación de sprints, que se ejecutarán solo si el cronograma lo permite y no forman parte del núcleo obligatorio del trabajo.
+La suma de las estimaciones de las tareas técnicas asciende a 388 horas y la de las actividades no técnicas a 212 horas, totalizando 600 horas estimadas en la desagregación, coherente con la planificación de sprints y con el presupuesto declarado en el acta de constitución. La proporción de actividades no técnicas (212 h) supera la franja sugerida de 100 a 120 h a causa del peso de la memoria técnica, los informes parciales por bimestre y la preparación de la defensa en un proyecto individual con núcleo experimental; se adopta como una desviación justificada y deliberada. Adicionalmente, se contemplan 20 horas de tareas opcionales (evaluación de TransFace como tercer modelo de evaluación y \textit{fine-tuning} de AdaFace como segundo ajuste de adaptación al dominio), presentes únicamente en el WBS y no en la planificación de sprints, que se ejecutarán solo si el cronograma lo permite y no forman parte del núcleo obligatorio del trabajo.
 
-Para facilitar la trazabilidad entre ambas desagregaciones, las diez filas no técnicas de la tabla anterior se corresponden, una a una y con idéntica estimación horaria, con las filas etiquetadas ``No téc.'' de la planificación de sprints (sección~\ref{sec:sprints}); cada fila no técnica indica entre paréntesis el sprint en el que se ejecuta. Asimismo, la fila técnica ``Infra.'' del WBS (configuración del entorno, 20 h) corresponde a la fila ``Planif.'' del Sprint 0, y la fila técnica ``Cierre'' del WBS (ajustes finales al prototipo, 10 h) corresponde a la fila ``---'' del Sprint 10. De este modo el WBS y la planificación de sprints coinciden exactamente en 388 h técnicas y 212 h no técnicas (600 h del núcleo obligatorio), difiriendo únicamente en las 20 h opcionales referidas en el párrafo anterior, propias del WBS.
+Para facilitar la trazabilidad entre ambas desagregaciones, las diez filas no técnicas de la tabla anterior se corresponden, con idéntica estimación horaria agregada por fila, con las filas etiquetadas ``No téc.'' de la planificación de sprints (sección~\ref{sec:sprints}); cada fila no técnica indica entre paréntesis el sprint en el que se ejecuta, y su estimación coincide con la suma de las filas no técnicas del sprint correspondiente. Asimismo, la fila técnica ``Infra.'' del WBS (configuración del entorno, 20 h) corresponde a la fila ``Planif.'' del Sprint 0, y la fila técnica ``Cierre'' del WBS (ajustes finales al prototipo, 10 h) corresponde a la fila ``---'' del Sprint 10. De este modo el WBS y la planificación de sprints coinciden exactamente en 388 h técnicas y 212 h no técnicas (600 h del núcleo obligatorio), difiriendo únicamente en las 20 h opcionales referidas en el párrafo anterior, propias del WBS.
 
 \section{10. Planificación de Sprints}
 \label{sec:sprints}
 
-Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 a 3 semanas de duración cada uno, distribuidos a lo largo de 4 bimestres curriculares (34 semanas, aproximadamente 8 meses, desde el 24 de agosto de 2026 hasta finales de abril de 2027). Cada sprint concentra 50 horas de trabajo, lo que resulta en una carga promedio de 20 horas semanales (con picos de 25 horas semanales en los sprints de 2 semanas), con semanas de transición entre bimestres dedicadas a repaso, redacción de informes parciales y revisión con la orientadora. El responsable de todas las tareas es el autor del trabajo final. La planificación contempla tanto tareas técnicas derivadas de las historias de usuario como actividades no técnicas (planificación, documentación, reuniones y preparación de la defensa). El núcleo experimental (\textit{fine-tuning} y evaluación sobre \textit{benchmarks} múltiples) se concentra en los sprints 5 a 7, mientras que los sprints 1 a 4 corresponden a la construcción del \textit{pipeline} base y los sprints 8 a 11 a la integración, \textit{liveness}, \textit{demo}, documentación y cierre. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral, la preparación de la defensa y el cierre.
+Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 a 3 semanas de duración cada uno, distribuidos a lo largo de 4 bimestres curriculares (35 semanas, aproximadamente 8 meses, desde el 24 de agosto de 2026 hasta finales de abril de 2027). Cada sprint concentra 50 horas de trabajo, lo que resulta en una carga promedio de 20 horas semanales (con picos de 25 horas semanales en los sprints de 2 semanas), con semanas de transición entre bimestres dedicadas a repaso, redacción de informes parciales y revisión con la orientadora. El responsable de todas las tareas es el autor del trabajo final. La planificación contempla tanto tareas técnicas derivadas de las historias de usuario como actividades no técnicas (planificación, documentación, reuniones y preparación de la defensa). El núcleo experimental (\textit{fine-tuning} y evaluación sobre \textit{benchmarks} múltiples) se concentra en los sprints 5 a 7, mientras que los sprints 1 a 4 corresponden a la construcción del \textit{pipeline} base y los sprints 8 a 11 a la integración, \textit{liveness}, \textit{demo}, documentación y cierre. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral, la preparación de la defensa y el cierre.
 
 \begin{table}[htpb]
   \centering
@@ -841,7 +869,7 @@ Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 
 
     Sprint 8 & HU14 & Integración del clasificador de \textit{liveness} y evaluación sobre OULU-NPU & 18 h & Al. & 0 \\ \cline{2-6}
     Sprint 8 & HU14 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} y a la \textit{demo} & 14 h & Al. & 0 \\ \cline{2-6}
-    Sprint 8 & HU15 & Implementación del \textit{harness} CLI de evaluación end-to-end & 18 h & Al. & 0 \\ \hline
+    Sprint 8 & HU15 & Implementación del \textit{harness} CLI de evaluación \textit{end-to-end} & 18 h & Al. & 0 \\ \hline
 
     Sprint 9 & HU15 & Documentación del \textit{harness} y comandos de reproducción & 6 h & Al. & 0 \\ \cline{2-6}
     Sprint 9 & HU16 & Implementación de la \textit{demo} interactiva con Gradio/Streamlit & 18 h & Al. & 0 \\ \cline{2-6}
@@ -859,18 +887,18 @@ Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 
   \end{tabularx}
 \end{table}
 
-La distribución totaliza 600 horas, distribuidas a lo largo de 12 sprints (Sprint 0 al Sprint 11) en un plazo de 34 semanas (4 bimestres, aproximadamente 8 meses), desde el 24 de agosto de 2026 hasta finales de abril de 2027. La carga promedio es de 20 horas semanales (50 h por sprint de 2 a 3 semanas), con semanas de transición entre bimestres. El núcleo experimental (sprints 5 a 7) recibe 110 horas técnicas, lo que refleja su carácter central. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral del \textit{pipeline} y de la documentación, la preparación de la defensa y la entrega final.
+La distribución totaliza 600 horas, distribuidas a lo largo de 12 sprints (Sprint 0 al Sprint 11) en un plazo de 35 semanas (4 bimestres, aproximadamente 8 meses), desde el 24 de agosto de 2026 hasta finales de abril de 2027. La carga promedio es de 20 horas semanales (50 h por sprint de 2 a 3 semanas), con semanas de transición entre bimestres. El núcleo experimental (sprints 5 a 7) recibe 120 horas técnicas, lo que refleja su carácter central. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral del \textit{pipeline} y de la documentación, la preparación de la defensa y la entrega final.
 
 \section{11. Diagrama de Gantt (sprints)}
 \label{sec:gantt}
 
-La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando como base los sprints definidos en la sección~\ref{sec:sprints}. El eje horizontal representa las semanas del proyecto, distribuidas en 4 bimestres curriculares desde el 24 de agosto de 2026 hasta finales de abril de 2027 (34 semanas, aproximadamente 8 meses). Cada fila corresponde a un sprint o a una tarea del sprint. Las tareas técnicas derivadas de historias de usuario se diferencian visualmente de las actividades no técnicas (planificación, documentación, defensa). Las bandas en gris claro representan semanas de transición entre bimestres, dedicadas a revisión, redacción de informes parciales y descanso planificado.
+La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando como base los sprints definidos en la sección~\ref{sec:sprints}. El eje horizontal representa las semanas del proyecto, distribuidas en 4 bimestres curriculares desde el 24 de agosto de 2026 hasta finales de abril de 2027 (35 semanas, aproximadamente 8 meses). Cada fila corresponde a un sprint o a una tarea del sprint. Las tareas técnicas derivadas de historias de usuario se diferencian visualmente de las actividades no técnicas (planificación, documentación, defensa). Las bandas en gris claro representan semanas de transición entre bimestres, dedicadas a revisión, redacción de informes parciales y descanso planificado.
 
 \begin{landscape}
   \begin{figure}[htpb]
     \centering
     \begin{ganttchart}[
-        x unit=0.55cm,
+        x unit=0.53cm,
         y unit title=0.3cm,
         y unit chart=0.3cm,
         vgrid,
@@ -886,7 +914,7 @@ La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando co
         group height=.3,
         milestone label font=\scriptsize,
         milestone/.style={fill=red!80}
-      ]{1}{34}
+      ]{1}{35}
       \gantttitle{Agosto}{2}
       \gantttitle{Sept.}{4}
       \gantttitle{Oct.}{4}
@@ -895,8 +923,8 @@ La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando co
       \gantttitle{Ene.}{4}
       \gantttitle{Feb.}{4}
       \gantttitle{Mar.}{4}
-      \gantttitle{Abr.}{3} \\
-      \foreach \i in {1,...,34} {
+      \gantttitle{Abr.}{4} \\
+      \foreach \i in {1,...,35} {
         \gantttitle{\scriptsize S\i}{1}
       } \\
 
@@ -968,7 +996,7 @@ La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando co
       \ganttbar[bar/.style={fill=orange!60}]{Reuniones finales}{33}{33} \\
       \ganttbar[bar/.style={fill=orange!60}]{Entrega final}{34}{34} \\
 
-      \ganttmilestone{Defensa}{34}
+      \ganttmilestone{Defensa}{35}
     \end{ganttchart}
     \caption{Diagrama de Gantt del proyecto.}
     \label{fig:gantt}
@@ -1066,7 +1094,7 @@ Para abordar los riesgos identificados, el prototipo incorpora las siguientes me
 Las siguientes medidas son necesarias para un eventual despliegue operativo del sistema, pero no forman parte del alcance de este prototipo académico ni se implementan en el \textit{backlog}, los criterios de aceptación, el WBS ni los sprints del proyecto. Se documentan aquí como guía explícita para una iteración posterior, en línea con la exclusión correspondiente declarada en la sección 4:
 
 \begin{itemize}
-  \item Control de acceso al almacenamiento de \textit{embeddings}: mecanismos de autenticación y autorización que Restrinjan la consulta y manipulación de la base de \textit{embeddings} a los usuarios autorizados (administrador del sistema, equipo de RRHH), con registro de accesos.
+  \item Control de acceso al almacenamiento de \textit{embeddings}: mecanismos de autenticación y autorización que restrinjan la consulta y manipulación de la base de \textit{embeddings} a los usuarios autorizados (administrador del sistema, equipo de RRHH), con registro de accesos.
   \item Mecanismos de eliminación y actualización de registros: implementación operativa del derecho de supresión (``derecho al olvido'') y de la rectificación o actualización de los \textit{embeddings} asociados a un candidato o trabajador (por ejemplo, ante reasignación de puesto, cambio de documento o retiro de consentimiento).
   \item Consentimiento informado del titular: proceso de recolección, registro y revocación del consentimiento expreso de cada trabajador cuyo \textit{embedding} se almacene, con trazabilidad de las aceptaciones y revocaciones.
   \item Cifrado de \textit{embeddings} en reposo y en tránsito: aplicación de cifrado simétrico en la base de datos y de TLS en las comunicaciones entre el cliente y el servidor, con gestión de claves documentada.
@@ -1119,7 +1147,7 @@ Riesgo 4: \textit{dataset} principal de \textit{fine-tuning} (Glint360K o WebFac
 \item Probabilidad de ocurrencia (O): 2. Ambos \textit{datasets} están alojados en repositorios institucionales estables; cambios de licencia son improbables en el horizonte de 8 meses, pero no imposibles.
 \end{itemize}
 
-Riesgo 5: agotamiento de tiempo o burnout del responsable.
+Riesgo 5: agotamiento de tiempo o \textit{burnout} del responsable.
 
 \begin{itemize}
 \item Severidad (S): 9. El proyecto es individual; si el responsable no puede dedicar las horas estimadas, la entrega se atrasa o se degrada la calidad.
@@ -1145,7 +1173,7 @@ Capacidad computacional insuficiente en \textit{tiers} gratuitos (R1) & 8 & 5 & 
 \textit{Fine-tuning} sin mejora medible sobre el \textit{baseline} (R2) & 6 & 4 & 24 & 6 & 4 & 24 \\ \hline
 LFW saturado no diferencia modelos (R3) & 5 & 7 & 35 & 5 & 7 & 35 \\ \hline
 \textit{Dataset} principal inaccesible o cambio de licencia (R4) & 7 & 2 & 14 & 7 & 2 & 14 \\ \hline
-Agotamiento de tiempo o burnout (R5) & 9 & 5 & 45 & 9 & 3 & 27 \\ \hline
+Agotamiento de tiempo o \textit{burnout} (R5) & 9 & 5 & 45 & 9 & 3 & 27 \\ \hline
 Datos sintéticos no representativos para cotejo documento--rostro (R6) & 5 & 5 & 25 & 5 & 5 & 25 \\ \hline
 \end{tabularx}%
 \end{table}
@@ -1174,7 +1202,7 @@ R3 --- LFW saturado no diferencia modelos.
 \item Ocurrencia revisada (O*): 7. Por la misma razón, la probabilidad de que LFW esté saturado no se modifica; O* se mantiene en 7, igual a O. RPN* se mantiene en 35.
 \end{itemize}
 
-R5 --- Agotamiento de tiempo o burnout.
+R5 --- Agotamiento de tiempo o \textit{burnout}.
 
 \begin{itemize}
 \item Acción: priorizar las HU de los sprints 5 a 7 (núcleo experimental: HU8, HU10, HU11, HU13) por sobre las HU de los sprints 1 a 4 (\textit{pipeline} base). Si el cronograma se ve comprometido, reducir el alcance de las HU de infraestructura (por ejemplo, simplificar la HU4 de manejo de capturas inválidas) antes que reducir el alcance experimental. Solicitar extensión del plazo al posgrado si la situación lo requiere.
@@ -1185,11 +1213,11 @@ R5 --- Agotamiento de tiempo o burnout.
 \section{14. Sprint Review}
 \label{sec:sprint_review}
 
-La revisión de sprint (\emph{Sprint Review}) es una práctica fundamental en metodologías ágiles. Consiste en revisar y evaluar lo que se ha completado al finalizar un sprint. En esta instancia, se presentan los avances y se verifica si las funcionalidades cumplen con los criterios de aceptación establecidos. También se identifican entregables parciales y se consideran ajustes si es necesario.
+La revisión de sprint (\textit{Sprint Review}) es una práctica fundamental en metodologías ágiles. Consiste en revisar y evaluar lo que se ha completado al finalizar un sprint. En esta instancia, se presentan los avances y se verifica si las funcionalidades cumplen con los criterios de aceptación establecidos. También se identifican entregables parciales y se consideran ajustes si es necesario.
 
 Aunque el proyecto aún se encuentre en etapa de planificación, esta sección permite proyectar cómo se evaluarán las funcionalidades más importantes del \textit{backlog}. Esta mirada anticipada favorece la planificación enfocada en valor y permite reflexionar sobre posibles obstáculos.
 
-Objetivo: anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \emph{Product Backlog}.
+Objetivo: anticipar cómo se evaluará el avance del proyecto a medida que se desarrollen las funcionalidades, utilizando como base al menos cuatro historias de usuario del \textit{product backlog}.
 
 Se seleccionan las HU1, HU5, HU8 y HU11, que cubren tanto el \textit{pipeline} base (captura, verificación en tiempo interactivo) como el núcleo experimental (evaluación comparativa y \textit{fine-tuning}).
 
@@ -1251,13 +1279,13 @@ Se completa la tabla para tres sprints técnicos (Sprint 1 de captura facial, Sp
 \rowcolor[HTML]{CCCCCC}
 \textbf{Sprint tipo y N°} & \textbf{¿Qué hacer más?} & \textbf{¿Qué hacer menos?} & \textbf{¿Qué mantener?} & \textbf{¿Qué empezar a hacer?} & \textbf{¿Qué dejar de hacer?} \\
 \hline
-Sprint técnico 1 (Captura facial) & Pruebas con cámara e iluminación real desde el inicio; documentar decisiones de diseño en el repositorio & Reescribir módulos sin versionar; posponer la lectura de la documentación de InsightFace & Commits pequeños y frecuentes con mensajes descriptivos; instalación del entorno en una máquina de referencia & Registrar \textit{issues} y dudas en un \textit{log} de proyecto; correr pruebas con \textit{datasets} sintéticos antes de integrar & Cambiar de modelo o librería sin evaluar impacto \\
+Sprint técnico 1 (Captura facial) & Pruebas con cámara e iluminación real desde el inicio; documentar decisiones de diseño en el repositorio & Reescribir módulos sin versionar; posponer la lectura de la documentación de InsightFace & \textit{Commits} pequeños y frecuentes con mensajes descriptivos; instalación del entorno en una máquina de referencia & Registrar \textit{issues} y dudas en un \textit{log} de proyecto; correr pruebas con \textit{datasets} sintéticos antes de integrar & Cambiar de modelo o librería sin evaluar impacto \\
 \hline
 Sprint técnico 6 (\textit{fine-tuning}) & Monitoreo de \textit{loss} y validación durante el entrenamiento; documentar hiperparámetros y semillas & Reentrenar desde cero ante cada cambio; experimentar sin guardar \textit{checkpoints} & Registro riguroso de la configuración experimental; uso de Weights \& Biases (\textit{wandb}) o equivalente para el \textit{tracking} & Comparar curvas de entrenamiento entre modelos; calcular tiempo total de cómputo consumido & Modificar \textit{learning rate} o esquema de \textit{freeze} sin justificación documentada \\
 \hline
 Sprint técnico 9 (\textit{demo} y revisión) & Pruebas de extremo a extremo con la \textit{demo}; revisión cruzada de la documentación con la orientadora & Postergar \textit{bugs} conocidos del \textit{pipeline} por avanzar con la \textit{demo}; acumular deuda técnica sin documentarla & \textit{Demo} reproducible con un único comando; \textit{README} claro del repositorio & Hacer \textit{screencasts} cortos de la \textit{demo} para la defensa; pedirle a un tercero que ejecute el \textit{harness} desde cero & Depurar en vivo durante la defensa \\
 \hline
-Sprint no técnico 10 (Defensa) & Ensayos cronometrados con público; simulacro de preguntas del tribunal & Reescribir slides de último momento; excederse en detalles técnicos secundarios & Estructura clara: problema, solución, experimento, resultados, limitaciones; figuras con etiquetas legibles & Pedirle a un no-especialista que escuche la presentación; preparar respuestas a preguntas frecuentes (``¿por qué no AdaFace en producción?'', ``¿qué efecto produce el \textit{fine-tuning} sobre el \textit{baseline}?'') & Agregar slides o secciones que no se pueden defender en 15 minutos \\
+Sprint no técnico 10 (Defensa) & Ensayos cronometrados con público; simulacro de preguntas del tribunal & Reescribir \textit{slides} de último momento; excederse en detalles técnicos secundarios & Estructura clara: problema, solución, experimento, resultados, limitaciones; figuras con etiquetas legibles & Pedirle a un no-especialista que escuche la presentación; preparar respuestas a preguntas frecuentes (``¿por qué no AdaFace en producción?'', ``¿qué efecto produce el \textit{fine-tuning} sobre el \textit{baseline}?'') & Agregar \textit{slides} o secciones que no se pueden defender en 15 minutos \\
 \hline
 \end{tabular}
 \end{table}
