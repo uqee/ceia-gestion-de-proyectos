@@ -31,6 +31,11 @@
 \fechaFINALPlan{18 de agosto de 2026}   %Fecha de final de cursada de GdP
 \fechaFINALTrabajo{23 de abril de 2027}  % Fecha de defensa pública del trabajo final
 
+% Columnas X de tabularx alineadas a la izquierda (sin justificación),
+% para evitar las advertencias Underfull \hbox en celdas cuyo último renglón
+% queda corto.
+\renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
+
 \begin{document}
 
 \maketitle
@@ -139,7 +144,7 @@ En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistem
 
 \begin{figure}[htpb]
   \centering
-  \includegraphics[height=0.985\textheight,keepaspectratio]{./Figuras/diagBloques.png}
+  \includegraphics[height=0.965\textheight,keepaspectratio]{./Figuras/diagBloques.png}
   \caption{Diagrama en bloques del sistema.}
   \label{fig:diagBloques}
 \end{figure}
@@ -722,7 +727,7 @@ La suma total de las horas técnicas (406 h) más las actividades no técnicas (
   \centering
   \small
   \renewcommand{\arraystretch}{0.9}
-  \caption{Desglose de tareas por historia de usuario (3/5).}
+  \caption{Desglose de tareas por historia de usuario (3a/5): configuración de umbral y evaluación \textit{baseline}.}
   \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
     \hline
     \rowcolor[HTML]{C0C0C0}
@@ -735,6 +740,19 @@ La suma total de las horas técnicas (406 h) más las actividades no técnicas (
     HU8 & Ejecución de la evaluación \textit{baseline}: corridas de ArcFace y AdaFace preentrenados sobre LFW, AgeDB y RFW y sobre las variantes degradadas de LFW y AgeDB, con medición de EER, FAR, FRR, AUC, TAR a FAR fijo, curva ROC, tiempo de inferencia y uso de memoria & 20 h & Alta \\ \hline
 
     HU9 (opcional) & Corrida de TransFace preentrenado sobre los mismos \textit{benchmarks} para ampliar la comparativa con una arquitectura \textit{transformer}-based reciente, en idénticas condiciones que ArcFace y AdaFace & 8 h & Baja \\ \hline
+
+  \end{tabularx}
+\end{table}
+
+\begin{table}[htpb]
+  \centering
+  \small
+  \renewcommand{\arraystretch}{0.9}
+  \caption{Desglose de tareas por historia de usuario (3b/5): preparación del subconjunto y \textit{fine-tuning}.}
+  \begin{tabularx}{\linewidth}{@{}|X|X|c|c|@{}}
+    \hline
+    \rowcolor[HTML]{C0C0C0}
+    Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
 
     HU10 & Preparación del subconjunto de \textit{fine-tuning}: descarga, filtrado y partición de un subconjunto de Glint360K (o WebFace4M) en \textit{train}/\textit{val} con muestreo orientado a diversidad de edad y documentación de identidades por partición, y preparación de las dos variantes del subconjunto: control (sin degradaciones sintéticas) y adaptación al dominio (con \textit{data augmentation} de degradaciones sintéticas: desenfoque, compresión, baja resolución) & 8 h & Alta \\ \hline
 
@@ -898,7 +916,7 @@ La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando co
   \begin{figure}[htpb]
     \centering
     \begin{ganttchart}[
-        x unit=0.53cm,
+        x unit=0.52cm,
         y unit title=0.3cm,
         y unit chart=0.3cm,
         vgrid,
@@ -1222,9 +1240,11 @@ Objetivo: anticipar cómo se evaluará el avance del proyecto a medida que se de
 Se seleccionan las HU1, HU5, HU8 y HU11, que cubren tanto el \textit{pipeline} base (captura, verificación en tiempo interactivo) como el núcleo experimental (evaluación comparativa y \textit{fine-tuning}).
 
 \begin{table}[htpb]
+\centering
 \small
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{4pt}
+\caption{Revisión de historias de usuario: \textit{pipeline} base (1/2).}
 \begin{tabular}{|>{\raggedright\arraybackslash\hspace{1mm}}p{1.7cm}|
 >{\raggedright\arraybackslash}p{2.8cm}|
 >{\raggedright\arraybackslash}p{3.1cm}|
@@ -1238,7 +1258,25 @@ HU1 & Módulo de captura facial y flujo de registro (38 h, Sprint 1) & Módulo d
 \hline
 HU5 & \textit{Pipeline} de verificación al inicio de turno (28 h, Sprint 4) & Módulo de verificación en vivo funcional con indicador de aceptado/rechazado & \textit{Log} de 20 corridas en el \textit{hardware} de referencia (MacBook Pro 16'' 2019) con tiempo total del \textit{pipeline} registrado; \texttt{tests/hu5\_latency.py} que verifica tiempo $<5$ s en cada corrida; \textit{screenshot} de la \textit{demo} con los tres casos (aceptado, rechazado, reintento); aceptación del supervisor de turno en el repositorio & La latencia de captura y procesamiento en el \textit{hardware} de referencia puede ser ajustada; comparar con corrida sobre GPU \\
 \hline
-HU8 & Diseño del protocolo experimental y evaluación \textit{baseline} de ArcFace y AdaFace sobre LFW, AgeDB y RFW (34 h, Sprint 5) & Tablas y curvas ROC comparativas preentrenadas con EER, FAR, FRR, AUC & Archivo \texttt{results/hu8\_baseline.csv} con las métricas por modelo y \textit{benchmark}; figuras \texttt{figures/roc\_*.png} para cada \textit{benchmark}; archivo de configuración \texttt{configs/hu8.json} con semillas, particiones y versión de modelo; entrada en \texttt{CHANGELOG.md} firmada por la orientadora & Riesgo de que LFW esté saturado y no diferencie modelos (R3); respaldarse en AgeDB y RFW \\
+\end{tabular}
+\end{table}
+
+\begin{table}[htpb]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\caption{Revisión de historias de usuario: núcleo experimental (2/2).}
+\begin{tabular}{|>{\raggedright\arraybackslash\hspace{1mm}}p{1.7cm}|
+>{\raggedright\arraybackslash}p{2.8cm}|
+>{\raggedright\arraybackslash}p{3.1cm}|
+>{\raggedright\arraybackslash}p{4.3cm}|
+>{\raggedright\arraybackslash}p{2.5cm}|}
+\hline
+\rowcolor[HTML]{CCCCCC}
+\textbf{HU} & \textbf{Tareas asociadas} & \textbf{Entregable esperado} & \textbf{Evidencia concreta de cumplimiento} & \textbf{Observaciones o riesgos} \\
+\hline
+HU8 & Diseño del protocolo experimental y evaluación \textit{baseline} de ArcFace y AdaFace sobre LFW, AgeDB y RFW (34 h, Sprint 5) & Tablas y curvas ROC comparativas preentrenadas con EER, FAR, FRR, AUC & Archivo \path|results/hu8_baseline.csv| con las métricas por modelo y \textit{benchmark}; figuras \texttt{figures/roc\_*.png} para cada \textit{benchmark}; archivo de configuración \texttt{configs/hu8.json} con semillas, particiones y versión de modelo; entrada en \texttt{CHANGELOG.md} firmada por la orientadora & Riesgo de que LFW esté saturado y no diferencie modelos (R3); respaldarse en AgeDB y RFW \\
 \hline
 HU11 & \textit{Fine-tuning} de ArcFace en dos condiciones sobre el subconjunto de Glint360K o WebFace4M (30 h + 12 h de ejecución, Sprint 6) & Modelo ArcFace ajustado en ambas condiciones (control y adaptación al dominio) con curvas de \textit{loss} y \textit{checkpoints} intermedios & \path|checkpoints/hu11_arcface_epoch{1..N}.pt| y \path|checkpoints/hu11_control_arcface_epoch{1..N}.pt| preservados; \path|results/hu11_finetune.csv| con EER preentrenado vs cada condición del ajuste por \textit{benchmark} e IC 95\% (\textit{bootstrap} $N=1000$); figuras \path|figures/hu11_loss.png| y \path|figures/hu11_delta_eer.png|; \textit{release} del modelo en el repositorio con etiqueta \path|hu11-approved| y aceptación de la orientadora en el \textit{issue} correspondiente & Riesgo de capacidad computacional (R1) y de no observar efecto del ajuste (R2) \\
 \hline
