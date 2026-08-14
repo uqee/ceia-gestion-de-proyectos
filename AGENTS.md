@@ -13,13 +13,14 @@
 
 Toda palabra o expresión en inglés que aparezca dentro de texto en español debe:
 
-- Escribirse en **minúsculas**, salvo cuando se trate de un **nombre propio** (persona, marca, acrónimo consolidado, nombre propio de métrica/modelo, etc.) o cuando inicien una oración, un elemento de lista, u otra posición que exija mayúscula inicial por la ortografía del español.
+- Escribirse en **minúsculas**, salvo cuando se trate de un **nombre propio** (persona, marca, acrónimo consolidado, nombre propio de métrica/modelo, etc.) o cuando inicien una oración, un elemento de lista, el contenido de una celda de tabla (rótulo) u otra posición que exija mayúscula inicial por la ortografía del español.
 - Envolverse con la macro `\textit{...}` para cursivizarla.
 
 Ejemplos:
 - Correcto: `\textit{product backlog}`, `\textit{story points}`, `\textit{face verification}`, `\textit{mock}`, `\textit{product owner}`, `\textit{pipeline}`, `\textit{embedding}`, `\textit{deep learning}`, `\textit{outsourcing}`, `\textit{dataset}`.
 - Correcto (nombre propio / acrónimo conservan mayúsculas): `FaceNet`, `ArcFace`, `MTCNN`, `RetinaFace`, `LFW`, `VGGFace2`, `CASIA-WebFace`, `API`, `REST`, `ROC`, `FAR`, `FRR`, `EER`, `GDPR`, `HIPAA`.
 - Correcto (nombre propio de métrica, en cursiva): `\textit{False Acceptance Rate}`, `\textit{Equal Error Rate}`.
+- Correcto (inicio de celda de tabla): `\textit{Product owner}` como rótulo único de una celda de la columna «Puesto», o `\textit{Log}` al comienzo de una celda de evidencia, cuando las celdas vecinas de la misma columna también comienzan con mayúscula.
 - Incorrecto: `Product Owner`, `Pipeline`, `Mock`, `Outsourcing` (mayúsculas injustificadas y/o sin cursiva).
 
 ### Gerundio de posterioridad

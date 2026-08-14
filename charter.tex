@@ -129,9 +129,9 @@ Se adjunta a esta acta la planificación inicial.
 
 El presente trabajo se desarrolla en el marco de \empclientename, empresa internacional del sector de mejoramiento del hogar, que enfrenta una problemática recurrente en la gestión de personal operativo tercerizado (mozos de depósito, personal de limpieza, mecánicos, peones): la falta de certeza de que la persona presente sea la misma que figura en la documentación o en el registro laboral. En la práctica, el riesgo operativo se concentra en dos situaciones de correspondencia de identidad: (1) en la selección, que quien se presenta ante el reclutador no coincida con la fotografía del documento de identidad exhibido; y (2) en la operación diaria, que quien asiste a un turno no sea la misma persona que fue dada de alta como trabajador. Queda fuera del problema tratado en este trabajo la determinación de si el documento de identidad es auténtico o falsificado, así como la verificación de que la imagen capturada corresponda a una persona en vivo y no a una reproducción.
 
-En cuanto al estado del arte, el reconocimiento facial es un campo maduro con arquitecturas de referencia como ArcFace y AdaFace para la generación de \textit{embeddings} faciales, y modelos de detección como MTCNN y RetinaFace. Adicionalmente, TransFace (ICCV 2023) representa una extensión reciente basada en \textit{transformers} que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes; se incluye como modelo opcional de evaluación si el cronograma lo permite (ver sección 4.1). La pregunta central que motiva este trabajo no es ya qué modelo preentrenado es mejor en abstracto (esa pregunta tiene respuesta conocida en la literatura), sino qué efecto produce el ajuste mediante \textit{fine-tuning} de adaptación al dominio (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo de reconocimiento facial, cuando se aplica sobre un subconjunto de un \textit{dataset} público aumentado con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, y cuál es el \textit{trade-off} de costo computacional asociado. Esta pregunta es relevante porque las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
+En cuanto al estado del arte, el reconocimiento facial es un campo maduro con arquitecturas de referencia como ArcFace y AdaFace para la generación de \textit{embeddings} faciales, y modelos de detección como MTCNN y RetinaFace. Adicionalmente, TransFace (ICCV 2023) representa una extensión reciente basada en \textit{transformers} que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes; se incluye como modelo opcional de evaluación si el cronograma lo permite (ver sección 4.1). La pregunta central que motiva este trabajo no es ya qué modelo preentrenado es mejor en abstracto (esa pregunta tiene respuesta conocida en la literatura), sino qué efecto produce el ajuste mediante \textit{fine-tuning} (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo de reconocimiento facial, distinguiendo dos condiciones sobre el mismo subconjunto de un \textit{dataset} público: un ajuste de control sin degradaciones sintéticas, que aísla el efecto del entrenamiento adicional por sí solo, y un ajuste de adaptación al dominio con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución), ambas con muestreo orientado a diversidad de edad, y cuál es la ganancia de precisión en relación con el costo de entrenamiento (horas de cómputo) asociado. Esta pregunta es relevante porque las soluciones genéricas no contemplan las condiciones operativas particulares del contexto laboral operativo: heterogeneidad en la calidad de dispositivos de captura, iluminación no controlada, envejecimiento entre la foto del documento y la imagen actual, y calidad variable de los documentos digitalizados.
 
-La solución propuesta consiste en un módulo de verificación biométrica basado en \textit{fine-tuning} de adaptación al dominio de modelos preentrenados modernos (ArcFace y AdaFace como modelos principales, TransFace como opcional) sobre un subconjunto de un \textit{dataset} público de gran escala (Glint360K o WebFace4M) aumentado con degradaciones sintéticas (desenfoque, compresión, baja resolución) y con muestreo orientado a diversidad de edad, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo, y su evaluación sistemática sobre tres \textit{benchmarks} estándar con condiciones complementarias: LFW (\textit{benchmark} clásico saturado, esperable superior al 99~\% en ambos modelos), AgeDB (verificación \textit{cross-age}, que ataca directamente el problema de envejecimiento declarado) y RFW (\textit{Racial Faces in the Wild}, que mide sesgo demográfico y se vincula con la sección de gobernanza). El proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa; la integración se materializa mediante un \textit{harness} CLI que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} y produce métricas reproducibles, y una \textit{demo} interactiva con Gradio para la presentación. A fin de cerrar el lazo entre el entrenamiento y la evaluación en condiciones adversas, las mismas degradaciones sintéticas aplicadas al subconjunto de \textit{fine-tuning} se aplican también para construir variantes degradadas de LFW y AgeDB, que emulan la heterogeneidad de calidad de captura del dominio operativo y permiten medir de manera comparable el rendimiento en condiciones adversas controladas, tanto del modelo preentrenado como del ajustado.
+La solución propuesta consiste en un módulo de verificación biométrica basado en modelos preentrenados modernos (ArcFace y AdaFace como modelos principales, TransFace como opcional), con \textit{fine-tuning} de adaptación al dominio de ArcFace (y, como segundo ajuste opcional, de AdaFace) sobre un subconjunto de un \textit{dataset} público de gran escala (Glint360K o WebFace4M) con muestreo orientado a diversidad de edad, en dos condiciones complementarias --- un ajuste de control sin degradaciones sintéticas, que aísla el efecto del entrenamiento adicional, y un ajuste de adaptación al dominio con degradaciones sintéticas (desenfoque, compresión, baja resolución) que emulan las condiciones operativas adversas del dominio objetivo, y su evaluación sistemática sobre tres \textit{benchmarks} estándar con condiciones complementarias: LFW (\textit{benchmark} clásico saturado, esperable superior al 99~\% en ambos modelos), AgeDB (verificación \textit{cross-age}, que ataca directamente el problema de envejecimiento declarado) y RFW (\textit{Racial Faces in the Wild}, que mide sesgo demográfico y se vincula con la sección de gobernanza). El proyecto se ejecuta en un contexto académico sin acceso directo a datos operativos de la empresa; la integración se materializa mediante un \textit{harness} CLI que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} y produce métricas reproducibles, y una \textit{demo} interactiva con Gradio para la presentación. A fin de cerrar el lazo entre el entrenamiento y la evaluación en condiciones adversas, las mismas degradaciones sintéticas aplicadas al subconjunto de \textit{fine-tuning} se aplican también para construir variantes degradadas de LFW y AgeDB, que emulan la heterogeneidad de calidad de captura del dominio operativo y permiten medir de manera comparable el rendimiento en condiciones adversas controladas, tanto del modelo preentrenado como del ajustado.
 
 El \textit{pipeline} técnico central consiste en: (1) detección facial mediante modelos como MTCNN o RetinaFace; (2) alineación basada en \textit{landmarks}; (3) generación de \textit{embeddings} faciales mediante ArcFace o AdaFace, en su configuración preentrenada o con \textit{fine-tuning} sobre el subconjunto seleccionado; (4) cálculo de similitud por distancia coseno entre el \textit{embedding} del sujeto presente y el de referencia; (5) decisión umbralizada que equilibre la tasa de falsos positivos y falsos negativos según los requerimientos de seguridad del escenario; y (6) un módulo mínimo de \textit{liveness} basado en un modelo preentrenado, que opera como \textit{baseline} extensible (no como sistema de producción). Se incluye también una \textit{demo} interactiva que materializa los flujos de captura y verificación para la presentación.
 
@@ -146,7 +146,7 @@ En la figura \ref{fig:diagBloques} se presenta el diagrama en bloques del sistem
 
 Por tratarse de un proyecto de vinculación con una empresa en el marco académico del posgrado, el proyecto no contempla financiamiento de programas públicos o privados adicionales. La relación con el cliente se enmarca en un acuerdo de confidencialidad (NDA) entre el \textit{product owner} y la empresa externa a la que pertenece; dicho NDA cubre información comercial y datos internos del cliente y de la empresa adoptante, y no restringe la difusión de los resultados académicos del trabajo: la metodología, el código del prototipo, los \textit{datasets} públicos utilizados, las métricas de evaluación y el análisis experimental son publicables en el marco del trabajo final. La documentación evita incluir datos confidenciales del cliente o de \empclientename.
 
-El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en \textit{outsourcing} operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis experimental sistemático del impacto del \textit{fine-tuning} de adaptación al dominio (con un subconjunto aumentado con las mismas degradaciones sintéticas que se aplican a los \textit{benchmarks} de evaluación) sobre el rendimiento y el costo computacional, un abordaje escasamente reportado en la literatura comparativa reciente y que, a diferencia del ajuste sobre un subconjunto sin transformar, permite formular una pregunta experimental realmente respondible. Tercero, integra consideraciones de equidad y robustez demográfica desde el diseño (evaluación sobre RFW) y sienta las bases para un módulo de \textit{liveness} extensible en una iteración posterior (por ejemplo, en una etapa de maestría), y se basa exclusivamente en \textit{datasets} públicos sujetos a verificación de sus licencias y condiciones de uso para garantizar el cumplimiento de la normativa de protección de datos personales en el ámbito del trabajo final.
+El valor diferencial de este proyecto radica en tres aspectos. Primero, aborda un dominio de aplicación concreto (verificación de identidad laboral en \textit{outsourcing} operativo) con condiciones operativas particulares que las soluciones genéricas de reconocimiento facial no contemplan. Segundo, propone un análisis experimental sistemático del impacto del \textit{fine-tuning} sobre el rendimiento y sobre el costo de entrenamiento, con dos condiciones complementarias --- un ajuste de control sobre el subconjunto sin degradaciones sintéticas y un ajuste de adaptación al dominio con las mismas degradaciones sintéticas que se aplican a los \textit{benchmarks} de evaluación ---, un abordaje que permite separar el efecto del entrenamiento adicional del efecto de la adaptación y que está escasamente reportado en la literatura comparativa reciente. Tercero, integra consideraciones de equidad y robustez demográfica desde el diseño (evaluación sobre RFW) y sienta las bases para un módulo de \textit{liveness} extensible en una iteración posterior (por ejemplo, en una etapa de maestría), y se basa exclusivamente en \textit{datasets} públicos sujetos a verificación de sus licencias y condiciones de uso para garantizar el cumplimiento de la normativa de protección de datos personales en el ámbito del trabajo final.
 
 \section{2. Identificación y análisis de los interesados}
 \label{sec:interesados}
@@ -207,10 +207,10 @@ Principales características de los interesados:
 \section{3. Propósito del proyecto}
 \label{sec:proposito}
 
-El propósito de este proyecto es diseñar, ajustar, evaluar y documentar, en un marco académico, un módulo de verificación biométrica basado en reconocimiento facial, para contribuir a verificar la correspondencia de identidad del personal tercerizado al inicio del turno y frente a la fotografía del documento presentado. La pregunta experimental central del trabajo es qué efecto produce el ajuste mediante \textit{fine-tuning} de adaptación al dominio (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo moderno (ArcFace, AdaFace), cuando dicho ajuste se aplica sobre un subconjunto de un \textit{dataset} público aumentado con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución) y con muestreo orientado a diversidad de edad, y cuál es el \textit{trade-off} con el costo computacional asociado.
+El propósito de este proyecto es diseñar, ajustar, evaluar y documentar, en un marco académico, un módulo de verificación biométrica basado en reconocimiento facial, para contribuir a verificar la correspondencia de identidad del personal tercerizado al inicio del turno y frente a la fotografía del documento presentado. La pregunta experimental central del trabajo es qué efecto produce el ajuste mediante \textit{fine-tuning} (que puede ser positivo, neutro o negativo) sobre el rendimiento de verificación de un modelo moderno (ArcFace, AdaFace), distinguiendo dos condiciones sobre el mismo subconjunto de un \textit{dataset} público: un ajuste de control sin degradaciones sintéticas, que aísla el efecto del entrenamiento adicional por sí solo, y un ajuste de adaptación al dominio con degradaciones sintéticas que emulan las condiciones operativas adversas (desenfoque, compresión, baja resolución), ambas con muestreo orientado a diversidad de edad, y cuál es la ganancia de precisión en relación con el costo de entrenamiento (horas de cómputo) asociado.
 
 \paragraph{Métrica y \textit{benchmark} primarios.}
-La métrica primaria de éxito experimental es el \textit{Equal Error Rate} (EER) sobre AgeDB, y el \textit{benchmark} primario es AgeDB en su configuración estándar, por atacar directamente el problema de envejecimiento entre la foto del documento y la captura en vivo declarado en la descripción del proyecto. Las métricas secundarias son FAR, FRR, AUC, TAR a FAR fijo, tiempo medio de inferencia y uso de memoria, evaluadas sobre LFW, RFW y las variantes degradadas de LFW y AgeDB.
+La métrica primaria de éxito experimental es el \textit{Equal Error Rate} (EER) sobre AgeDB, y el \textit{benchmark} primario es AgeDB en su configuración estándar, por atacar directamente el problema de envejecimiento entre la foto del documento y la captura en vivo declarado en la descripción del proyecto. Las métricas secundarias son FAR, FRR, AUC y TAR a FAR fijo, evaluadas sobre LFW, RFW y las variantes degradadas de LFW y AgeDB. El tiempo medio de inferencia y el uso de memoria se reportan como métricas absolutas del \textit{pipeline}: al no cambiar la arquitectura, son prácticamente idénticos entre el modelo preentrenado y los modelos ajustados, y solo aportan diferenciación entre arquitecturas (ArcFace, AdaFace y, en su caso, TransFace). La dimensión de costo relevante del \textit{fine-tuning} es el costo de entrenamiento (horas de cómputo), que se registra en cada corrida y se analiza junto con la ganancia de precisión.
 
 Los componentes del MVP y los opcionales, los alcances incluidos y excluidos, y los detalles de los flujos de registro y verificación se detallan en las secciones 4 y 4.1.
 
@@ -223,8 +223,8 @@ El proyecto incluye:
   \item implementación de un \textit{pipeline} de verificación biométrica basado en modelos preentrenados modernos (ArcFace, AdaFace): detección facial, alineación, generación de \textit{embeddings} y comparación por similitud;
   \item verificación de correspondencia entre el rostro en vivo y la fotografía del documento en el flujo de registro, y verificación facial frente a la referencia almacenada al inicio de turno;
   \item módulo de comparación biométrica con umbralización configurable para balancear seguridad y usabilidad;
-  \item \textit{fine-tuning} de adaptación al dominio de al menos uno de los modelos (ArcFace o AdaFace) sobre un subconjunto seleccionado de un \textit{dataset} público de gran escala (Glint360K o WebFace4M), aumentado con degradaciones sintéticas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo, con evaluación de su impacto frente a la versión preentrenada;
-  \item evaluación comparativa de los modelos preentrenados y ajustados sobre al menos tres \textit{benchmarks} públicos: LFW (\textit{baseline}), AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), así como sobre variantes degradadas sintéticamente de LFW y AgeDB (desenfoque, compresión, baja resolución), con métricas EER, FAR, FRR, curva ROC, AUC, TAR a FAR fijo (por ejemplo, TAR con FAR = $10^{-3}$) y tiempo medio de inferencia. Los modelos principales son ArcFace y AdaFace; TransFace (ICCV 2023) puede incluirse como tercer modelo opcional si el cronograma lo permite, a fin de ampliar la cobertura del estado del arte (ver sección 4.1);
+  \item \textit{fine-tuning} de al menos uno de los modelos (ArcFace o AdaFace) sobre un subconjunto seleccionado de un \textit{dataset} público de gran escala (Glint360K o WebFace4M) con muestreo orientado a diversidad de edad, en dos condiciones: un ajuste de control sin degradaciones sintéticas y un ajuste de adaptación al dominio con degradaciones sintéticas (desenfoque, compresión, baja resolución) que emulan las condiciones operativas adversas del dominio objetivo, con evaluación del impacto de cada condición frente a la versión preentrenada;
+  \item evaluación comparativa de los modelos preentrenados y ajustados sobre al menos tres \textit{benchmarks} públicos: LFW (\textit{baseline}), AgeDB (\textit{cross-age}) y RFW (sesgo demográfico), así como sobre variantes degradadas sintéticamente de LFW y AgeDB (desenfoque, compresión, baja resolución), con métricas EER, FAR, FRR, curva ROC, AUC, TAR a FAR fijo (por ejemplo, TAR con FAR = $10^{-3}$), tiempo medio de inferencia y uso de memoria como métricas absolutas del \textit{pipeline} (idénticas entre preentrenado y ajustado por no cambiar la arquitectura) y costo de entrenamiento (horas de cómputo) registrado por corrida. Los modelos principales son ArcFace y AdaFace; TransFace (ICCV 2023) puede incluirse como tercer modelo opcional si el cronograma lo permite, a fin de ampliar la cobertura del estado del arte (ver sección 4.1);
   \item módulo de \textit{liveness} (componente obligatorio del MVP) basado en un modelo preentrenado (por ejemplo, MiniFASNet o FeatherNet) evaluado sobre un \textit{dataset} público de \textit{spoofing} (OULU-NPU o CASIA-FASD), operando como \textit{baseline} extensible cuyo desarrollo robusto queda como trabajo futuro;
   \item \textit{harness} de evaluación \textit{end-to-end} ejecutable como CLI o \textit{notebook} parametrizable, que corra el \textit{pipeline} completo sobre un \textit{benchmark} y produzca métricas y figuras reproducibles;
   \item \textit{demo} interactiva con Gradio o Streamlit para la presentación del prototipo;
@@ -253,7 +253,7 @@ Los componentes obligatorios del MVP son aquellos cuya entrega es indispensable 
 \paragraph{Componentes obligatorios (MVP).}
 \begin{itemize}
   \item \textit{Pipeline} de verificación biométrica con ArcFace y AdaFace preentrenados (detección, alineación, \textit{embedding}, comparación por similitud).
-  \item \textit{Fine-tuning} de adaptación al dominio de ArcFace sobre un subconjunto de Glint360K o WebFace4M, con evaluación sobre LFW, AgeDB y RFW y sobre las variantes degradadas de LFW y AgeDB.
+  \item \textit{Fine-tuning} de ArcFace sobre un subconjunto de Glint360K o WebFace4M en dos condiciones (control sin degradaciones sintéticas y adaptación al dominio con degradaciones sintéticas), con evaluación sobre LFW, AgeDB y RFW y sobre las variantes degradadas de LFW y AgeDB.
   \item Módulo de \textit{liveness} integrado al \textit{pipeline} como \textit{baseline} académico, evaluado sobre OULU-NPU o CASIA-FASD y reportado con sus limitaciones.
   \item \textit{Harness} CLI ejecutable y reproducible.
   \item \textit{Demo} interactiva con Gradio o Streamlit.
@@ -382,17 +382,17 @@ HU9: Evaluación de TransFace preentrenado (opcional, no pertenece al MVP)
   \item \textit{Story points}: 13
 \end{itemize}
 
-HU10: Preparación del subconjunto de \textit{fine-tuning} de adaptación al dominio
+HU10: Preparación del subconjunto de \textit{fine-tuning} (control y adaptación al dominio)
 \begin{itemize}
-  \item Como orientadora técnica, quiero que se seleccione y documente un subconjunto de Glint360K o WebFace4M (5\,000--10\,000 identidades, 100\,000--300\,000 imágenes) con muestreo orientado a diversidad de edad, y que se aplique \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución) y partición \textit{train}/\textit{val} documentada, a fin de aproximar el subconjunto de entrenamiento a las condiciones operativas adversas del dominio objetivo.
+  \item Como orientadora técnica, quiero que se seleccione y documente un subconjunto de Glint360K o WebFace4M (5\,000--10\,000 identidades, 100\,000--300\,000 imágenes) con muestreo orientado a diversidad de edad y partición \textit{train}/\textit{val} documentada, y que se prepare la variante degradada del subconjunto mediante \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución), de modo que queden listas las dos variantes del subconjunto para el \textit{fine-tuning}: la de control sin degradaciones y la de adaptación al dominio con degradaciones.
   \item Prioridad: alta
   \item Dificultad: 5, complejidad: 4, incertidumbre: 4
   \item \textit{Story points}: 13
 \end{itemize}
 
-HU11: Ejecución del \textit{fine-tuning} de adaptación al dominio de ArcFace
+HU11: Ejecución del \textit{fine-tuning} de ArcFace (control y adaptación al dominio)
 \begin{itemize}
-  \item Como orientadora técnica, quiero que ArcFace se ajuste mediante \textit{fine-tuning} de adaptación al dominio sobre el subconjunto preparado en la HU10, con esquema de \textit{freeze} de capas, \textit{learning rate}, número de épocas y \textit{batch size} documentados, y con \textit{checkpoints} intermedios preservados, a fin de cuantificar el efecto del ajuste (positivo, neutro o negativo) sobre los \textit{benchmarks} \textit{cross-age} y degradados.
+  \item Como orientadora técnica, quiero que ArcFace se ajuste mediante \textit{fine-tuning} sobre el subconjunto preparado en la HU10 en dos condiciones --- un ajuste de control sin degradaciones sintéticas y un ajuste de adaptación al dominio con degradaciones sintéticas --- con esquema de \textit{freeze} de capas, \textit{learning rate}, número de épocas y \textit{batch size} documentados, y con \textit{checkpoints} intermedios preservados, a fin de cuantificar el efecto de cada condición (positivo, neutro o negativo) y separar el efecto del entrenamiento adicional del efecto de la adaptación sobre los \textit{benchmarks} \textit{cross-age} y degradados.
   \item Prioridad: alta
   \item Dificultad: 8, complejidad: 8, incertidumbre: 5
   \item \textit{Story points}: 21
@@ -406,9 +406,9 @@ HU12: Ejecución del \textit{fine-tuning} de adaptación al dominio de AdaFace (
   \item \textit{Story points}: 13
 \end{itemize}
 
-HU13: Re-evaluación post-\textit{fine-tuning} y análisis comparativo
+HU13: Reevaluación post-\textit{fine-tuning} y análisis comparativo
 \begin{itemize}
-  \item Como orientadora técnica, quiero que los modelos ajustados en la HU11 (y, si aplica, en la HU12) se reevalúen sobre LFW, AgeDB, RFW y las variantes degradadas de LFW y AgeDB en idénticas condiciones que la HU8, y que se elaboren tablas, curvas ROC superpuestas y un análisis de \textit{trade-off} entre precisión y costo computacional, a fin de fundamentar la selección del modelo del prototipo.
+  \item Como orientadora técnica, quiero que los modelos ajustados en la HU11 (ambas condiciones: control y adaptación al dominio) y, si aplica, en la HU12, se reevalúen sobre LFW, AgeDB, RFW y las variantes degradadas de LFW y AgeDB en idénticas condiciones que la HU8, y que se elaboren tablas, curvas ROC superpuestas y un análisis de la ganancia de precisión en relación con el costo de entrenamiento, a fin de fundamentar la selección del modelo del prototipo.
   \item Prioridad: alta
   \item Dificultad: 5, complejidad: 6, incertidumbre: 3
   \item \textit{Story points}: 21
@@ -518,18 +518,18 @@ Criterios de aceptación HU9: Evaluación de TransFace preentrenado (opcional)
   \item Técnico: se reportan las mismas métricas que en HU8, y se documenta la versión del modelo y la configuración de inferencia empleada.
 \end{enumerate}
 
-Criterios de aceptación HU10: Preparación del subconjunto de \textit{fine-tuning} de adaptación al dominio
+Criterios de aceptación HU10: Preparación del subconjunto de \textit{fine-tuning} (control y adaptación al dominio)
 \begin{enumerate}
-  \item Funcional: se selecciona y documenta un subconjunto de Glint360K o WebFace4M (5\,000--10\,000 identidades, 100\,000--300\,000 imágenes) con muestreo orientado a diversidad de edad, y se aplica \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución).
+  \item Funcional: se selecciona y documenta un subconjunto de Glint360K o WebFace4M (5\,000--10\,000 identidades, 100\,000--300\,000 imágenes) con muestreo orientado a diversidad de edad, y se preparan dos variantes: la variante de control (sin degradaciones sintéticas) y la variante de adaptación al dominio con \textit{data augmentation} de degradaciones sintéticas (desenfoque, compresión, baja resolución).
   \item Visual: la documentación incluye estadísticas descriptivas del subconjunto (cantidad de identidades, distribución de edades, ejemplos de degradaciones aplicadas) y un diagrama del \textit{pipeline} de \textit{augmentation}.
   \item Técnico: la partición \textit{train}/\textit{val} se documenta con los identificadores de las identidades asignadas a cada partición; el solapamiento entre particiones es verificado programáticamente y es nulo; la distribución de edades por partición es comparable (diferencia de medias $\leq 5$ años).
 \end{enumerate}
 
-Criterios de aceptación HU11: Ejecución del \textit{fine-tuning} de adaptación al dominio de ArcFace
+Criterios de aceptación HU11: Ejecución del \textit{fine-tuning} de ArcFace (control y adaptación al dominio)
 \begin{enumerate}
-  \item Funcional: ArcFace se ajusta mediante \textit{fine-tuning} de adaptación al dominio sobre el subconjunto preparado en la HU10, con un esquema documentado de partición, \textit{freeze} de capas, \textit{learning rate}, número de épocas y \textit{batch size}, y los \textit{checkpoints} intermedios se preservan.
+  \item Funcional: ArcFace se ajusta mediante \textit{fine-tuning} sobre el subconjunto preparado en la HU10 en dos condiciones (control sin degradaciones sintéticas y adaptación al dominio con degradaciones sintéticas), con el mismo esquema documentado de partición, \textit{freeze} de capas, \textit{learning rate}, número de épocas y \textit{batch size} para ambas, y los \textit{checkpoints} intermedios de cada condición se preservan.
   \item Visual: las curvas de \textit{loss} y de las métricas de validación durante el entrenamiento se grafican y se incluyen en la documentación.
-  \item Técnico: el efecto del \textit{fine-tuning} sobre el EER en AgeDB y en las variantes degradadas de LFW y AgeDB respecto del modelo preentrenado de la HU8 se reporta como diferencia porcentual absoluta con un intervalo de confianza del 95\% estimado mediante \textit{bootstrap} con $N=1000$ remuestreos sobre los pares de evaluación de cada \textit{benchmark}; si el efecto no es estadísticamente significativo, se documenta y analiza la causa (tamaño del subconjunto, capacidad del modelo, magnitud de las degradaciones, dominio del \textit{dataset}).
+  \item Técnico: el efecto de cada condición del \textit{fine-tuning} (control y adaptación al dominio) sobre el EER en AgeDB y en las variantes degradadas de LFW y AgeDB respecto del modelo preentrenado de la HU8 se reporta como diferencia porcentual absoluta con un intervalo de confianza del 95\% estimado mediante \textit{bootstrap} con $N=1000$ remuestreos sobre los pares de evaluación de cada \textit{benchmark}; la comparación entre la condición de control y la de adaptación aísla el efecto de las degradaciones, y si algún efecto no es estadísticamente significativo se documenta y analiza la causa (tamaño del subconjunto, capacidad del modelo, magnitud de las degradaciones, dominio del \textit{dataset}). El costo de entrenamiento de cada condición (horas de cómputo) se registra y se reporta junto con la ganancia de precisión.
 \end{enumerate}
 
 Criterios de aceptación HU12: Ejecución del \textit{fine-tuning} de adaptación al dominio de AdaFace (opcional)
@@ -539,10 +539,10 @@ Criterios de aceptación HU12: Ejecución del \textit{fine-tuning} de adaptació
   \item Técnico: se reportan las mismas métricas que en HU11, con la misma metodología estadística (\textit{bootstrap} $N=1000$, IC 95\%).
 \end{enumerate}
 
-Criterios de aceptación HU13: Re-evaluación post-\textit{fine-tuning} y análisis comparativo
+Criterios de aceptación HU13: Reevaluación post-\textit{fine-tuning} y análisis comparativo
 \begin{enumerate}
-  \item Funcional: los modelos ajustados en la HU11 (y, si aplica, en la HU12) se reevalúan sobre LFW, AgeDB, RFW y las variantes degradadas, en idénticas condiciones que la HU8, y se elaboran tablas y figuras que comparan preentrenado vs ajustado.
-  \item Visual: la documentación incluye curvas ROC superpuestas, tabla de métricas por modelo y \textit{benchmark}, y un gráfico de \textit{trade-off} entre precisión (EER) y costo computacional (tiempo de inferencia).
+  \item Funcional: los modelos ajustados en la HU11 (condiciones de control y de adaptación al dominio) y, si aplica, en la HU12, se reevalúan sobre LFW, AgeDB, RFW y las variantes degradadas, en idénticas condiciones que la HU8, y se elaboran tablas y figuras que comparan el modelo preentrenado con ambas condiciones del ajuste.
+  \item Visual: la documentación incluye curvas ROC superpuestas, tabla de métricas por modelo y \textit{benchmark}, y un gráfico de \textit{trade-off} entre la ganancia de precisión (EER) y el costo de entrenamiento (horas de cómputo).
   \item Técnico: el análisis se almacena en un archivo con la configuración experimental completa (modelo, \textit{benchmark}, umbral, versión, semilla, partición), reproducible a partir del \textit{harness} de la HU15.
 \end{enumerate}
 
@@ -578,7 +578,7 @@ El proyecto se adhiere al modelo \textit{Cross-Industry Standard Process for Dat
 
 Objetivo: comprender el contexto organizacional, los objetivos del proyecto y los criterios de éxito desde la perspectiva del negocio.
 
-El proyecto se enmarca en la necesidad de \empclientename\hspace{1px} de verificar la correspondencia de identidad de su personal operativo tercerizado. El valor agregado de la inteligencia artificial reside en automatizar el cotejo facial, que de otro modo sería manual, subjetivo y propenso a errores. Las métricas de éxito del negocio son: reducción de incidentes de suplantación de identidad, disminución del tiempo de verificación por turno y disponibilidad de un registro trazable de intentos de verificación. La pregunta experimental del proyecto (\textit{fine-tuning} vs preentrenado, \textit{trade-off} con costo computacional) responde al interés del cliente en contar con evidencia técnica para una eventual decisión de despliegue.
+El proyecto se enmarca en la necesidad de \empclientename\hspace{1px} de verificar la correspondencia de identidad de su personal operativo tercerizado. El valor agregado de la inteligencia artificial reside en automatizar el cotejo facial, que de otro modo sería manual, subjetivo y propenso a errores. Las métricas de éxito del negocio son: reducción de incidentes de suplantación de identidad, disminución del tiempo de verificación por turno y disponibilidad de un registro trazable de intentos de verificación. La pregunta experimental del proyecto (\textit{fine-tuning} vs preentrenado, con distinción entre control y adaptación al dominio, y ganancia de precisión en relación con el costo de entrenamiento) responde al interés del cliente en contar con evidencia técnica para una eventual decisión de despliegue.
 
 El alcance del prototipo es académico: la validación se realizará con \textit{datasets} públicos y el \textit{fine-tuning} se realiza sobre un subconjunto representativo del dominio, no sobre datos reales de la empresa. No se contempla despliegue operativo en la empresa.
 
@@ -611,7 +611,7 @@ Las transformaciones clave son:
   \item Normalización: redimensionar los recortes faciales a la resolución de entrada esperada por cada modelo de generación de \textit{embeddings} (112$\times$112 píxeles para ArcFace y AdaFace).
   \item Generación de \textit{embeddings} \textit{baseline}: conversión de cada rostro alineado en un vector numérico de dimensionalidad fija (por ejemplo, 512 dimensiones) con el modelo preentrenado.
   \item Partición de datos: dividir los \textit{datasets} en conjuntos de entrenamiento, validación y prueba, respetando los protocolos de evaluación establecidos para cada \textit{benchmark}.
-  \item Subconjunto de \textit{fine-tuning} de adaptación al dominio: selección de un subconjunto de Glint360K o WebFace4M (por ejemplo, 5.000--10.000 identidades, 100.000--300.000 imágenes) y aplicación de \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución) que emulan las condiciones adversas del dominio objetivo, junto con muestreo orientado a diversidad de edad, con partición \textit{hold-out} para validación.
+  \item Subconjunto de \textit{fine-tuning}: selección de un subconjunto de Glint360K o WebFace4M (por ejemplo, 5.000--10.000 identidades, 100.000--300.000 imágenes) con muestreo orientado a diversidad de edad y partición \textit{hold-out} para validación, y preparación de dos variantes: la variante de control sin degradaciones sintéticas y la variante de adaptación al dominio con \textit{data augmentation} de degradaciones sintéticas (desenfoque, compresión, baja resolución) que emulan las condiciones adversas del dominio objetivo.
 \end{itemize}
 
 \subsection{Fase 4: Modelado}
@@ -623,7 +623,7 @@ El tipo de problema es la verificación de identidad binaria: determinar si dos 
 Los algoritmos evaluados son:
 
 \begin{itemize}
-  \item ArcFace (ResNet-100): red neuronal que emplea una función de pérdida aditiva angular (\textit{Additive Angular Margin Loss}) para generar \textit{embeddings} con alta discriminabilidad. Se utilizará la implementación preentrenada de InsightFace con \textit{weights} públicos, y se realizará \textit{fine-tuning} de adaptación al dominio sobre el subconjunto aumentado con degradaciones sintéticas.
+  \item ArcFace (ResNet-100): red neuronal que emplea una función de pérdida aditiva angular (\textit{Additive Angular Margin Loss}) para generar \textit{embeddings} con alta discriminabilidad. Se utilizará la implementación preentrenada de InsightFace con \textit{weights} públicos, y se realizará \textit{fine-tuning} en dos condiciones sobre el subconjunto: una de control sin degradaciones sintéticas y una de adaptación al dominio con degradaciones sintéticas.
   \item AdaFace (CVPR 2022): red neuronal que introduce una función de pérdida con margen adaptativo a la calidad (\textit{quality-adaptive margin}), reportando mejoras sobre ArcFace en condiciones adversas. Se utilizará la implementación preentrenada pública, y opcionalmente se ajustará sobre el mismo subconjunto aumentado con degradaciones sintéticas.
   \item TransFace (ICCV 2023, opcional): arquitectura basada en \textit{transformers} para la generación de \textit{embeddings} faciales, que reporta mejoras incrementales sobre ArcFace en \textit{benchmarks} recientes. Su inclusión queda condicionada a la disponibilidad de tiempo dentro del cronograma y al éxito del \textit{fine-tuning} de adaptación al dominio de los modelos principales. Si se incluye, se evalúa en idénticas condiciones que ArcFace y AdaFace y se reporta en una fila adicional de las tablas comparativas, con la advertencia explícita de que es resultado de una iteración opcional y no afecta los hallazgos principales del trabajo.
 \end{itemize}
@@ -632,7 +632,7 @@ El método de comparación entre \textit{embeddings} es la distancia coseno. La 
 
 \subsection{Fase 5: Evaluación}
 
-Objetivo: medir el rendimiento de los modelos y fundamentar la elección del modelo del prototipo, con énfasis en la comparación preentrenado vs ajustado.
+Objetivo: medir el rendimiento de los modelos y fundamentar la elección del modelo del prototipo, con énfasis en la comparación entre el modelo preentrenado y las dos condiciones del ajuste (control y adaptación al dominio).
 
 Las métricas de rendimiento son:
 
@@ -643,7 +643,7 @@ Las métricas de rendimiento son:
   \item Curva ROC (\textit{Receiver Operating Characteristic}): representación gráfica del compromiso entre sensibilidad y especificidad.
   \item AUC (\textit{Area Under the Curve}): área bajo la curva ROC; capacidad discriminativa global.
   \item TAR a FAR fijo (\textit{True Acceptance Rate} a un \textit{False Acceptance Rate} determinado, por ejemplo FAR = $10^{-3}$): tasa de aceptación genuina en un punto operativo de seguridad exigente; métrica de referencia habitual en la industria biométrica.
-  \item Tiempo medio de inferencia por \textit{embedding} y uso de memoria, en el \textit{hardware} de referencia.
+  \item Tiempo medio de inferencia por \textit{embedding} y uso de memoria, en el \textit{hardware} de referencia, como métricas absolutas del \textit{pipeline}. Al no variar la arquitectura entre el modelo preentrenado y los ajustados, estas métricas no diferencian al preentrenado del ajustado; la dimensión de costo del \textit{fine-tuning} se mide como costo de entrenamiento (horas de cómputo) y se reporta junto con la ganancia de precisión.
 \end{itemize}
 
 Los \textit{benchmarks} utilizados son:
@@ -652,7 +652,7 @@ Los \textit{benchmarks} utilizados son:
   \item LFW: \textit{baseline} clásico, esperable saturación en ambos modelos. Se trata como prueba de saturación (no de diferenciación entre ArcFace y AdaFace), en coherencia con la redefinición del diseño experimental documentada en la mitigación del Riesgo 3 (sección 13). La diferenciación entre modelos se busca en AgeDB y RFW.
   \item AgeDB: \textit{cross-age}, donde se espera observar la mayor parte del efecto del \textit{fine-tuning}. Es el \textit{benchmark} primario de éxito experimental (sección 3).
   \item RFW: sesgo demográfico, con reporte por subgrupo.
-  \item Variantes degradadas de LFW y AgeDB: imágenes con desenfoque, compresión y baja resolución aplicados de manera sintética, que emulan la heterogeneidad de calidad de captura del dominio operativo. Los mismos operadores de degradación aplicados al subconjunto de \textit{fine-tuning} (fase de preparación) generan estas variantes de evaluación, de modo que el lazo entrenamiento--evaluación se mantenga comparable y la mejora (o su ausencia) sea interpretable en términos de adaptación al dominio.
+  \item Variantes degradadas de LFW y AgeDB: imágenes con desenfoque, compresión y baja resolución aplicados de manera sintética, que emulan la heterogeneidad de calidad de captura del dominio operativo. Los mismos operadores de degradación aplicados a la variante de adaptación al dominio del subconjunto de \textit{fine-tuning} (fase de preparación) generan estas variantes de evaluación, de modo que el lazo entrenamiento--evaluación se mantenga comparable y la mejora (o su ausencia) sea interpretable en términos de adaptación al dominio, en tanto que el ajuste de control (sin degradaciones) permite aislar el efecto de las degradaciones del efecto del entrenamiento adicional.
   \item OULU-NPU o CASIA-FASD (para \textit{liveness}): ACER/HTER.
 \end{itemize}
 
@@ -663,7 +663,7 @@ Objetivo: integrar el modelo seleccionado en un prototipo demostrable y document
 Dado el alcance académico del proyecto, el despliegue se limita a:
 
 \begin{itemize}
-  \item \textit{Harness} CLI o notebook parametrizable que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} seleccionados y produce métricas y figuras reproducibles.
+  \item \textit{Harness} CLI o \textit{notebook} parametrizable que ejecuta el \textit{pipeline} completo sobre los \textit{benchmarks} seleccionados y produce métricas y figuras reproducibles.
   \item \textit{Demo} interactiva con Gradio o Streamlit que materializa los flujos de captura y verificación para la presentación.
   \item Repositorio con documentación técnica, instrucciones de reproducción de experimentos y \textit{scripts} de evaluación.
 \end{itemize}
@@ -675,7 +675,7 @@ No se contempla despliegue en producción, integración con sistemas reales de \
 
 A partir de cada historia de usuario definida en la sección~\ref{sec:backlog}, se descompone el trabajo en tareas técnicas concretas, medibles y acotadas en el tiempo. Cada tarea se estima en horas y se le asigna una prioridad relativa (Alta, Media o Baja) según su relevancia funcional y su impacto en los entregables. Dado el carácter individual del proyecto y la granularidad de las historias de usuario, las tareas técnicas se estiman en un rango de 6 a 30 horas, agrupando subtareas afines que se ejecutan de manera contigua. Esta desviación respecto del rango sugerido de 2 a 8 horas se adopta deliberadamente, a fin de preservar la trazabilidad entre tareas y entregables sin fragmentar artificialmente el trabajo; las actividades no técnicas, de naturaleza continua, se descomponen en bloques asociados a cada sprint, con estimaciones de 6 a 32 horas.
 
-La suma total de las horas técnicas (388 h) más las actividades no técnicas (212 h) asciende a 600 h, que coincide con el presupuesto total del proyecto distribuido a lo largo de los 12 sprints (sección~\ref{sec:sprints}).
+La suma total de las horas técnicas (406 h) más las actividades no técnicas (194 h) asciende a 600 h, que coincide con el presupuesto total del proyecto distribuido a lo largo de los 12 sprints (sección~\ref{sec:sprints}).
 
 \begin{table}[htpb]
   \centering
@@ -736,9 +736,10 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
 
     HU9 (opcional) & Corrida de TransFace preentrenado sobre los mismos \textit{benchmarks} para ampliar la comparativa con una arquitectura \textit{transformer}-based reciente, en idénticas condiciones que ArcFace y AdaFace & 8 h & Baja \\ \hline
 
-    HU10 & Preparación del subconjunto de \textit{fine-tuning} de adaptación al dominio: descarga, filtrado y partición de un subconjunto de Glint360K (o WebFace4M) en \textit{train}/\textit{val}, aplicación de \textit{data augmentation} con degradaciones sintéticas (desenfoque, compresión, baja resolución) y muestreo orientado a diversidad de edad, con documentación de identidades por partición & 8 h & Alta \\ \hline
+    HU10 & Preparación del subconjunto de \textit{fine-tuning}: descarga, filtrado y partición de un subconjunto de Glint360K (o WebFace4M) en \textit{train}/\textit{val} con muestreo orientado a diversidad de edad y documentación de identidades por partición, y preparación de las dos variantes del subconjunto: control (sin degradaciones sintéticas) y adaptación al dominio (con \textit{data augmentation} de degradaciones sintéticas: desenfoque, compresión, baja resolución) & 8 h & Alta \\ \hline
 
-    HU11 & Ejecución del \textit{fine-tuning} de adaptación al dominio de ArcFace: configuración de hiperparámetros (\textit{learning rate}, número de épocas, \textit{batch size}, esquema de \textit{freeze}), entrenamiento y registro de curvas de \textit{loss}/métricas y \textit{checkpoints} intermedios & 30 h & Alta \\ \hline
+    HU11 & Ejecución del \textit{fine-tuning} de adaptación al dominio de ArcFace: configuración de hiperparámetros (\textit{learning rate}, número de épocas, \textit{batch size}, esquema de \textit{freeze}), entrenamiento y registro de curvas de \textit{loss}/métricas y \textit{checkpoints} intermedios & 30 h & Alta \\ \cline{2-4}
+    HU11 & Ejecución del \textit{fine-tuning} de control de ArcFace sobre el subconjunto sin degradaciones sintéticas, con la misma configuración de hiperparámetros, para aislar el efecto del entrenamiento adicional del efecto de la adaptación & 12 h & Alta \\ \hline
 
     HU12 (opcional) & \textit{Fine-tuning} de adaptación al dominio de AdaFace sobre el mismo subconjunto aumentado, con la misma metodología, si el cronograma lo permite & 12 h & Baja \\ \hline
 
@@ -755,8 +756,8 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
     \rowcolor[HTML]{C0C0C0}
     Historia de usuario & Tarea técnica & Estimación & Prioridad \\ \hline
 
-    HU13 & Re-evaluación de los modelos ajustados sobre LFW, AgeDB y RFW en idénticas condiciones que la HU8, con almacenamiento de los resultados en formato reproducible & 20 h & Alta \\ \cline{2-4}
-    HU13 & Análisis comparativo preentrenado vs ajustado: tablas, curvas ROC superpuestas, análisis de \textit{trade-off} entre EER y tiempo de inferencia, discusión de los resultados por \textit{benchmark} y fundamentación de la elección del modelo del prototipo & 18 h & Alta \\ \hline
+    HU13 & Reevaluación de los modelos ajustados (condiciones de control y de adaptación al dominio) sobre LFW, AgeDB y RFW en idénticas condiciones que la HU8, con almacenamiento de los resultados en formato reproducible & 26 h & Alta \\ \cline{2-4}
+    HU13 & Análisis comparativo preentrenado vs ajustado (ambas condiciones): tablas, curvas ROC superpuestas, análisis de la ganancia de precisión en relación con el costo de entrenamiento, discusión de los resultados por \textit{benchmark} y fundamentación de la elección del modelo del prototipo & 18 h & Alta \\ \hline
 
     HU14 & Integración del clasificador de \textit{liveness} preentrenado (MiniFASNet o FeatherNet) y evaluación sobre OULU-NPU (o CASIA-FASD), con cálculo de ACER/HTER y documentación de limitaciones del \textit{baseline} & 18 h & Media \\ \cline{2-4}
     HU14 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} principal y a la \textit{demo}, con ejemplo etiquetado de ataque (foto impresa) & 14 h & Media \\ \hline
@@ -784,8 +785,7 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
     No técnica & Informes de avance y reportes intermedios (Sprints 1 y 5) & 18 h & Alta \\ \hline
     No técnica & Documentación técnica parcial del \textit{pipeline} (Sprint 3) & 18 h & Alta \\ \hline
     No técnica & Reuniones de seguimiento y ajuste del cronograma (Sprint 4) & 6 h & Alta \\ \hline
-    No técnica & Monitoreo del entrenamiento y registro de curvas de \textit{loss} y métricas (Sprint 6) & 12 h & Alta \\ \hline
-    No técnica & Redacción de la sección experimental de la memoria técnica (Sprint 7) & 12 h & Alta \\ \hline
+    No técnica & Redacción de la sección experimental de la memoria técnica (Sprint 7) & 6 h & Alta \\ \hline
     No técnica & Revisión integral del \textit{pipeline} y de la documentación (Sprint 9) & 26 h & Alta \\ \hline
     No técnica & Preparación de la presentación de defensa y ensayos (Sprint 10) & 28 h & Alta \\ \hline
     No técnica & Revisión final de la memoria, entrega de documentación, código y repositorio (Sprints 10 y 11) & 32 h & Alta \\ \hline
@@ -794,9 +794,9 @@ La suma total de las horas técnicas (388 h) más las actividades no técnicas (
   \end{tabularx}
 \end{table}
 
-La suma de las estimaciones de las tareas técnicas asciende a 388 horas y la de las actividades no técnicas a 212 horas, totalizando 600 horas estimadas en la desagregación, coherente con la planificación de sprints y con el presupuesto declarado en el acta de constitución. La proporción de actividades no técnicas (212 h) supera la franja sugerida de 100 a 120 h a causa del peso de la memoria técnica, los informes parciales por bimestre y la preparación de la defensa en un proyecto individual con núcleo experimental; se adopta como una desviación justificada y deliberada. Adicionalmente, se contemplan 20 horas de tareas opcionales (evaluación de TransFace como tercer modelo de evaluación y \textit{fine-tuning} de AdaFace como segundo ajuste de adaptación al dominio), presentes únicamente en el WBS y no en la planificación de sprints, que se ejecutarán solo si el cronograma lo permite y no forman parte del núcleo obligatorio del trabajo.
+La suma de las estimaciones de las tareas técnicas asciende a 406 horas y la de las actividades no técnicas a 194 horas, totalizando 600 horas estimadas en la desagregación, coherente con la planificación de sprints y con el presupuesto declarado en el acta de constitución. La proporción de actividades no técnicas (194 h) supera la franja sugerida de 100 a 120 h a causa del peso de la memoria técnica, los informes parciales por bimestre y la preparación de la defensa en un proyecto individual con núcleo experimental; se adopta como una desviación justificada y deliberada. Adicionalmente, se contemplan 20 horas de tareas opcionales (evaluación de TransFace como tercer modelo de evaluación y \textit{fine-tuning} de AdaFace como segundo ajuste de adaptación al dominio), presentes únicamente en el WBS y no en la planificación de sprints, que se ejecutarán solo si el cronograma lo permite y no forman parte del núcleo obligatorio del trabajo.
 
-Para facilitar la trazabilidad entre ambas desagregaciones, las diez filas no técnicas de la tabla anterior se corresponden, con idéntica estimación horaria agregada por fila, con las filas etiquetadas ``No téc.'' de la planificación de sprints (sección~\ref{sec:sprints}); cada fila no técnica indica entre paréntesis el sprint en el que se ejecuta, y su estimación coincide con la suma de las filas no técnicas del sprint correspondiente. Asimismo, la fila técnica ``Infra.'' del WBS (configuración del entorno, 20 h) corresponde a la fila ``Planif.'' del Sprint 0, y la fila técnica ``Cierre'' del WBS (ajustes finales al prototipo, 10 h) corresponde a la fila ``---'' del Sprint 10. De este modo el WBS y la planificación de sprints coinciden exactamente en 388 h técnicas y 212 h no técnicas (600 h del núcleo obligatorio), difiriendo únicamente en las 20 h opcionales referidas en el párrafo anterior, propias del WBS.
+Para facilitar la trazabilidad entre ambas desagregaciones, las nueve filas no técnicas de la tabla anterior se corresponden, con idéntica estimación horaria agregada por fila, con las filas etiquetadas ``No téc.'' de la planificación de sprints (sección~\ref{sec:sprints}); cada fila no técnica indica entre paréntesis el sprint en el que se ejecuta, y su estimación coincide con la suma de las filas no técnicas del sprint correspondiente. Asimismo, la fila técnica ``Infra.'' del WBS (configuración del entorno, 20 h) corresponde a la fila ``Planif.'' del Sprint 0, y la fila técnica ``Cierre'' del WBS (ajustes finales al prototipo, 10 h) corresponde a la fila ``---'' del Sprint 10. De este modo el WBS y la planificación de sprints coinciden exactamente en 406 h técnicas y 194 h no técnicas (600 h del núcleo obligatorio), difiriendo únicamente en las 20 h opcionales referidas en el párrafo anterior, propias del WBS.
 
 \section{10. Planificación de Sprints}
 \label{sec:sprints}
@@ -848,9 +848,9 @@ Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 
     Sprint 5 & HU8 & Ejecución de la evaluación \textit{baseline} (ArcFace, AdaFace preentrenados) & 20 h & Al. & 0 \\ \cline{2-6}
     Sprint 5 & No téc. & Redacción de informe de avance & 6 h & Al. & 0 \\ \hline
 
-    Sprint 6 & HU10 & Preparación del subconjunto de \textit{fine-tuning} de adaptación al dominio (Glint360K o WebFace4M) & 8 h & Al. & 0 \\ \cline{2-6}
+    Sprint 6 & HU10 & Preparación del subconjunto de \textit{fine-tuning} (Glint360K o WebFace4M) & 8 h & Al. & 0 \\ \cline{2-6}
     Sprint 6 & HU11 & Ejecución del \textit{fine-tuning} de adaptación al dominio de ArcFace & 30 h & Al. & 0 \\ \cline{2-6}
-    Sprint 6 & No téc. & Monitoreo del entrenamiento y registro de curvas de \textit{loss} y métricas & 12 h & Al. & 0 \\ \hline
+    Sprint 6 & HU11 & Ejecución del \textit{fine-tuning} de control de ArcFace (sin degradaciones sintéticas) & 12 h & Al. & 0 \\ \hline
 
   \end{tabularx}
 \end{table}
@@ -863,9 +863,9 @@ Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 
     \rowcolor[HTML]{C0C0C0}
     Sprint & HU o fase & Tarea & Horas & Resp. & \% \\ \hline
 
-    Sprint 7 & HU13 & Re-evaluación de modelos ajustados sobre LFW, AgeDB y RFW & 20 h & Al. & 0 \\ \cline{2-6}
-    Sprint 7 & HU13 & Análisis comparativo preentrenado vs ajustado, gráficos y \textit{trade-off} & 18 h & Al. & 0 \\ \cline{2-6}
-    Sprint 7 & No téc. & Redacción de sección experimental de la memoria & 12 h & Al. & 0 \\ \hline
+    Sprint 7 & HU13 & Reevaluación de modelos ajustados (control y adaptación al dominio) sobre LFW, AgeDB y RFW & 26 h & Al. & 0 \\ \cline{2-6}
+    Sprint 7 & HU13 & Análisis comparativo preentrenado vs ajustado (ambas condiciones), gráficos y ganancia de precisión vs costo de entrenamiento & 18 h & Al. & 0 \\ \cline{2-6}
+    Sprint 7 & No téc. & Redacción de sección experimental de la memoria & 6 h & Al. & 0 \\ \hline
 
     Sprint 8 & HU14 & Integración del clasificador de \textit{liveness} y evaluación sobre OULU-NPU & 18 h & Al. & 0 \\ \cline{2-6}
     Sprint 8 & HU14 & Incorporación de la decisión de \textit{liveness} al \textit{pipeline} y a la \textit{demo} & 14 h & Al. & 0 \\ \cline{2-6}
@@ -887,7 +887,7 @@ Las tareas del proyecto se organizan en 12 sprints (Sprint 0 al Sprint 11) de 2 
   \end{tabularx}
 \end{table}
 
-La distribución totaliza 600 horas, distribuidas a lo largo de 12 sprints (Sprint 0 al Sprint 11) en un plazo de 35 semanas (4 bimestres, aproximadamente 8 meses), desde el 24 de agosto de 2026 hasta finales de abril de 2027. La carga promedio es de 20 horas semanales (50 h por sprint de 2 a 3 semanas), con semanas de transición entre bimestres. El núcleo experimental (sprints 5 a 7) recibe 120 horas técnicas, lo que refleja su carácter central. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral del \textit{pipeline} y de la documentación, la preparación de la defensa y la entrega final.
+La distribución totaliza 600 horas, distribuidas a lo largo de 12 sprints (Sprint 0 al Sprint 11) en un plazo de 35 semanas (4 bimestres, aproximadamente 8 meses), desde el 24 de agosto de 2026 hasta finales de abril de 2027. La carga promedio es de 20 horas semanales (50 h por sprint de 2 a 3 semanas), con semanas de transición entre bimestres. El núcleo experimental (sprints 5 a 7) recibe 138 horas técnicas, lo que refleja su carácter central. El cuarto bimestre (sprints 9 a 11) concentra la \textit{demo}, la revisión integral del \textit{pipeline} y de la documentación, la preparación de la defensa y la entrega final.
 
 \section{11. Diagrama de Gantt (sprints)}
 \label{sec:gantt}
@@ -964,13 +964,13 @@ La figura~\ref{fig:gantt} presenta el diagrama de Gantt del proyecto, tomando co
       \ganttbar[bar/.style={fill=gray!20}]{Transición bimestre 2}{18}{18} \\
 
       % Bimestre 3 (semanas 19-26)
-      \ganttgroup{Sprint 6: \textit{fine-tuning} adapt. dom.}{19}{21} \\
-      \ganttbar{HU10: subconjunto de \textit{fine-tuning} adapt.}{19}{19} \\
+      \ganttgroup{Sprint 6: \textit{fine-tuning}}{19}{21} \\
+      \ganttbar{HU10: subconjunto de \textit{fine-tuning}}{19}{19} \\
       \ganttbar{HU11: \textit{fine-tuning} de ArcFace (adapt. dom.)}{20}{21} \\
-      \ganttbar[bar/.style={fill=orange!60}]{Monitoreo entrenamiento}{21}{21} \\
+      \ganttbar{HU11: control (sin degrad.)}{20}{21} \\
 
       \ganttgroup{Sprint 7: análisis}{22}{24} \\
-      \ganttbar{HU13: re-evaluación}{22}{23} \\
+      \ganttbar{HU13: reevaluación}{22}{23} \\
       \ganttbar{HU13: análisis comparativo}{23}{24} \\
       \ganttbar[bar/.style={fill=orange!60}]{Memoria (sec. experimental)}{24}{24} \\
 
@@ -1129,7 +1129,7 @@ Riesgo 1: capacidad computacional insuficiente en \textit{tiers} gratuitos para 
 Riesgo 2: el \textit{fine-tuning} no produce una mejora medible sobre el \textit{baseline} en los \textit{benchmarks} seleccionados.
 
 \begin{itemize}
-\item Severidad (S): 6. Si la mejora es nula o marginal, el núcleo experimental del trabajo se debilita. No es bloqueante, pero obliga a reorientar el análisis (interpretación de por qué no mejoró, comparación con literatura, ablación).
+\item Severidad (S): 6. Si la mejora es nula o marginal, el núcleo experimental del trabajo se debilita. No es bloqueante, pero obliga a reorientar el análisis (interpretación de por qué no mejoró, comparación con literatura, ablación). El experimento de control (ajuste sin degradaciones sintéticas) aporta una vía adicional de interpretación: permite distinguir si la ausencia de mejora se debe al entrenamiento adicional en sí o a la ineficacia de las degradaciones para transferir al dominio.
 \item Probabilidad de ocurrencia (O): 4. Modelos modernos preentrenados sobre grandes \textit{datasets} ya tienen un \textit{baseline} alto; un subconjunto pequeño puede no aportar información nueva al modelo. Es un riesgo real que debe preverse y documentarse.
 \end{itemize}
 
@@ -1240,7 +1240,7 @@ HU5 & \textit{Pipeline} de verificación al inicio de turno (28 h, Sprint 4) & M
 \hline
 HU8 & Diseño del protocolo experimental y evaluación \textit{baseline} de ArcFace y AdaFace sobre LFW, AgeDB y RFW (34 h, Sprint 5) & Tablas y curvas ROC comparativas preentrenadas con EER, FAR, FRR, AUC & Archivo \texttt{results/hu8\_baseline.csv} con las métricas por modelo y \textit{benchmark}; figuras \texttt{figures/roc\_*.png} para cada \textit{benchmark}; archivo de configuración \texttt{configs/hu8.json} con semillas, particiones y versión de modelo; entrada en \texttt{CHANGELOG.md} firmada por la orientadora & Riesgo de que LFW esté saturado y no diferencie modelos (R3); respaldarse en AgeDB y RFW \\
 \hline
-HU11 & \textit{Fine-tuning} de ArcFace sobre el subconjunto de Glint360K o WebFace4M (30 h de ejecución, Sprint 6) & Modelo ArcFace ajustado con curvas de \textit{loss} y \textit{checkpoints} intermedios & \path|checkpoints/hu11_arcface_epoch{1..N}.pt| preservados; \path|results/hu11_finetune.csv| con EER preentrenado vs ajustado por \textit{benchmark} e IC 95\% (\textit{bootstrap} $N=1000$); figuras \path|figures/hu11_loss.png| y \path|figures/hu11_delta_eer.png|; \textit{release} del modelo en el repositorio con etiqueta \path|hu11-approved| y aceptación de la orientadora en el \textit{issue} correspondiente & Riesgo de capacidad computacional (R1) y de no observar efecto del ajuste (R2) \\
+HU11 & \textit{Fine-tuning} de ArcFace en dos condiciones sobre el subconjunto de Glint360K o WebFace4M (30 h + 12 h de ejecución, Sprint 6) & Modelo ArcFace ajustado en ambas condiciones (control y adaptación al dominio) con curvas de \textit{loss} y \textit{checkpoints} intermedios & \path|checkpoints/hu11_arcface_epoch{1..N}.pt| y \path|checkpoints/hu11_control_arcface_epoch{1..N}.pt| preservados; \path|results/hu11_finetune.csv| con EER preentrenado vs cada condición del ajuste por \textit{benchmark} e IC 95\% (\textit{bootstrap} $N=1000$); figuras \path|figures/hu11_loss.png| y \path|figures/hu11_delta_eer.png|; \textit{release} del modelo en el repositorio con etiqueta \path|hu11-approved| y aceptación de la orientadora en el \textit{issue} correspondiente & Riesgo de capacidad computacional (R1) y de no observar efecto del ajuste (R2) \\
 \hline
 \end{tabular}
 \end{table}
